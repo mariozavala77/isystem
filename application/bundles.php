@@ -18,10 +18,10 @@
 | that you want to handle requests with URIs that begin with "admin",
 | simply add it to the array like this:
 |
-|		'admin' => array(
-|			'location' => 'admin',
-|			'handles'  => 'admin',
-|		),
+|       'admin' => array(
+|           'location' => 'admin',
+|           'handles'  => 'admin',
+|       ),
 |
 | Note that the "location" is relative to the "bundles" directory.
 | Now the bundle will be recognized by Laravel and will be able
@@ -33,8 +33,16 @@
 |
 */
 
-return array(
+return [
+    'docs'       => [ 'handles' => 'docs' ],
+    'sentry'     => [ 'auto' => true ],
+    'datatables' => [ 'auto' => true ],
+    ];
 
-	'docs' => array('handles' => 'docs'),
+/*
+array(
+
+    'docs' => array('handles' => 'docs'),
 
 );
+*/
