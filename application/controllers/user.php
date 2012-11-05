@@ -24,5 +24,13 @@ class User_Controller extends Base_Controller {
 
         return Response::json( $data );
     }
+
+    // 添加用户
+    public function action_add() {
+
+        $groups = Group::get();
+
+        return View::make('user.add')->with('groups', $groups);
+    }
 }
 ?>

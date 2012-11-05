@@ -65,50 +65,6 @@
             <div class="shownpars">
                 <table cellpadding="0" cellspacing="0" border="0" class="dTable" id="group_list_table"></table>
             </div>
-            <script type="text/javascript">
-                $(function(){
-                    uTable = $('#group_list_table').dataTable({
-                        bSort: false,
-                        bProcessing: true,
-                        bFilter: true,
-                        bServerSide: true,
-                        bJQueryUI: false,
-                        sPaginationType: 'full_numbers',
-                        sAjaxSource: '{{ URL::base() }}/user/group/filter',
-                        sDom: '<"H"fl>tr<"F"ip>',
-                        aoColumnDefs: [
-                                        { sTitle: "名称",  aTargets: [0] },
-                                        { sTitle: "操作", "aTargets": [1], bSearchable: false, sClass: "textC tableToolbar", sWidth: '80px' }
-                                    ],
-                        fnRowCallback: function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
-                            var id = aData[1];
-                            var operation = '<ul class="btn-group toolbar">' +
-                                           '    <li>' +
-                                           '        <a href="{{ URL::base() }}/user/group/edit?group_id='+id+'" data-id="' + id + '"  class="tablectrl_small bDefault edit">' +
-                                           '            <span class="iconb" data-icon=""></span>' +
-                                           '        </a>' +
-                                           '    </li>' +
-                                           '    <li>' +
-                                           '        <a href="javascript:void(0);" data-id="' + id + '" class="tablectrl_small bDefault delete">' +
-                                           '            <span class="iconb" data-icon=""></span>' +
-                                           '        </a>' +
-                                           '    </li>' +
-                                           '    <li>' +
-                                           '        <a href="javascript:void(0);" data-id="' + id + '" class="tablectrl_small bDefault info">' +
-                                           '            <span class="iconb" data-icon=""></span>' +
-                                           '        </a>' +
-                                           '    </li>' +
-                                           '</ul>';
-
-                            $('td:eq(1)', nRow).html(operation);
-                        },
-                        oLanguage: {
-                            sSearch: '搜索:',
-                        }
-                });
-
-            });
-            </script>
             <div class="clear"></div>
         </div>
         <!-- group ends -->
@@ -116,7 +72,7 @@
     <!-- Main content ends -->
 
     <!-- delete confirm dialog begins -->
-    <div id="group_delete_confirm" style="display: none" title='提示'>
+    <div id="group_delete_confirm" style="display: none" title="提示">
         <p>你确认删除此用户组？</p>
     </div>
     <!-- delete confirm dialog ends -->

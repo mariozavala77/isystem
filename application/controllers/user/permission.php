@@ -17,7 +17,12 @@ class User_Permission_Controller extends Base_Controller {
 
     // 权限列表
     public function action_filter() {
-    
+        $fields = [ 'description', 'rule', 'id' ];
+        $permissions = Permission::filter( $fields );
+
+        $data = Datatables::of($permissions)->make();
+
+        return Response::json( $data );
     }
 
     // 权限添加
@@ -50,18 +55,33 @@ class User_Permission_Controller extends Base_Controller {
 
     // 权限更新
     public function action_edit() {
-    
-        return View::make('user.permission.edit'); 
+        $permission_id = Input::get('permission_id');
+        $permission = Permission::get( $permission_id );
+        
+        return View::make('user.permission.edit')->with('permission', $permission); 
     }
 
     // 权限更新处理
     public function action_update() {
-    
+        $permission_id = Input::get('permission_id');
+
+        $data = [
+            'rule'        => Input::get('rule'),
+            'description' => Input::get('description')
+            ];
+
+        Permission::update($permission_id, $data);
+
+        return Redirect::to('user/permission');
     }
 
     // 权限删除
     public function action_delete() {
-    
+        $permission_id = Input::get('permission_id');
+
+        $result = Permission::delete( $permission_id );
+
+        return Response::json($result);
     }
 }
 ?>

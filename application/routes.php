@@ -38,9 +38,13 @@ Route::group(array('before' => 'auth'), function() {
         return View::make('main');
     });
 
+    Route::controller('product.import');
+    Route::controller('product');
+    Route::controller('order');
     Route::controller('user.group');
     Route::controller('user.permission');
     Route::controller('user');
+
 });
 
 // 账户

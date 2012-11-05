@@ -55,6 +55,12 @@
 
     <!-- Main content bigins -->
     <div class="wrapper">
+
+        <div class="mt30 ">
+            <a href="{{ URL::base() }}/user/add" class="buttonM bDefault floatR"><span class="icon-home-5"></span><span>添加用户</span></a>
+            <div class="clear"></div>
+        </div>
+
         <!--users begins-->
         <div class="widget">
             <div class="whead"><h6>用户列表</h6><div class="clear"></div></div>

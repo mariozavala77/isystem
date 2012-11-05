@@ -64,7 +64,6 @@ class User_Group_Controller extends Base_Controller {
     public function action_delete() {
         $group_id = Input::get('group_id');
 
-        echo $group_id;die;
         $result = Group::delete($group_id);
 
         return Response::json($result);

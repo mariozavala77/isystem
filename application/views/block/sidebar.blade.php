@@ -7,7 +7,10 @@
                 <a href="{{ URL::base() }}" title="" class="active"><img src="{{ URL::base() }}/images/icons/mainnav/dashboard.png" alt="控制中心" /><span>控制中心</span></a>
             </li>
             <li>
-                <a href="{{ URL::base() }}" title="" class="active"><img src="{{ URL::base() }}/images/icons/mainnav/dashboard.png" alt="控制中心" /><span>订单处理</span></a>
+                <a href="{{ URL::base() }}/product" title="" class="active"><img src="{{ URL::base() }}/images/icons/mainnav/dashboard.png" alt="产品管理" /><span>产品管理</span></a>
+            </li>
+            <li>
+                <a href="{{ URL::base() }}/order" title="" class="active"><img src="{{ URL::base() }}/images/icons/mainnav/dashboard.png" alt="订单处理" /><span>订单处理</span></a>
             </li>
             <li>
                 <a href="{{ URL::base() }}" title="" class="active"><img src="{{ URL::base() }}/images/icons/mainnav/dashboard.png" alt="控制中心" /><span>任务处理</span></a>

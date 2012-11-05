@@ -17,6 +17,8 @@
     {{ HTML::script('js/plugins/wizards/jquery.validate.js') }}
     {{ HTML::script('js/plugins/wizards/jquery.form.js') }}
     {{ HTML::script('js/plugins/ui/jquery.jgrowl.js') }}
+    {{ HTML::script('js/plugins/tables/jquery.dataTables.js') }}
+    {{ HTML::script('js/plugins/forms/jquery.cleditor.js') }}
     {{ HTML::script('js/common.js') }}
     @yield('script')
 </head>

@@ -10,15 +10,20 @@
 class Group {
 
     /**
-     * 获取用户组权限
+     * 获取用户组
      *
      * @param: $group_id integer 用户组ID
      *
      * return array
      */
-    public static function get( $group_id ) {
-        $group = Sentry::group($group_id);
-        $group->permissions = array_keys(json_decode($group->permissions, true));
+    public static function get( $group_id = 0) {
+
+        if( !empty($permission_id) ) {
+            $group = Sentry::group($group_id);
+            $group->permissions = array_keys(json_decode($group->permissions, true));
+        } else {
+            $group = Sentry::group()->all();
+        }
 
         return $group;
     }
@@ -92,7 +97,7 @@ class Group {
 
         try {
             if(!Sentry::group($group_id)->delete()) {
-                $result = ['status' => 'fail', 'message' => '删除失败'];
+                $result = ['status' => 'fail', 'message' => ''];
             }
         } catch(Sentry\SentryException $e) {
 
