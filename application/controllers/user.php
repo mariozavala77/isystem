@@ -19,7 +19,6 @@ class User_Controller extends Base_Controller {
 
         $fields = [ 'username', 'email', 'ip_address', 'activated', 'last_login', 'id' ];
         $users = User::filter($fields);
-
         $data = Datatables::of( $users )->make();
 
         return Response::json( $data );
@@ -27,10 +26,34 @@ class User_Controller extends Base_Controller {
 
     // 添加用户
     public function action_add() {
-
         $groups = Group::get();
 
         return View::make('user.add')->with('groups', $groups);
+    }
+
+    // 添加用户
+    public function action_insert() {
+    
+    }
+
+    // 编辑用户
+    public function action_edit() {
+    
+    }
+
+    // 更新用户
+    public function action_update() {
+    
+    }
+
+    // 删除用户
+    public function action_delete() {
+    
+    }
+
+    // 激活用户
+    public function action_activate() {
+    
     }
 }
 ?>

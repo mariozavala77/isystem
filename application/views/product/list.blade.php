@@ -29,7 +29,7 @@
                     <a title="">
                         <i class="icos-money3"></i>
                         <span>快捷导航</span>
-                        <span><img src="images/elements/control/hasddArrow.png" alt=""></span>
+                        <span><img src="/images/elements/control/hasddArrow.png" alt=""></span>
                     </a>
                     <ul>
                         <li><a href="#" title=""><span class="icos-add"></span>New invoice</a></li>

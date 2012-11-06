@@ -10,7 +10,7 @@
 <!-- COntent begins -->
 <div id="content">
     <div class="contentTop">
-        <span class="pageTitle"><span class="icon-user-2">权限管理</span></span>
+        <span class="pageTitle"><span class="icon-user-2">权限设置</span></span>
         <div class="clear"></div>
     </div>
 
@@ -18,27 +18,21 @@
     <div class="breadLine">
         <div class="bc">
             <ul id="breadcrumbs" class="breadcrumbs">
-                <li><a href="index.html">Dashboard</a></li>
-                <li><a href="tables.html">Tables</a>
-                    <ul>
-                        <li><a href="tables.html" title="">Standard tables</a></li>
-                        <li><a href="tables_control.html" title="">Tables with control</a></li>
-                        <li><a href="tables_sortable.html" title="">Sortable and resizable</a></li>
-                    </ul>
-                </li>
-                <li class="current"><a href="tables_dynamic.html" title="">Dynamic table</a></li>
+                <li><a href="index.html">控制中心</a></li>
+                <li><a href="{{ URL::to('user') }}">用户管理</a></li>
+                <li><a class="current" href="{{ URL::to('user/permission') }}">权限设置</a></li>
             </ul>
         </div>
         
         <div class="breadLinks">
             <ul>
-                <li><a href="#" title=""><i class="icos-list"></i><span>Orders</span> <strong>(+58)</strong></a></li>
-                <li><a href="#" title=""><i class="icos-check"></i><span>Tasks</span> <strong>(+12)</strong></a></li>
+                <li><a href="#" title=""><i class="icos-list"></i><span>新订单</span> <strong>(+58)</strong></a></li>
+                <li><a href="#" title=""><i class="icos-check"></i><span>新任务</span> <strong>(+12)</strong></a></li>
                 <li class="has">
                     <a title="">
                         <i class="icos-money3"></i>
-                        <span>Invoices</span>
-                        <span><img src="images/elements/control/hasddArrow.png" alt=""></span>
+                        <span>快捷导航</span>
+                        <span><img src="/images/elements/control/hasddArrow.png" alt=""></span>
                     </a>
                     <ul>
                         <li><a href="#" title=""><span class="icos-add"></span>New invoice</a></li>
@@ -68,11 +62,10 @@
          </div>
          <!-- permission ends -->
 
-         <!-- delete confirm bigins-->
+         <!-- delete confirm begins-->
          <div id='permission_delete_confirm' style="display: none" title="提示">
             <p>你确定删除此权限？</p>
          </div>
-        
          <!-- delete confirm ends -->
     </div>
     <!-- Main content ends-->

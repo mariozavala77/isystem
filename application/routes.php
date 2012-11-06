@@ -38,9 +38,12 @@ Route::group(array('before' => 'auth'), function() {
         return View::make('main');
     });
 
-    Route::controller('product.import');
+    Route::controller('product.sale');
+    Route::controller('product.category');
     Route::controller('product');
     Route::controller('order');
+    Route::controller('agent');
+    Route::controller('task');
     Route::controller('user.group');
     Route::controller('user.permission');
     Route::controller('user');

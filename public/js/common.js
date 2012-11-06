@@ -7,6 +7,17 @@ $(function(){
     // input 样式
     $("select, .check, .check :checkbox, input:radio, input:file").uniform();
 
+    // sidebar二级
+    $('li.sideBarDrop').click(function () {
+		$(this).children().eq(1).slideToggle(200);
+	});
+    $(document).bind('click', function(e) {
+		var $clicked = $(e.target);
+		if (! $clicked.parents().hasClass("sideBarDrop"))
+		$(".leftUser").slideUp(200);
+	});
+
+
     // 全屏
     $('.doFullscreen').toggle(function() {
         var target_id = $(this).attr('key');

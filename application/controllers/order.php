@@ -48,7 +48,7 @@ class Order_Controller extends Base_Controller {
                     // 如果订单存在
                     if($order_info = Order::exists( ['entity_id' => $datum['entity_id'], 'channel_id' => $datum['channel_id'] ])) {
                         // 如果渠道端状态有更新，覆盖数据
-                        if( $datum['updated_at'] > $orchannelder_info->updated_at && $datum['status'] > $order_info->status ) {
+                        if( $datum['updated_at'] > $order_info->updated_at && $datum['status'] > $order_info->status ) {
                             foreach($datum as $key => $value) {
                                 if(empty($value)) {
                                     unset($datum[$key]);

@@ -61,6 +61,29 @@ class Product_Controller extends Base_Controller {
     
     }
 
+    // 导入产品
+    public function action_import() {
+        return View::make('product.import');
+    }
+
+    // 产品导入处理
+    public function action_do_import() {
+        $file = Input::file('file');
+        $root = path('storage') . 'products' . DS;
+        $path = UploadHelper::path($root, $file['name']);
+        $success = Input::upload('file', $path['dir'], $path['name']);
+
+        $result = ['status' => 'fail', 'message' => '导入失败!'];
+
+        if($success) {
+            if( Import::product( $path['dir'] . $path['name'] ) ) {
+                $result = ['status' => 'success', 'message' => '导入成功!'];
+            }
+        }
+
+        return Response::json($result);
+    }
+
     // 产品图片批量上传
     public function action_images() {
         $file = Input::file('file');
