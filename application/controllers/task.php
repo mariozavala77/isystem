@@ -13,6 +13,15 @@ class Task_Controller extends Base_Controller {
     public function action_index() {
         return View::make('task.index');
     }
+
+    // 列表
+    public function action_filter() {
+        $fields = ['type', 'content', 'level', 'created_at', 'id'];
+        $tasks = Tasks::filter($fields);
+        $data = Datatables::of($tasks)->make();
+
+        return Response::json($data);
+    }
 }
 
 ?>

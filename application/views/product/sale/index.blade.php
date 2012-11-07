@@ -64,7 +64,8 @@
                 bJQueryUI: false,
                 sPaginationType: 'full_numbers',
                 sAjaxSource: '/product/sale/filter',
-                sDom: '<"H"fl>tr<"F"ip>',
+                sDom: '<"H"fl<"clear">>tr<"F"ip>',
+                oLanguage: { sUrl: '/js/plugins/tables/lang_cn.txt' },
                 aoColumnDefs: [
                     { sTitle: "全选", aTargets: [0] },
                     { sTitle: "标题", aTargets: [1] },
@@ -73,22 +74,12 @@
                     { sTitle: "渠道", aTargets: [4] },
                     { sTitle: "代理商", aTargets: [5] },
                     { sTitle: "状态", aTargets: [6] },
-                    { sTitle: "操作", aTargets: [7] },
+                    { sTitle: "操作", aTargets: [7], bSearchable: false, sClass: 'tableActs' },
                 ],
                 fnRowCallback: function(nRow,aData, iDisplayIndex, iDisplayIndexFull) {
                     var id = aData[7];
-                    var operation = '<ul class="btn-group toolbar">' +
-                                   '    <li>' +
-                                   '        <a href="/product/category/edit?category_id=' + id + '"  class="tablectrl_small bDefault edit">' +
-                                   '            <span class="iconb" data-icon=""></span>' +
-                                   '        </a>' +
-                                   '    </li>' +
-                                   '    <li>' +
-                                   '        <a href="javascript:void(0);" data-id="' + id + '" class="tablectrl_small bDefault delete">' +
-                                   '            <span class="iconb" data-icon=""></span>' +
-                                   '        </a>' +
-                                   '    </li>' +
-                                   '</ul>';
+                    var operation = '<a href="/product/category/edit?category_id=' + id + '" class="tablectrl_small bDefault tipS" original-title="编辑"><span class="iconb" data-icon=""></span></a>' + 
+                                    '<a href="javascript: void(0);" data-id="' + id + '" class="tablectrl_small bDefault tipS" original-title="删除"><span class="iconb" data-icon=""></span></a>';
                     $('td:eq(7)', nRow).html(operation);
                 }
             });

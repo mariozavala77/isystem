@@ -2,7 +2,7 @@
 @section('script')
 @endsection
 @section('sidebar')
-    @rander('block.sidebar')
+    @include('../block.sidebar')
 @endsection
 @section('content')
 <!-- COntent begins -->

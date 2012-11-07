@@ -7,35 +7,23 @@ $(function(){
         bJQueryUI: false,
         sPaginationType: 'full_numbers',
         sAjaxSource: '/product/filter',
-        sDom: '<"H"fl>tr<"F"ip>',
+        sDom: '<"H"fl<"clear">>tr<"F"ip>',
         aoColumnDefs: [
                 { sTitle: "图片",  aTargets: [0] },
                 { sTitle: "名称", aTargets: [1] },
                 { sTitle: "SKU", aTargets: [2] },
                 { sTitle: "价格", aTargets: [3], bSearchable: false },
                 { sTitle: "添加时间", aTargets: [4], bSearchable: false },
-                { sTitle: "操作", "aTargets": [5], bSearchable: false, sClass: "textC tableToolbar", sWidth: '80px' }
+                { sTitle: "操作", "aTargets": [5], bSearchable: false, sClass: "tableActs", sWidth: '80px' }
                     ],
         fnRowCallback: function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
             var id = aData[5];
-            var operation = '<ul class="btn-group toolbar">' +
-                           '    <li>' +
-                           '        <a href="javascript:void(0);" data-id="' + id + '"  class="tablectrl_small bDefault edit">' +
-                           '            <span class="iconb" data-icon=""></span>' +
-                           '        </a>' +
-                           '    </li>' +
-                           '    <li>' +
-                           '        <a href="javascript:void(0);" data-id="' + id + '" class="tablectrl_small bDefault delete">' +
-                           '            <span class="iconb" data-icon=""></span>' +
-                           '        </a>' +
-                           '    </li>' +
-                           '</ul>';
+            var operation = '<a href="#" class="tablectrl_small bDefault tipS" original-title="编辑"><span class="iconb" data-icon=""></span></a>' + 
+                            '<a href="#" class="tablectrl_small bDefault tipS" original-title="删除"><span class="iconb" data-icon=""></span></a>';
 
             $('td:eq(5)', nRow).html(operation);
         },
-        oLanguage: {
-            sSearch: '搜索:',
-        }
+        oLanguage: { sUrl: '/js/plugins/tables/lang_cn.txt' },
     });
 
     $("#editor").cleditor({

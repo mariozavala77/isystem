@@ -9,30 +9,17 @@ $(function() {
         bJQueryUI: false,
         sPaginationType: 'full_numbers',
         sAjaxSource: '/user/group/filter',
-        sDom: '<"H"fl>tr<"F"ip>',
+        sDom: '<"H"fl<"clear">>tr<"F"ip>',
+        oLanguage: { sUrl: '/js/plugins/tables/lang_cn.txt' },
         aoColumnDefs: [
                         { sTitle: "名称",  aTargets: [0] },
-                        { sTitle: "操作", "aTargets": [1], bSearchable: false, sClass: "textC tableToolbar", sWidth: '80px' }
+                        { sTitle: "操作", "aTargets": [1], bSearchable: false, sClass: "tableActs", sWidth: '80px' }
                     ],
         fnRowCallback: function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
             var id = aData[1];
-            var operation = '<ul class="btn-group toolbar">' +
-                           '    <li>' +
-                           '        <a href="/user/group/edit?group_id='+id+'" data-id="' + id + '"  class="tablectrl_small bDefault edit">' +
-                           '            <span class="iconb" data-icon=""></span>' +
-                           '        </a>' +
-                           '    </li>' +
-                           '    <li>' +
-                           '        <a href="javascript:void(0);" data-id="' + id + '" class="tablectrl_small bDefault delete">' +
-                           '            <span class="iconb" data-icon=""></span>' +
-                           '        </a>' +
-                           '    </li>' +
-                           '</ul>';
-
+            var operation = '<a href="/user/group/edit?group_id=' + id + '" class="tablectrl_small bDefault tipS" original-title="编辑"><span class="iconb" data-icon=""></span></a>' + 
+                            '<a href="javascript:void(0);" data-id="' + id + '" class="tablectrl_small bDefault tipS" original-title="删除"><span class="iconb" data-icon=""></span></a>';
             $('td:eq(1)', nRow).html(operation);
-        },
-        oLanguage: {
-            sSearch: '搜索:',
         }
     });
     

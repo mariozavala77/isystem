@@ -48,8 +48,7 @@
 
     <!-- Main content bigins -->
     <div class="wrapper">
-
-        <div class="mt30 ">
+        <div style="margin-top: 35px">
             <a href="{{ URL::base() }}/agent/add" class="buttonM bDefault floatR"><span class="icon-home-5"></span><span>添加代理</span></a>
             <div class="clear"></div>
         </div>
@@ -70,35 +69,22 @@
                         bJQueryUI: false,
                         sPaginationType: 'full_numbers',
                         sAjaxSource: '{{ URL::base() }}/agent/filter',
-                        sDom: '<"H"fl>tr<"F"ip>',
+                        sDom: '<"H"fl<"clear">>tr<"F"ip>',
+                        oLanguage: { sUrl: '/js/plugins/tables/lang_cn.txt' },
                         aoColumnDefs: [
                                         { sTitle: "名称",  aTargets: [0] },
                                         { sTitle: "电话", aTargets: [1] },
                                         { sTitle: "邮箱", aTargets: [2] },
                                         { sTitle: "地址",aTargets: [3] },
                                         { sTitle: "加入时间",aTargets: [4], bSearchable: false },
-                                        { sTitle: "操作", "aTargets": [5], bSearchable: false, sClass: "textC tableToolbar", sWidth: '80px' }
+                                        { sTitle: "操作", "aTargets": [5], bSearchable: false, sClass: "tableActs", sWidth: '80px' }
                                     ],
                         fnRowCallback: function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
                             var id = aData[5];
-                            var operation = '<ul class="btn-group toolbar">' +
-                                           '    <li>' +
-                                           '        <a href="{{ URL::to('/agent/edit') }}?agent_id=' + id + '" class="tablectrl_small bDefault edit">' +
-                                           '            <span class="iconb" data-icon=""></span>' +
-                                           '        </a>' +
-                                           '    </li>' +
-                                           '    <li>' +
-                                           '        <a href="javascript:void(0);" data-id="' + id + '" class="tablectrl_small bDefault delete">' +
-                                           '            <span class="iconb" data-icon=""></span>' +
-                                           '        </a>' +
-                                           '    </li>' +
-                                           '</ul>';
-
+                            var operation = '<a href="/agent/edit?agent_id=' + id + '" class="tablectrl_small bDefault tipS" original-title="编辑"><span class="iconb" data-icon=""></span></a>' + 
+                                            '<a href="javascript:void(0);" data-id="' + id + '" class="tablectrl_small bDefault tipS" original-title="删除"><span class="iconb" data-icon=""></span></a>';
                             $('td:eq(5)', nRow).html(operation);
                         },
-                        oLanguage: {
-                            sSearch: '搜索:',
-                        }
                 });
 
             });

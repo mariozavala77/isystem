@@ -46,7 +46,7 @@
     <!-- Main content begins -->
     <div class="wrapper">
 
-        <div class="mt30 ">
+        <div style="margin-top: 35px">
             <a href="{{ URL::base() }}/product/import" class="buttonM bDefault floatR ml10"><span class="icon-home-5"></span><span>导入产品</span></a>
             <a href="{{ URL::base() }}/product/add" class="buttonM bDefault floatR ml10"><span class="icon-home-5"></span><span>添加产品</span></a>
             <div class="clear"></div>
@@ -55,7 +55,7 @@
         <div class="widget">
             <div class="whead"><h6>产品列表</h6><div class="clear"></div></div>
             <div class="shownpars">
-                <table cellpadding="0" cellspacing="0" border="0" class="dTable" id="product_list_table"></table>
+                <table cellpadding="0" cellspacing="0" border="0" class="dTable" id="product_list_table" width="100%"></table>
             </div>
         </div>
         <!-- products list ends -->

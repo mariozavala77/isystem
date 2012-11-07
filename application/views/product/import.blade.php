@@ -1,6 +1,7 @@
 @layout('layout.base')
 @section('script')
     {{ HTML::script('js/plugins/uploader/plupload.js') }}
+    {{ HTML::script('js/plugins/uploader/lang_cn.js') }}
     {{ HTML::script('js/plugins/uploader/plupload.html4.js') }}
     {{ HTML::script('js/plugins/uploader/plupload.html5.js') }}
     {{ HTML::script('js/plugins/uploader/jquery.plupload.queue.js') }}
@@ -16,45 +17,60 @@
         <div class="clear"></div>
     </div>
 
+    <!-- Breadcrumbs line begins -->
+    <div class="breadLine">
+        <div class="bc">
+            <ul id="breadcrumbs" class="breadcrumbs">
+                <li><a href="{{ URL::base() }}">控制中心</a></li>
+                <li class="current"><a href="{{ URL::to('task') }}">任务处理</a></li>
+            </ul>
+        </div>
+        
+        <div class="breadLinks">
+            <ul>
+                <li><a href="#" title=""><i class="icos-list"></i><span>新订单</span> <strong>(+58)</strong></a></li>
+                <li><a href="#" title=""><i class="icos-check"></i><span>新任务</span> <strong>(+12)</strong></a></li>
+                <li class="has">
+                    <a title="">
+                        <i class="icos-money3"></i>
+                        <span>快捷导航</span>
+                        <span><img src="/images/elements/control/hasddArrow.png" alt=""></span>
+                    </a>
+                    <ul>
+                        <li><a href="#" title=""><span class="icos-add"></span>New invoice</a></li>
+                        <li><a href="#" title=""><span class="icos-archive"></span>History</a></li>
+                        <li class="noBorderB"><a href="#" title=""><span class="icos-printer"></span>Print invoices</a></li>
+                    </ul>
+                </li>
+            </ul>
+             <div class="clear"></div>
+        </div>
+    </div>
+    <!-- Breadcrumbs line ends -->
+
+
     <!-- Main content begins -->
     <div class="wrapper">
         <div class="widget">
-            <div class="whead"><h6>导入产品</h6><div class="clear"></div></div>
-            <div class="inContainer">
-                <div class="inTo">
-                    <h5>操作步骤：</h5>
-                    <span>批量上传产品图片</span>
-                    <span>下载<a class="label label-info">产品导入模板</a>录入产品信息</span>
-                    <span>检查录入内容是否正确</span>
-                    <span>上传导入文件，产品导入完成</span>
-                </div>
-            </div>
-            <!-- upload images begins -->
+            <div class="whead"><h6>批量导入产品</h6><div class="clear"></div></div>
             <div class="m20 ml20 mr20">
-                <h5>批量上传产品图片：</h5> 
-                <div class="widget">
-                    <div id="upload_images">你的浏览器不支持批量上传。</div> 
+                <!-- upload images begins -->
+                <div>
+                    <span><span class="label label-info mr10">1</span>上传图片：</span> 
+                    <div class="widget" style="margin-top: 10px">
+                        <div id="upload_images">你的浏览器不支持批量上传。</div> 
+                    </div>
                 </div>
-            </div>
-            <!-- upload images ends -->
-            <!-- import products begins -->
-            <div class="m20 ml20 mr20" id="upload_file">
-                <h5>导入产品文件：</h5>
-                <div class="fluid">
-                    <div class="grid1 textR">
-                        <label>导入文件:</label>
-                    </div>  
-                    <div class="grid3">
-                        <a class="bDefault buttonM" id="pickfile">
-                            <span class="icon-add"></span>
-                            <span>选择文件</span>
-                        </a>
-
-                        <a class="bDefault buttonM" id="uploadfile">
-                            <span class="icon-upload-2"></span>
-                            <span>上传文件</span>
-                        </a>
-                        <div id="filelist"></div>
+                <!-- upload images ends -->
+                <div style="margin-top: 20px">
+                    <span><span class="label label-info mr10">2</span>下载产品模板[可选]：</span><a href="#" class="bDefault buttonS">产品模板</a> 
+                </div>
+                <div style="margin-top: 20px">
+                    <span><span class="label label-info mr10">3</span>导入产品数据：</span>
+                    <div class="m10" id="upload_file">
+                        <a id="pickfiles" class="bDefault buttonS" href="javascript:void(0);">选择文件</a>
+                        <a id="uploadfiles" class="bDefault buttonS" href="javascript:void(0);">导入文件</a>
+                        <span id="filelist"></span>
                     </div>
                 </div>
             </div>
@@ -62,21 +78,9 @@
         </div>
     </div>
     <!-- Main content ends-->
+
     <script type="text/javascript">
         $(function() {
-
-
-            /*
-            $('#file').fileupload({
-                dataType: 'json',
-                add: function (e, data) {
-                    data.submit();
-                },
-                done: function (e, data) {
-                    $.jGrowl(data.result.message);
-                }
-            });
-            */
 
             // 批量上传图片
             $("#upload_images").pluploadQueue({
@@ -89,28 +93,53 @@
                 ]
             });
 
-            // 产品信息上传
+            // 文件导入
             var uploader = new plupload.Uploader({
                 runtimes : 'html5, html4',
-                browse_button : 'pickfile',
+                browse_button : 'pickfiles',
                 container : 'upload_file',
                 max_file_size : '1mb',
-                url : 'upload.php',
+                url : '{{ URL::base() }}/product/do_import',
                 filters : [
-                    {title : "Excel文件", extensions : "xls"}
+                    {title : "Excel文件", extensions : "xls"},
                 ],
             });
 
-            uploader.bind('Init', function(up, params) {
-                $('#filelist').html("<div>Current runtime: " + params.runtime + "</div>");
-            });
 
-            $('#upload_file').click(function(e) {
+            $('#uploadfiles').click(function(e) {
                 uploader.start();
                 e.preventDefault();
             });
 
             uploader.init();
+
+            $('#pickfiles').click(function() {
+                for(i in uploader.files) {
+                    uploader.removeFile(uploader.files[i]);
+                }
+
+                $('#filelist').html('');
+            });
+
+            uploader.bind('FilesAdded', function(up, files) {
+                $('#pickfiles').html('重新选择');
+                $.each(files, function(i, file) {
+                    $('#filelist').append('<span id="' + file.id + '">' + file.name + ' (' + plupload.formatSize(file.size) + ') <b></b>' + '</span>');
+                });
+            });
+
+            uploader.bind('UploadProgress', function(up, file) {
+                $('#' + file.id + " b").html(file.percent + "%");
+            });
+
+            uploader.bind('Error', function(up, err) {
+                $('#pickfiles').html('重新选择');
+                $('#filelist').append('<span class="redBack">' + err.message + '</span>');
+            });
+
+            uploader.bind('FileUploaded', function(up, file) {
+                $('#' + file.id + " b").html("100%");
+            });
 
         });
     </script>

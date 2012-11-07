@@ -55,35 +55,28 @@
     <!-- Main content ends-->
     <script type="text/javascript">
         $(function() {
-            cTable = $('#task_list_table').dataTable({
+            tTable = $('#task_list_table').dataTable({
                 bSort: false,
                 bProcessing: true,
                 bFilter: true,
                 bServerSide: true,
                 bJQueryUI: false,
                 sPaginationType: 'full_numbers',
-                sAjaxSource: '/product/category/filter',
-                sDom: '<"H"fl>tr<"F"ip>',
+                sAjaxSource: '/task/filter',
+                sDom: '<"H"fl<"clear">>tr<"F"ip>',
+                oLanguage: { sUrl: '/js/plugins/tables/lang_cn.txt' },
                 aoColumnDefs: [
-                    { sTitle: "类别名称", aTargets: [0] },
-                    { sTitle: "排序", aTargets: [1] },
-                    { sTitle: "操作", aTargets: [2], sWidth: 60 },
+                    { sTitle: "任务类型", aTargets: [0] },
+                    { sTitle: "内容", aTargets: [1] },
+                    { sTitle: "级别", aTargets: [2] },
+                    { sTitle: "分配时间", aTargets: [3] },
+                    { sTitle: "操作", aTargets: [4], bSearchable: false, sClass: "tableActs", sWidth: "60px" },
                 ],
                 fnRowCallback: function(nRow,aData, iDisplayIndex, iDisplayIndexFull) {
-                    var id = aData[2];
-                    var operation = '<ul class="btn-group toolbar">' +
-                                   '    <li>' +
-                                   '        <a href="/product/category/edit?category_id=' + id + '"  class="tablectrl_small bDefault edit">' +
-                                   '            <span class="iconb" data-icon=""></span>' +
-                                   '        </a>' +
-                                   '    </li>' +
-                                   '    <li>' +
-                                   '        <a href="javascript:void(0);" data-id="' + id + '" class="tablectrl_small bDefault delete">' +
-                                   '            <span class="iconb" data-icon=""></span>' +
-                                   '        </a>' +
-                                   '    </li>' +
-                                   '</ul>';
-                    $('td:eq(2)', nRow).html(operation);
+                    var id = aData[4];
+                    var operation = '<a href="/product/category/edit?category_id=' + id + '" class="tablectrl_small bDefault tipS" original-title="编辑"><span class="iconb" data-icon=""></span></a>' + 
+                                    '<a href="javascript:void(0);" data-id="' + id + '" class="tablectrl_small bDefault tipS" original-title="删除"><span class="iconb" data-icon=""></span></a>';
+                    $('td:eq(4)', nRow).html(operation);
                 }
             });
 

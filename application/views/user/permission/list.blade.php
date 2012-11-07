@@ -20,7 +20,7 @@
             <ul id="breadcrumbs" class="breadcrumbs">
                 <li><a href="index.html">控制中心</a></li>
                 <li><a href="{{ URL::to('user') }}">用户管理</a></li>
-                <li><a class="current" href="{{ URL::to('user/permission') }}">权限设置</a></li>
+                <li class="current"><a href="{{ URL::to('user/permission') }}">权限设置</a></li>
             </ul>
         </div>
         
@@ -48,7 +48,7 @@
 
     <!-- Main content bigins -->
     <div class="wrapper"> 
-        <div class="mt30 ">
+        <div style="margin-top: 35px">
             <a href="{{ URL::base() }}/user/permission/add" class="buttonM bDefault floatR"><span class="icon-home-5"></span><span>添加权限</span></a>
             <div class="clear"></div>
         </div>
