@@ -18,11 +18,20 @@ class Product_Controller extends Base_Controller {
     // 产品列表
     public function action_filter() {
 
-        $fields = [ 'name', 'sku', 'min_price', 'max_price', 'weight', 'size', 'created_at' ];
-
+        $fields = [ 'p.id as id', 'name', 'sku', 'min_price', 'max_price', 'weight', 'size', 'created_at', 'p.id as operate' ];
         $products = Product::filter($fields);
-
         $data = Datatables::of($products)->make();
+
+        /*
+        foreach($data['aaData'] as $key => $datum) {
+            $product_id = $datum[0];
+            $image = Product_Image::get($product_id, 1);
+            print_r($image);
+            die;
+
+        
+        }
+         */
 
         return Response::json( $data );
     }
@@ -76,9 +85,7 @@ class Product_Controller extends Base_Controller {
         $result = ['status' => 'fail', 'message' => '导入失败!'];
 
         if($success) {
-            if( Import::product( $path['dir'] . $path['name'] ) ) {
-                $result = ['status' => 'success', 'message' => '导入成功!'];
-            }
+            $result = Import::product( $path['dir'] . $path['name'] );
         }
 
         return Response::json($result);

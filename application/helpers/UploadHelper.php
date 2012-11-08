@@ -12,12 +12,13 @@ class UploadHelper {
     /**
      * 获取产品上传路径
      *
-     * @param: $root     string 上传根目录
-     * @param: $filename string 文件名称
+     * @param: $root     string  上传根目录
+     * @param: $filename string  文件名称
+     * @param: $file     boolean 是否返回完整路径
      *
      * return string
      */
-    public static function path( $root, $filename ) {
+    public static function path( $root, $filename, $file = false ) {
         $fileinfo = pathinfo($filename);
 
         $dirs = static::_hashDir( $fileinfo );
@@ -25,7 +26,10 @@ class UploadHelper {
             $root .= $dir . DS;
         }
     
-        return [ 'dir' => $root , 'name' => $fileinfo['basename'] ];
+        if($file)
+            return $root.$fileinfo['basename'];
+        else
+            return [ 'dir' => $root , 'name' => $fileinfo['basename'] ];
     }
 
     /**

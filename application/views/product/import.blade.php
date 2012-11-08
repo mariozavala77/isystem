@@ -63,7 +63,10 @@
                 </div>
                 <!-- upload images ends -->
                 <div style="margin-top: 20px">
-                    <span><span class="label label-info mr10">2</span>下载产品模板[可选]：</span><a href="#" class="bDefault buttonS">产品模板</a> 
+                    <span><span class="label label-info mr10">2</span>下载产品模板 [ 可选 ]：</span>
+                    <a href="{{ URL::to('uploads/demo/products.xls') }}" target="_blank" class="bDefault buttonS">
+                        <span class="icon-download"></span><span>产品模板</span>
+                    </a> 
                 </div>
                 <div style="margin-top: 20px">
                     <span><span class="label label-info mr10">3</span>导入产品数据：</span>
@@ -137,8 +140,14 @@
                 $('#filelist').append('<span class="redBack">' + err.message + '</span>');
             });
 
-            uploader.bind('FileUploaded', function(up, file) {
+            uploader.bind('FileUploaded', function(up, file, info) {
                 $('#' + file.id + " b").html("100%");
+                var response = jQuery.parseJSON(info.response);
+                if(response.status == 'success') {
+                    $('#filelist').html('<span class="greenBack">导入成功</span>');
+                } else {
+                    $('#filelist').html('<span class="redBack">' + response.message + '</span>');
+                }
             });
 
         });
