@@ -15,8 +15,30 @@ class Channel {
      *
      * return $object
      */
-    public static function all() {
-        return DB::table('channels')->get();
+    public static function filter($fields) {
+        return DB::table('channels')->select($fields);
+    }
+
+    /**
+     * 插入渠道信息
+     *
+     * @param: $data       array   数据
+     *
+     * return void
+     */
+    public static function insert($data){
+        return DB::table('channels')->insert( $data );
+    }
+
+    /**
+     * 获取单条渠道的信息
+     *
+     * @param: $channel_id integer 渠道ID
+     *
+     * return array
+     */
+    public static function info($channel_id){
+        return DB::table('channels')->where('id', '=', $channel_id)->first();
     }
 
     /**
@@ -28,7 +50,20 @@ class Channel {
      * return void
      */
     public static function update($channel_id, $data) {
+        $data['accredit'] = serialize($data['accredit']);
         DB::table('channels')->where('id', '=', $channel_id)->update($data);
+    }
+
+    /**
+     * 删除渠道
+     *
+     * @static
+     * @param $channel_id integer 渠道ID
+     *
+     * retrun void
+     */
+    public static function delete($channel_id){
+        return DB::table('channels')->where('id', '=', $channel_id)->delete();
     }
 
 }
