@@ -66,6 +66,8 @@ class Import_Product extends Import_Base {
         foreach($data as $key => $datum) {
             $current_row = $key + 1;
 
+            if(!$datum[0]) continue;
+
             $datum = $this->trim($datum);
             $datum = array_combine($this->_config['keys'], $datum);
             if(!$datum) {
@@ -77,7 +79,10 @@ class Import_Product extends Import_Base {
                 Throw new ImportException("第{$current_row}行数据的语言还没有被支持");
 
             // 获取验证规则
-            $rules = $this->_config['rules'][$datum['language']];
+            $rules = $datum['language'] == 'cn' ? 
+                $this->_config['rules'][$datum['language']] : 
+                $this->_config['rules']['default'];
+
             foreach($rules as $key => $rule) {
                 unset($rules[$key]);
                 $rules[$this->_config['keys'][$key]] = $rule;
@@ -86,7 +91,8 @@ class Import_Product extends Import_Base {
             $valid = Validator::make($datum, $rules, $this->_config['messages']);
 
             if($valid->fails()) {
-                $exception = "亲，第{$current_row}行的" . str_replace($this->_config['keys'], $this->_config['head'], $valid->errors->first());
+                $message = str_replace(' ', '_', $valid->errors->first());
+                $exception = "亲，第{$current_row}行的" . str_replace($this->_config['keys'], $this->_config['head'], $message);
                 Throw new ImportException($exception);
             } else {
                 // 额外验证
@@ -104,6 +110,8 @@ class Import_Product extends Import_Base {
                 $developer = $datum['devel_id'];
                 $datum['devel_id'] = DB::table('users')->where('username', '=', $developer)->only('id');
                 if(!$datum['devel_id']) Throw new ImportException("OMG，第{$current_row}行开发人“developer}”不存在。");
+
+                $datum['images'] = explode(';', rtrim($datum['images'], ';'));
             }
 
             $this->data[] = $datum;

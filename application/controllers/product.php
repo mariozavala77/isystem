@@ -85,6 +85,8 @@ class Product_Controller extends Base_Controller {
             try {
                 $import = new Import('product', $path.$filename);
                 $import->valid();
+                $data = $import->data();
+                print_r($data);
                 die;
             
             } catch(Import\ImportException $e) {

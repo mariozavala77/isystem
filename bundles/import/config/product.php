@@ -11,14 +11,14 @@ return [
     // 表格对应key
     'keys' => [ 
         'name', 'sku', 'language', 'category_id', 'cost', 'min_price', 'max_price', 
-        'supplier_id', 'devel_id', 'weight', 'size', 'images', 'description', 'keywords',
-        'short_descrption',
+        'supplier_id', 'devel_id', 'weight', 'size', 'images', 'keywords', 'short_descrption',
+        'description',
         ],
 
      // 表格头信息
     'head' => [ 
         '名称', 'SKU', '语言', '分类', '成本价', '最低价格','最高价格', '供应商', '开发人',
-        '重量','尺寸', '图片', '描述', '关键词', '短描述',
+        '重量','尺寸', '图片', '关键词', '简要描述', '详细描述'
         ],
 
     // 验证信息
