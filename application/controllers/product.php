@@ -18,20 +18,16 @@ class Product_Controller extends Base_Controller {
     // 产品列表
     public function action_filter() {
 
-        $fields = [ 'p.id as id', 'name', 'sku', 'min_price', 'max_price', 'weight', 'size', 'created_at', 'p.id as operate' ];
+        $fields = [ 'p.id as id', 'name', 'sku', 'min_price', 'max_price', 'created_at', 'p.id as operate' ];
         $products = Product::filter($fields);
         $data = Datatables::of($products)->make();
 
-        /*
         foreach($data['aaData'] as $key => $datum) {
             $product_id = $datum[0];
-            $image = Product_Image::get($product_id, 1);
-            print_r($image);
-            die;
-
-        
+            $image      = Product_Image::get($product_id, 1);
+            $root       = '/uploads/images/products/';
+            $data['aaData'][$key][0] = UploadHelper::path($root, $image->link, true);
         }
-         */
 
         return Response::json( $data );
     }
@@ -67,7 +63,7 @@ class Product_Controller extends Base_Controller {
 
     // 产品编辑处理
     public function action_update() {
-    
+
     }
 
     // 导入产品
@@ -78,14 +74,22 @@ class Product_Controller extends Base_Controller {
     // 产品导入处理
     public function action_do_import() {
         $file = Input::file('file');
-        $root = path('storage') . 'products' . DS;
-        $path = UploadHelper::path($root, $file['name']);
-        $success = Input::upload('file', $path['dir'], $path['name']);
+        $path = path('storage') . 'products' . DS . 'import' . DS . date('Ymd') . DS;
+        $info = pathinfo($file['name']);
+        $filename = microtime(true) . '.' . $info['extension'];
+        $success = Input::upload('file', $path, $filename);
 
-        $result = ['status' => 'fail', 'message' => '导入失败!'];
+        $result = ['status' => 'fail', 'message' => '文件上传失败!'];
 
         if($success) {
-            $result = Import::product( $path['dir'] . $path['name'] );
+            try {
+                $import = new Import('product', $path.$filename);
+                $import->valid();
+                die;
+            
+            } catch(Import\ImportException $e) {
+                $result = ['status' => 'fail', 'message' => $e->getMessage()];
+            }
         }
 
         return Response::json($result);

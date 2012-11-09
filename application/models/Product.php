@@ -53,6 +53,10 @@ class Product {
                 ];
 
             static::_insertProductExtension( $product_extension_data );
+
+            if($data['images']) {
+                Product_Image::insert($product_id, explode(';', $data['images']));
+            }
         }
 
         return $product_id ? true : false;
@@ -66,7 +70,6 @@ class Product {
      * return integer
      */
     private static function _insertProduct( $data ) {
-
         return DB::table('products')->insert_get_id($data);
     }
 

@@ -35,5 +35,30 @@ class Product_Image {
 
         return $result;
     }
+
+    /**
+     * 添加产品图片
+     *
+     * @param: $product_id integer 产品ID
+     * @param: $images     array   产品图片
+     *
+     * return void
+     */
+    public static function insert($product_id, $images) {
+
+        foreach($images as $image) {
+            if(empty($image)) continue;
+
+            $data = [
+                'product_id' => $product_id,
+                'link'       => $image,
+                'sort'       => 0,
+                'created_at' => date('Y-m-d H:i:s'),
+                ];
+
+            DB::table('products_images')->insert( $data );
+        }
+    
+    }
 }
 ?>

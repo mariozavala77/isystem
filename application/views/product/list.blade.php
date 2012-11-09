@@ -55,7 +55,7 @@
         <div class="widget">
             <div class="whead"><h6>产品列表</h6><div class="clear"></div></div>
             <div class="shownpars">
-                <table cellpadding="0" cellspacing="0" border="0" class="dTable" id="product_list_table" width="100%"></table>
+                <table cellpadding="0" cellspacing="0" border="0" class="dTable tMedia" id="product_list_table" width="100%"></table>
             </div>
         </div>
         <!-- products list ends -->
