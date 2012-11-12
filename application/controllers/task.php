@@ -22,6 +22,22 @@ class Task_Controller extends Base_Controller {
 
         return Response::json($data);
     }
+
+    // 任务详细
+    public function action_info(){
+        $task_id = Input::get('task_id');
+        if(empty($task_id)){
+            session::flash('tips', '任务不存在');
+
+            return Redirect::back();
+        }
+    }
+
+    // 任务处理
+    public function action_handle(){
+        $task_id = Input::get('task_id');
+    }
+
 }
 
 ?>

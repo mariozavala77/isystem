@@ -8,14 +8,14 @@
  * @version: $Id$
  */
 
-class AgentAPI_category
+class AgentAPI_Category
 {
     /**
      * 产品分类列表
      *
-     * @param array $params 相关参数列表
+     * @param $params array 相关参数列表
      *
-     * @return array 直接返回分类的属性数组
+     * @return object 直接返回分类的属性数组
      */
     public static function lists($params){
         $filed = ['id', 'parent_id', 'name'];
@@ -27,9 +27,9 @@ class AgentAPI_category
     /**
      * 将数据格式化成树形结构
      *
-     * @param array $items 需要处理的数组
+     * @param $items array 需要处理的数组
      *
-     * @return array
+     * @return object
      */
     private static function genTree($items) {
         $tree = []; //格式化好的树
@@ -46,6 +46,6 @@ class AgentAPI_category
             }
         }
 
-        return $tree;
+        return (object)$tree;
     }
 }

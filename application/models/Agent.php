@@ -65,6 +65,19 @@ class Agent {
     public static function delete($agent_id) {
         DB::table('agents')->where('id', '=', $agent_id)->delete();
     }
-}
 
-?>
+    /**
+     * 检测代理商是否可以使用api
+     * 通过代理商id和密钥进行检测代理商是否可以使用api
+     *
+     * @param: $agent_id integer 代理商ID
+     * @param: $secret   string  代理商密钥
+     *
+     * return void
+     */
+    public static function check($agent_id, $secret) {
+        return DB::table('agents')->where('id', '=', $agent_id)
+                                  ->where('secret', '=', $secret)
+                                  ->only('id');
+    }
+}

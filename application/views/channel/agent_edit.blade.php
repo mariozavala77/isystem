@@ -62,6 +62,22 @@
                         <div class="clear"></div>
                     </div>
                     <div class="formRow">
+                        <div class="grid3"><label>渠道所属语言：</label></div>
+                        <div class="grid9">
+                            <select name="language">
+                                <option value="zh" @if ( $channel->language == 'zh' )
+                                selected="true"
+                                @endif>中文</option><option value="en" @if ( $channel->language == 'en' )
+                                selected="true"
+                                @endif>英文</option>
+                                <option value="de" @if ( $channel->language == 'de' )
+                                selected="true"
+                                @endif>德语</option>
+                            </select>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+                    <div class="formRow">
                         <div class="grid3"><label>渠道许可密钥：</label></div>
                         <div class="grid9"><input type="text" name="accredit['secret']" style="width: 30%" required="true" value="{{$channel->accredit['secret']}}"/></div>
                         <div class="clear"></div>

@@ -13,15 +13,20 @@ class Product {
      * 产品列表
      *
      * @param: $fields array  显示字段
-     * @param: $lang   string 语言
      * @param: $filter array  过滤
      *
      * return object
      */
-    public static function filter( $fields, $lang = 'en', $filter = [] ) {
+    public static function filter( $fields, $filter = [] ) {
 
-        return DB::table('products as p')->left_join('products_extension as pe', 'p.id', '=', 'pe.product_id')
-                                         ->select($fields);
+        $table = DB::table('products as p')->left_join('products_extension as pe', 'p.id', '=', 'pe.product_id');
+
+        if(!empty($filter)){
+            foreach($filter as $value){
+                $table->where($value[0], '=', $value[1]);
+            }
+        }
+        return  $table->select($fields);
     }
 
     /**
@@ -78,7 +83,7 @@ class Product {
      * return void
      */
     private static function _insertProductExtension( $data ) {
-        DB::table('products_extension')->insert( $data );;
+        DB::table('products_extension')->insert( $data );
     }
 }
 ?>

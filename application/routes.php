@@ -54,6 +54,7 @@ Route::group(array('before' => 'auth'), function() {
 
 // 账户
 Route::controller('account');
+Route::controller('api');
 
 /*
 |--------------------------------------------------------------------------

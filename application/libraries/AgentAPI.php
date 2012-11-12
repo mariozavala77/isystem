@@ -6,19 +6,25 @@
  * @copyright: Copyright (c) 2012 UFCEC Tech All Rights Reserved.
  * @version: $Id$
  */
+class AgentAPIException extends Exception{}
+class AgentAPILogException extends Exception{}
+
 class AgentAPI{
 
     // 标注jsonrpc的版本
-    define("JSONRPC", "2.0");
+    const JSONRPC = '2.0';
 
     // 请求的url 在发送的时候用到
-    define("API_URL", 'http://localhost/ceshi/test.php');
+    const APP_URL = 'http://localhost/ceshi/testeeee.php';
     
     // 请求id 可以是代理商的id 也可以是代理商随机生成
-	private $id = '';
+    private $_id = '';
  
     // 传递的参数
-	private $params = '';
+    private $_params = '';
+
+    // 当前登录系统的用户
+    private $_user_id = 0;
 
     /**
      * 请求的方法
@@ -27,13 +33,14 @@ class AgentAPI{
      * 不对外请求 则是get.class.function
      * 对外请求 post.class.function
      */
-	private $method ='';
+    private $_method ='';
     
-	public function __construct($method, $params, $id = 1){
-		$this->method = $method;
-		$this->params = $params;
-		$this->id     = $id;
-	}
+    public function __construct($method, $params, $id = 1){
+        $this->_method = $method;
+        $this->_params = $params;
+        $this->_id     = $id;
+        if(Sentry::check()) $this->_user_id = Sentry::user()->get('id');
+    }
 
     /**
      * 代理商api处理
@@ -41,20 +48,23 @@ class AgentAPI{
      * @return bool|mixed
      */
     public function handle(){
-		list($method, $interface, $action) = explode('.', $this->method);
+        list($method, $interface, $action) = explode('.', $this->_method);
 
         if('get' == $method){
-            return $this->_rpc_get($interface, $action);
+            $result = $this->_rpc_get($interface, $action);
         }else{
-            return $this->_rpc_post($interface, $action);
+            $result = $this->_rpc_post($interface, $action);
         }
-	}
+
+        return $result;
+    }
 
     /**
      * RPC 错误处理
      *
-     * @param string $code    错误码
-     * @param string $message 错误信息
+     * @param $code    string 错误码
+     * @param $message string 错误信息
+     *
      * @return mixed
      */
     private function _rpc_error($code, $message){
@@ -64,7 +74,7 @@ class AgentAPI{
     /**
      * 正确的RPC请求处理
      *
-     * @param array|string $result 处理结果
+     * @param $result array|string 处理结果
      * @return mixed
      */
     private function _rpc_result($result){
@@ -74,13 +84,13 @@ class AgentAPI{
     /**
      * RPC 请求json返回，正确或者错误
      *
-     * @param array $result 正确的处理
-     * @param array $error  错误的处理
+     * @param $result array 正确的处理
+     * @param $error  array 错误的处理
      * @return mixed
      */
     private function _rpc_callbak($result = [], $error = []){
         $response = [
-            'jsonrpc' => JSONRPC,
+            'jsonrpc' => selt::JSONRPC,
             ];
         if(!empty($result)){
             $response['result'] = $result;
@@ -88,7 +98,7 @@ class AgentAPI{
         if(!empty($error)){
             $response['error'] = $error;
         }
-        $response['id'] = $this->id;
+        $response['id'] = $this->_id;
 
         return $response;
     }
@@ -96,87 +106,108 @@ class AgentAPI{
     /**
      * 处理远程提交的RPC请求
      *
-     * @param string $interface 类
-     * @param string $action    方法
+     * @param $interface string 类
+     * @param $action    string 方法
      *
      * @return bool
      */
     private function _rpc_post($interface, $action){
-        $params = $this->params;
-        
-        if(empty($params)){
-            // 写日志
-            return FALSE;
-        }
+        $params = $this->_params;
+        try{
+            if(empty($params)){
 
-        $agent = Agent::info($params['agent_id']);
-        
-        if(empty($agent)){
-            // 写日志
-            return FALSE;
-        }
+                throw new AgentAPILogException('参数不争取', 1);
+            }
 
-        $params['secret'] = $agent->secret;
-        
-        $request = [
-            'jsonrpc' => JSONRPC,
-            'method'  => 'get.'.$interface.'.'.$action,
-            'params'  => $params,
-            'id'      => time()
-        ];
+            $agent = Agent::info($params['agent_id']);
+            
+            if(empty($agent)){
+                throw new AgentAPILogException('没有获取到代理商信息', 1);
+            }
 
-        $transport = new Transport();
-        $request = $transport->request(API_URL, json_encode($request), 'POST');
-        if(empty($request)){
+            $params['secret'] = $agent->secret;
+            
+            $request = [
+                'jsonrpc' => self::JSONRPC,
+                'method'  => 'get.'.$interface.'.'.$action,
+                'params'  => $params,
+                'id'      => time()
+            ];
+
+            $transport = new Transport();
+            $request = $transport->request(self::APP_URL, json_encode($request), 'POST');
+            if(!empty($request) || !isset($request['body'])){
+                $request = $request['body'];
+                $request = json_decode($request,TRUE);
+                if(isset($request['error'])){
+                    throw new AgentAPILogException($request['error'], 1);
+                }
+                return TRUE;
+            }
+        }catch(AgentAPILogException $e){
+            $content = [
+                'errormsg' =>$e->getMessage(),
+                'file'     =>$e->getFile(),
+                'line'     =>$e->getLine(),
+                'trace'    =>$e->getTraceAsString(),
+            ];
+            $data = [
+                'user_id'    => $this->_user_id,
+                'content'    => json_encode($content),
+                'created_at' => date('Y-m-d H:i:s')
+            ];
+            //App\Log\Log::insert($data); // 写入日志
             return FALSE;
-        }
-        $request = $request['body'];
-        $request = json_decode($request,TRUE);
-        if(isset($request['error'])){
-            // 写日志
-            return FALSE;
-        }else{
-            return TRUE;
         }
     }
 
     /**
      * RPC 的get处理
      *
-     * @param string $interface 类
-     * @param string $action    方法
+     * @param $interface string 类
+     * @param $action    string 方法
      *
      * @return mixed
      */
     private function _rpc_get($interface, $action){
-        if(empty($this->id)){
-            return $this->_rpc_error('-32600', '无效请求');
-        }
-        // 传递的参数
-        $params = $this->params;
-
-        // 检测代理商权限
-        $agent_id = Agent::check($params['agent_id'], $params['secret']);
-
-        if(empty($agent_id)){
-            return $this->_rpc_error('-32001', '无效代理商');
-        }
         try{
+            if(empty($this->_id)){
+                throw new AgentAPIException('无效请求', -32600);
+            }
+            // 传递的参数
+            $params = $this->_params;
+
+            // 检测代理商权限
+            $agent_id = Agent::check($params['agent_id'], $params['secret']);
+
+            if(empty($agent_id)){
+                throw new AgentAPIException('无效代理商', -32001);
+            }
+            
             $interface = 'AgentAPI_' . $interface;
             $param['value']= $params;
             $result=call_user_func_array([$interface, $action], $param);
-            if($result){
-                if(isset($result['status']) && $result['status'] == 'fail'){
-                    return $this->_rpc_error('-32004', $result['message']);
-                }else{
-                    return $this->_rpc_result($result);
-                }
-            }else{
-                return $this->_rpc_error('-32601', '无效方法');
+            if($result == FALSE){
+                throw new AgentAPIException('请求了无效方法', -32601);
+                
             }
-        }catch(Exception $e){
-            // 需要写日志
-            return $this->_rpc_error('-32003', '内容获取失败');
+            return $this->_rpc_result($result);
+        }catch(AgentAPIException $e){
+            return $this->_rpc_error($e->getCode(), $e->getMessage());
+        }catch(AgentAPILogException $e){
+            $content = [
+                'errormsg' =>$e->getMessage(),
+                'file'     =>$e->getFile(),
+                'line'     =>$e->getLine(),
+                'trace'    =>$e->getTraceAsString(),
+            ];
+            $data = [
+                'user_id'    => $this->_user_id,
+                'content'    => json_encode($content),
+                'created_at' => date('Y-m-d H:i:s')
+            ];
+            //Log::insert($data); // 写入日志
+            return $this->_rpc_error(-32003, '内容获取失败');
         }
     }
 }

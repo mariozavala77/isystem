@@ -7,12 +7,12 @@
  * @version: $Id$
  */
 
-class AgentAPI_channel
+class AgentAPI_Channel
 {
     /**
      * 渠道列表
      *
-     * @param array $params 列表相关参数
+     * @param $params array 列表相关参数
      *
      * @return mixed 仅返回 id 别名 描述
      */

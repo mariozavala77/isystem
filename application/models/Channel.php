@@ -22,9 +22,9 @@ class Channel {
     /**
      * 插入渠道信息
      *
-     * @param: $data       array   数据
+     * @param: $data array 数据
      *
-     * return void
+     * return boolean
      */
     public static function insert($data){
         return DB::table('channels')->insert( $data );
@@ -35,7 +35,7 @@ class Channel {
      *
      * @param: $channel_id integer 渠道ID
      *
-     * return array
+     * return object
      */
     public static function info($channel_id){
         return DB::table('channels')->where('id', '=', $channel_id)->first();
@@ -47,11 +47,11 @@ class Channel {
      * @param: $channel_id integer 渠道ID
      * @param: $data       array   数据
      *
-     * return void
+     * return boolean
      */
     public static function update($channel_id, $data) {
         $data['accredit'] = serialize($data['accredit']);
-        DB::table('channels')->where('id', '=', $channel_id)->update($data);
+        return DB::table('channels')->where('id', '=', $channel_id)->update($data);
     }
 
     /**
@@ -60,11 +60,10 @@ class Channel {
      * @static
      * @param $channel_id integer 渠道ID
      *
-     * retrun void
+     * retrun boolean
      */
     public static function delete($channel_id){
         return DB::table('channels')->where('id', '=', $channel_id)->delete();
     }
 
 }
-?>

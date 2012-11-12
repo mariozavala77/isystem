@@ -65,54 +65,57 @@ class Transport
     {
         $fsock_exists = function_exists('fsockopen');
         $curl_exists = function_exists('curl_init');
-
-        if (!$fsock_exists && !$curl_exists)
-        {
-            die('No method available!');
-        }
-
-        if (!$url)
-        {
-            die('Invalid url!');
-        }
-
-        if ($this->time_limit > -1)//如果为0，不限制执行时间
-        {
-            set_time_limit($this->time_limit);
-        }
-
-        $method = $method === 'GET' ? $method : 'POST';
-        $response = '';
-        $temp_str = '';
-
-        /* 格式化将要发要送的参数 */
-        if ($params && is_array($params))
-        {
-            foreach ($params AS $key => $value)
+        try{
+            if (!$fsock_exists && !$curl_exists)
             {
-                $temp_str .= '&' . $key . '=' . $value;
+                throw new Exception('No method available!', 1);
             }
-            $params = preg_replace('/^&/', '', $temp_str);
-        }
 
-        /* 如果fsockopen存在，且用户不指定使用curl，则调用use_socket函数 */
-        if ($fsock_exists && !$this->use_curl)
-        {
-            $response = $this->use_socket($url, $params, $method, $my_header);
-        }
-        /* 只要上述条件中的任一个不成立，流程就转向这里，这时如果curl模块可用，就调用use_curl函数 */
-        elseif ($curl_exists)
-        {
-            $response = $this->use_curl($url, $params, $method, $my_header);
-        }
+            if (!$url)
+            {
+                throw new Exception('Invalid url!', 2);
+            }
 
-        /* 空响应或者传输过程中发生错误，程序将返回false */
-        if (!$response)
-        {
-            return false;
-        }
+            if ($this->time_limit > -1)//如果为0，不限制执行时间
+            {
+                set_time_limit($this->time_limit);
+            }
 
-        return $response;
+            $method = $method === 'GET' ? $method : 'POST';
+            $response = '';
+            $temp_str = '';
+
+            /* 格式化将要发要送的参数 */
+            if ($params && is_array($params))
+            {
+                foreach ($params AS $key => $value)
+                {
+                    $temp_str .= '&' . $key . '=' . $value;
+                }
+                $params = preg_replace('/^&/', '', $temp_str);
+            }
+
+            /* 如果fsockopen存在，且用户不指定使用curl，则调用use_socket函数 */
+            if ($fsock_exists && !$this->use_curl)
+            {
+                $response = $this->use_socket($url, $params, $method, $my_header);
+            }
+            /* 只要上述条件中的任一个不成立，流程就转向这里，这时如果curl模块可用，就调用use_curl函数 */
+            elseif ($curl_exists)
+            {
+                $response = $this->use_curl($url, $params, $method, $my_header);
+            }
+
+            /* 空响应或者传输过程中发生错误，程序将返回false */
+            if (!$response)
+            {
+                throw new Exception("An empty response or error occurs during transmission", 3);
+                
+            }
+            return $response;
+        }catch (Exception $e){
+            throw new AgentAPILogException($e->getMessage(), $e->getCode());        
+        }
     }
 
     /**
@@ -190,12 +193,14 @@ class Transport
 
         if (!$fp)
         {
-            return false;//打开失败
+            throw new Exception("Open failed", 4);
+            
         }
 
         if (!@fwrite($fp, $request))
         {
-            return false;//写入失败
+            throw new Exception("Write failed", 5);
+
         }
 
         while (!feof($fp))
@@ -205,7 +210,7 @@ class Transport
 
         if (!$http_response)
         {
-            return false;//空响应
+            throw new Exception("Empty response", 6);
         }
 
         $separator = '/\r\n\r\n|\n\n|\r\r/';
@@ -296,9 +301,16 @@ class Transport
         /* 发送请求 */
         $http_response = curl_exec($curl_session);
 
-        if (curl_errno($curl_session) != 0)
+        $curl_errno = curl_errno($curl_session);
+        $http_status = curl_getinfo($curl_session, CURLINFO_HTTP_CODE);
+
+        if($http_status !='200'){
+            throw new Exception('http_error:'.$http_status, $http_status);
+        }
+
+        if ($http_response === false || $curl_errno != 0)
         {
-            return false;
+            throw new Exception('curl_error:'.curl_error($curl_session), $curl_errno);   
         }
 
         $separator = '/\r\n\r\n|\n\n|\r\r/';

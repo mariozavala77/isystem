@@ -204,10 +204,10 @@ return array(
     |
     */
     'channel_type' => array(
-        'Amazon' => array('en' => 'Amazon', 'cn' => '亚马逊'),
-        'Ebay' => array('en' => 'Ebay', 'cn' => '易趣'),
-        'Magento' => array('en' => 'Magento', 'cn' => 'Magento电子商务'),
-        'Agent' => array('en' => 'Agent', 'cn' => '代理商'),
+        'Amazon'    => array('en' => 'Amazon', 'cn' => '亚马逊', 'img' => 'Amazon.jpg'),
+        'AmazonUK'  => array('en' => 'Amazon', 'cn' => '亚马逊伦敦', 'img' => 'AmazonUK.jpg'),
+        'Ebay'       => array('en' => 'Ebay', 'cn' => '易趣', 'img' => 'AmazonUK.jpg'),
+        'Magento'   => array('en' => 'Magento', 'cn' => 'Magento电子商务', 'img' => 'AmazonUK.jpg'),
+        'Agent'     => array('en' => 'Agent', 'cn' => '代理商', 'img' => 'AmazonUK.jpg'),
     ),
-
 );
