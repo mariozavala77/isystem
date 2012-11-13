@@ -18,6 +18,7 @@ return [
         'language'          => ['name' => '语言',     'rule' => 'in:cn,en,de'],
         'category_id'       => ['name' => '分类',     'rule' => 'max:60|transduce:table,category,name'],
         'cost'              => ['name' => '成本价',   'rule' => 'match:/^\d+\.\d{2}$/'],
+        'price'             => ['name' => '认购价',   'rule' => 'match:/^\d+\.\d{2}$/'],
         'min_price'         => ['name' => '最低价格', 'rule' => 'match:/^\d+\.\d{2}$/'],
         'max_price'         => ['name' => '最高价格', 'rule' => 'match:/^\d+\.\d{2}$/'],
         'supplier_id'       => ['name' => '供应商',   'rule' => 'max:100|transduce:table,suppliers,company'],
@@ -49,7 +50,7 @@ return [
         'key'      => 'cn',
         'requires' => [
             'cn' => [
-                'name', 'sku', 'category_id', 'cost', 'min_price', 'max_price',
+                'name', 'sku', 'category_id', 'cost', 'price', 'min_price', 'max_price',
                 'supplier_id', 'devel_id', 'image', 'description',
                 // 'weight', 'size', 
             ],
@@ -62,7 +63,7 @@ return [
     // 存储
     'storage' => [
         'products' => [
-            'fields' => ['sku', 'cost', 'category_id', 'supplier_id', 'devel_id', 'min_price', 'max_price', 'weight', 'size', 'status' => 1],
+            'fields' => ['sku', 'cost', 'price', 'category_id', 'supplier_id', 'devel_id', 'min_price', 'max_price', 'weight', 'size', 'status' => 1],
             'uniques' => ['sku'=> 'products', 'language'=>'products_extensions', 'image' => 'products_images'],
             'relation_field' => 'product_id',
             'relation_tables' => [
