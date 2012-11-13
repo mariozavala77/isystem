@@ -23,30 +23,11 @@
                 <li class="current"><a href="{{ URL::base()}}/agent" title="">代理管理</a></li>
             </ul>
         </div>
-        
-        <div class="breadLinks">
-            <ul>
-                <li><a href="#" title=""><i class="icos-list"></i><span>新订单</span> <strong>(+58)</strong></a></li>
-                <li><a href="#" title=""><i class="icos-check"></i><span>新任务</span> <strong>(+12)</strong></a></li>
-                <li class="has">
-                    <a title="">
-                        <i class="icos-money3"></i>
-                        <span>快捷导航</span>
-                        <span><img src="images/elements/control/hasddArrow.png" alt=""></span>
-                    </a>
-                    <ul>
-                        <li><a href="#" title=""><span class="icos-add"></span>New invoice</a></li>
-                        <li><a href="#" title=""><span class="icos-archive"></span>History</a></li>
-                        <li class="noBorderB"><a href="#" title=""><span class="icos-printer"></span>Print invoices</a></li>
-                    </ul>
-                </li>
-            </ul>
-             <div class="clear"></div>
-        </div>
+        @include('block.bread')
     </div>
     <!-- Breadcrumbs line ends -->
 
-    <!-- Main content bigins -->
+    <!-- Main content begins -->
     <div class="wrapper">
         <div style="margin-top: 35px">
             <a href="{{ URL::base() }}/agent/add" class="buttonM bDefault floatR"><span class="icon-home-5"></span><span>添加代理</span></a>
@@ -72,13 +53,13 @@
                         sDom: '<"H"fl<"clear">>tr<"F"ip>',
                         oLanguage: { sUrl: '/js/plugins/tables/lang_cn.txt' },
                         aoColumnDefs: [
-                                        { sTitle: "名称",  aTargets: [0] },
-                                        { sTitle: "电话", aTargets: [1] },
-                                        { sTitle: "邮箱", aTargets: [2] },
-                                        { sTitle: "地址",aTargets: [3] },
-                                        { sTitle: "加入时间",aTargets: [4], bSearchable: false },
-                                        { sTitle: "操作", "aTargets": [5], bSearchable: false, sClass: "tableActs", sWidth: '80px' }
-                                    ],
+                            { sTitle: "名称", aTargets: [0] },
+                            { sTitle: "电话", aTargets: [1] },
+                            { sTitle: "邮箱", aTargets: [2] },
+                            { sTitle: "地址", aTargets: [3] },
+                            { sTitle: "加入时间", aTargets: [4], bSearchable: false },
+                            { sTitle: "操作", aTargets: [5], bSearchable: false, sClass: "tableActs", sWidth: '80px' }
+                            ],
                         fnRowCallback: function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
                             var id = aData[5];
                             var operation = '<a href="/agent/edit?agent_id=' + id + '" class="tablectrl_small bDefault tipS" original-title="编辑"><span class="iconb" data-icon=""></span></a>' + 

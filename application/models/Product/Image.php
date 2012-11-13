@@ -51,7 +51,7 @@ class Product_Image {
 
             $data = [
                 'product_id' => $product_id,
-                'link'       => $image,
+                'image'      => $image,
                 'sort'       => 0,
                 'created_at' => date('Y-m-d H:i:s'),
                 ];

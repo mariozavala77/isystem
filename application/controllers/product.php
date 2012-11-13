@@ -18,15 +18,18 @@ class Product_Controller extends Base_Controller {
     // 产品列表
     public function action_filter() {
 
-        $fields = [ 'p.id as id', 'name', 'sku', 'min_price', 'max_price', 'created_at', 'p.id as operate' ];
+        $fields = [ 'p.id as check', 'p.id as id', 'name', 'sku', 'category_id', 'cost', 'min_price', 'max_price', 'status', 'created_at', 'p.id as operate' ];
         $products = Product::filter($fields);
         $data = Datatables::of($products)->make();
 
         foreach($data['aaData'] as $key => $datum) {
-            $product_id = $datum[0];
+            $product_id = $datum[1];
             $image      = Product_Image::get($product_id, 1);
             $root       = '/uploads/images/products/';
-            $data['aaData'][$key][0] = UploadHelper::path($root, $image->link, true);
+            $data['aaData'][$key][1] = UploadHelper::path($root, $image->image, true);
+
+            $category = Category::info($datum[4]);
+            $data['aaData'][$key][4] = $category->name;
         }
 
         return Response::json( $data );
@@ -74,24 +77,14 @@ class Product_Controller extends Base_Controller {
     // 产品导入处理
     public function action_do_import() {
         $file = Input::file('file');
-        $path = path('storage') . 'products' . DS . 'import' . DS . date('Ymd') . DS;
-        $info = pathinfo($file['name']);
-        $filename = microtime(true) . '.' . $info['extension'];
-        $success = Input::upload('file', $path, $filename);
+
+        $filename = UploadHelper::rename($file['name'], 'timestamp');
+        $success = Input::upload('file', path('product_import'), $filename);
 
         $result = ['status' => 'fail', 'message' => '文件上传失败!'];
 
         if($success) {
-            try {
-                $import = new Import('product', $path.$filename);
-                $import->valid();
-                $data = $import->data();
-                print_r($data);
-                die;
-            
-            } catch(Import\ImportException $e) {
-                $result = ['status' => 'fail', 'message' => $e->getMessage()];
-            }
+            $result = Product::import(path('product_import').$filename);
         }
 
         return Response::json($result);
@@ -100,11 +93,11 @@ class Product_Controller extends Base_Controller {
     // 产品图片批量上传
     public function action_images() {
         $file = Input::file('file');
-        $root = path('public') . 'uploads' . DS . 'images' . DS . 'products' . DS;
-        $path = UploadHelper::path($root, $file['name']);
+        $path = UploadHelper::path(path('product_image'), $file['name']);
         $success = Input::upload('file', $path['dir'], $path['name']);
         if($success) {
-            $result = [ 'jsonrpc' => '2.0', 'result' => null, 'id' => 'id' ];
+            $path = str_replace(path('public'), '', $path['dir'].$path['name']);
+            $result = [ 'jsonrpc' => '2.0', 'result' => $path , 'id' => 'id' ];
         } else {
             $result = [ 
                 'jsonrpc' => '2.0', 

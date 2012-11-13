@@ -1,53 +1,76 @@
 <?php
 
 /**
- * 产品表格相关信息
+ * 产品导入配置信息
  */
 return [
 
-    // 允许的语言版本
-    'language' => [ 'cn', 'en', 'de' ],
+    /*
+    | -----------------------------------------------------------------------
+    | 导入设置
+    | -----------------------------------------------------------------------
+    | 数据库字段名与表格列名映射
+    | 顺序要跟模板表格对应的列保持一致
+    */
+    'import' => [
+        'name'              => ['name' => '名称',     'rule' => 'max:255'],
+        'sku'               => ['name' => 'SKU',      'rule' => 'max:20'], 
+        'language'          => ['name' => '语言',     'rule' => 'in:cn,en,de'],
+        'category_id'       => ['name' => '分类',     'rule' => 'max:60|transduce:table,category,name'],
+        'cost'              => ['name' => '成本价',   'rule' => 'match:/^\d+\.\d{2}$/'],
+        'min_price'         => ['name' => '最低价格', 'rule' => 'match:/^\d+\.\d{2}$/'],
+        'max_price'         => ['name' => '最高价格', 'rule' => 'match:/^\d+\.\d{2}$/'],
+        'supplier_id'       => ['name' => '供应商',   'rule' => 'max:100|transduce:table,suppliers,company'],
+        'devel_id'          => ['name' => '开发人',   'rule' => 'max:200|transduce:table,users,username'],
+        'weight'            => ['name' => '重量',     'rule' => ''],
+        'size'              => ['name' => '尺寸',     'rule' => ''],
+        'image'             => ['name' => '图片',     'rule' => 'match:/^(\w+\_\d+\.(jpg)\;)+$/|transduce:image,;'],
+        'keywords'          => ['name' => '关键词',   'rule' => 'max:255'],
+        'short_description' => ['name' => '简要描述', 'rule' => ''],
+        'description'       => ['name' => '详细描述', 'rule' => ''],
+    ],
 
-    // 表格对应key
-    'keys' => [ 
-        'name', 'sku', 'language', 'category_id', 'cost', 'min_price', 'max_price', 
-        'supplier_id', 'devel_id', 'weight', 'size', 'images', 'keywords', 'short_descrption',
-        'description',
-        ],
-
-     // 表格头信息
-    'head' => [ 
-        '名称', 'SKU', '语言', '分类', '成本价', '最低价格','最高价格', '供应商', '开发人',
-        '重量','尺寸', '图片', '关键词', '简要描述', '详细描述'
-        ],
-
-    // 验证信息
-    'rules' => [
-           'cn' => [ // 中文版本验证 针对产品开发部门
-                '0'  => 'required|max:255',                         // 名称
-                '1'  => 'required|max:20',                          // SKU
-                '2'  => 'required|max:2',                           // 语言
-                '3'  => 'required',                                 // 分类
-                '4'  => 'required|match:/^\d+\.\d{2}$/',            // 成本
-                '5'  => 'required|match:/^\d+\.\d{2}$/',            // 最低价格
-                '6'  => 'required|match:/^\d+\.\d{2}$/',            // 最高价格
-                '7'  => 'required',                                 // 供应商
-                '8'  => 'required',                                 // 开发人
-                '9'  => 'required',                                 // 重量
-                '10' => 'required',                                 // 尺寸 
-                '11' => 'required|match:/^(\w+\_\d+\.(jpg)\;)+$/',  // 图片
-                '12' => 'required',                                 // 描述
-                ],
-
-            // 中文版本以外 针对客服部门
-            'default' => [
-                '0'  => 'required|max:255',  // 名称
-                '1'  => 'required|max:20',   // SKU
-                '2'  => 'required',          // 语言
-                '12' => 'required',          // 描述
-                '13' => 'required|max:255',  // 关键词
-                '14' => 'required',          // 短描述
-                ],
+    /*
+    | -----------------------------------------------------------------------
+    | 场景规则
+    | -----------------------------------------------------------------------
+    | 1.如果没有必填限制
+    | <code>
+    |     'scene' => [],
+    | </code>
+    | 
+    | 2.默认场景
+    | <code>
+    |     'scene' => ['name', 'sku', 'language'],
+    | </code>
+    */
+    'scenes' => [
+        'case'     => 'language',
+        'key'      => 'cn',
+        'requires' => [
+            'cn' => [
+                'name', 'sku', 'category_id', 'cost', 'min_price', 'max_price',
+                'supplier_id', 'devel_id', 'image', 'description',
+                // 'weight', 'size', 
             ],
+            'default' => [
+                'name', 'sku', 'keywords', 'short_description', 'description',
+            ]
+        ],
+        ],
+
+    // 存储
+    'storage' => [
+        'products' => [
+            'fields' => ['sku', 'cost', 'category_id', 'supplier_id', 'devel_id', 'min_price', 'max_price', 'weight', 'size', 'status' => 1],
+            'uniques' => ['sku'=> 'products', 'language'=>'products_extensions', 'image' => 'products_images'],
+            'relation_field' => 'product_id',
+            'relation_tables' => [
+                'products_extensions' => ['product_id', 'language', 'name', 'description', 'keywords', 'short_description', 'created_at' => 'datetime'],
+                'products_images' => ['product_id', 'image', 'created_at' => 'datetime'],
+                ]
+            ]
+    ],
+
+
 ];
-?>

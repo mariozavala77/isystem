@@ -28,6 +28,14 @@ $environments = array(
 );
 
 // --------------------------------------------------------------
+// Define the directory separator for the environment.
+// --------------------------------------------------------------
+if ( ! defined('DS'))
+{
+    define('DS', DIRECTORY_SEPARATOR);
+}
+
+// --------------------------------------------------------------
 // The path to the application directory.
 // --------------------------------------------------------------
 $paths['app'] = 'application';
@@ -62,17 +70,20 @@ $paths['public'] = 'public';
 chdir(__DIR__);
 
 // --------------------------------------------------------------
-// Define the directory separator for the environment.
-// --------------------------------------------------------------
-if ( ! defined('DS'))
-{
-    define('DS', DIRECTORY_SEPARATOR);
-}
-
-// --------------------------------------------------------------
 // Define the path to the base directory.
 // --------------------------------------------------------------
 $GLOBALS['laravel_paths']['base'] = __DIR__.DS;
+
+// --------------------------------------------------------------
+// 定义产品导入文件存放目录
+// --------------------------------------------------------------
+set_path('product_import', path('base').'storage'.DS.'product'.DS.'import'.DS.date('Ymd').DS);
+
+// --------------------------------------------------------------
+// 定义产品图片存放目录
+// --------------------------------------------------------------
+set_path('product_image', path('base').'public'.DS.'uploads'.DS.'images'.DS.'products'.DS);
+
 
 // --------------------------------------------------------------
 // Define each constant if it hasn't been defined.

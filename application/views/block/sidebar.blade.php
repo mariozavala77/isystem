@@ -21,7 +21,7 @@
                 <a href="{{ URL::base() }}/task" title="" class="active"><img src="{{ URL::base() }}/images/icons/mainnav/dashboard.png" alt="任务管理" /><span>任务处理</span></a>
             </li>
             <li>
-                <a href="{{ URL::base() }}/stock" title="" class="active"><img src="{{ URL::base() }}/images/icons/mainnav/dashboard.png" alt="库存信息" /><span>库存信息</span></a>
+                <a href="{{ URL::base() }}/stock" title="" class="active"><img src="{{ URL::base() }}/images/icons/mainnav/dashboard.png" alt="库存信息" /><span>库存管理</span></a>
             </li>
             <li class="sideBarDrop">
                 <a href="javascript:void(0);" title="" class="active"><img src="{{ URL::base() }}/images/icons/mainnav/tables.png" alt="系统设置" /><span>系统设置</span></a>
