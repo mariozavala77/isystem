@@ -28,6 +28,14 @@ $environments = array(
 );
 
 // --------------------------------------------------------------
+// Define the directory separator for the environment.
+// --------------------------------------------------------------
+if ( ! defined('DS'))
+{
+    define('DS', DIRECTORY_SEPARATOR);
+}
+
+// --------------------------------------------------------------
 // The path to the application directory.
 // --------------------------------------------------------------
 $paths['app'] = 'application';
@@ -60,14 +68,6 @@ $paths['public'] = 'public';
 // Change to the current working directory.
 // --------------------------------------------------------------
 chdir(__DIR__);
-
-// --------------------------------------------------------------
-// Define the directory separator for the environment.
-// --------------------------------------------------------------
-if ( ! defined('DS'))
-{
-    define('DS', DIRECTORY_SEPARATOR);
-}
 
 // --------------------------------------------------------------
 // Define the path to the base directory.

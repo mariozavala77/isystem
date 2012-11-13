@@ -33,6 +33,33 @@ class UploadHelper {
     }
 
     /**
+     * 格式化名字
+     *
+     * 不带type简单将文件名改成统一小写
+     *
+     * @param: $filename string 文件名
+     * @param: $type     string 格式化类型
+     *
+     * return string
+     */
+    public static function rename($filename, $type='') {
+        if(!empty($type)) {
+            $info = pathinfo($filename);
+
+            switch ($type) {
+                case 'timestamp':
+                    $filename = microtime(true).'.'.$info['extension'];
+                    break;
+                default:
+                    break;
+            }
+        }
+        $filename = strtolower($filename);
+
+        return $filename;
+    }
+
+    /**
      * 截取MD5目录
      *
      * @param: $fileinfo array 文件信息

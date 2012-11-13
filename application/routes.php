@@ -41,6 +41,7 @@ Route::group(array('before' => 'auth'), function() {
     Route::controller('product.sale');
     Route::controller('product.category');
     Route::controller('product');
+    Route::controller('supplier');
     Route::controller('order');
     Route::controller('agent');
     Route::controller('stock');

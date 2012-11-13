@@ -14,7 +14,7 @@ class Permission {
      *
      * 获取指定权限没ID时获取所有权限
      *
-     * @param integer $permission_id 权限ID
+     * @param $permission_id integer 权限ID
      *
      * return object 
      */
@@ -75,7 +75,7 @@ class Permission {
     public static function delete( $permission_id ) {
 
         $affected = DB::table('rules')->where('id', '=', $permission_id)
-                                    ->delete(); 
+                                      ->delete(); 
 
         if($affected) {
             $result = [ 'status' => 'success', 'message' => '' ];

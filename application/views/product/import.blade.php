@@ -22,7 +22,8 @@
         <div class="bc">
             <ul id="breadcrumbs" class="breadcrumbs">
                 <li><a href="{{ URL::base() }}">控制中心</a></li>
-                <li class="current"><a href="{{ URL::to('task') }}">任务处理</a></li>
+                <li><a href="{{ URL::to('product') }}">产品管理</a></li>
+                <li class="current"><a href="{{ URL::to('product/import') }}">导入产品</a></li>
             </ul>
         </div>
         

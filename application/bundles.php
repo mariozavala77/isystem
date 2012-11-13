@@ -34,9 +34,9 @@
 */
 
 return [
-    'docs'       => [ 'handles' => 'docs' ],
     'sentry'     => [ 'auto' => true ],
     'datatables' => [ 'auto' => true ],
+    'import'     => [ 'auto' => true ],
     ];
 
 /*

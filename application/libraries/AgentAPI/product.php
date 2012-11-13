@@ -19,7 +19,7 @@ class AgentAPI_Product extends AgentAPI_Base
      * @return mixed
      */
     public static function lists($params){
-        $fileds = ['p.id', 'price', 'min_price', 'max_price', 'weight', 'size', 'name', 'description'];
+        $fileds = ['p.id', 'category_id','price', 'min_price', 'max_price', 'weight', 'size', 'name', 'description'];
         $filter = ['language'=>'cn'];
         $table = Product::filter($fileds, $filter);
         $count = $table->count();
@@ -30,9 +30,24 @@ class AgentAPI_Product extends AgentAPI_Base
         $data = $table ->skip(($page-1)*$params['pagesize'])
                        ->take($params['pagesize'])
                        ->get();
+        
         if(empty($data)){
             throw new AgentAPIException("not have product", -32004);
         }
+
+        foreach($data as $key => $datum) {
+            $imgs=[];
+            $images      = Product_Image::get($datum->id);
+            $root       = '/uploads/images/products/';
+            foreach($images as $k => $val){
+                $imgs[$k]= str_replace('\\', '/', UploadHelper::path($root, $val->image, true));
+            }
+
+            $data[$key]->images = $imgs;
+            $category = Category::info($datum->category_id);
+            $data[$key]->category = $category->name;
+        }
+
         return ['data' => $data, 'total' => $count];
     }
 
