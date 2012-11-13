@@ -13,12 +13,12 @@ class Channel_Controller extends Base_Controller {
     public function action_index(){
         $types = Config::get('application.channel_type');
 
-        return View::make('channel.list', array('channel_type' => $types));
+        return View::make('channel.list')->with('channel_type', $types);
     }
 
     // 渠道列表
     public function action_filter(){
-        $fields = ['type', 'name', 'alias', 'synced_at','id'];
+        $fields = ['type', 'name', 'alias', 'description', 'status', 'id'];
         $channel = Channel::filter($fields);
         $data = Datatables::of($channel)->make();
 
@@ -35,18 +35,22 @@ class Channel_Controller extends Base_Controller {
 
             return Redirect::back();
         }
-        return View::make('channel.' . strtolower($type) . '_add', array('channel' => $types[$type]));
+
+        $view = 'channel.' . strtolower($type) . '_add';
+
+        return View::make($view)->with('channel', $types[$type]);
     }
 
     // 插入渠道信息
     public function action_insert(){
         $data = [
-            'type' => Input::get('type'),
-            'name' => Input::get('name'),
-            'alias' => Input::get('alias'),
+            'type'         => Input::get('type'),
+            'name'         => Input::get('name'),
+            'alias'        => Input::get('alias'),
             'description'  => Input::get('description'),
-            'accredit' => serialize(Input::get('accredit')),
-            'synced_at' => date('Y-m-d H:i:s')
+            'accredit'     => serialize(Input::get('accredit')),
+            'synced_at'    => date('Y-m-d H:i:s'),
+            'language'     => Input::get('language'),
         ];
 
         if(Channel::insert( $data )) {
@@ -62,11 +66,15 @@ class Channel_Controller extends Base_Controller {
 
     // 渠道编辑
     public function action_edit(){
+
         $channel_id = Input::get('channel_id');
         $channel = Channel::info($channel_id);
         $channel->accredit = unserialize($channel->accredit);
         $types = Config::get('application.channel_type');
-        return View::make('channel.' . strtolower($channel->type) . '_edit', array('channel' => $channel, 'channel_type' => $types));
+        $view = 'channel.' . strtolower($channel->type) . '_edit';
+
+        return View::make($view)->with('channel', $channel)
+                                 ->with('channel_type', $types);
     }
 
     // 更新渠道信息
@@ -74,10 +82,11 @@ class Channel_Controller extends Base_Controller {
         $channel_id = Input::get('channel_id');
 
         $data = [
-            'name'    => Input::get('name'),
-            'alias'      => Input::get('alias'),
-            'description'      => Input::get('description'),
+            'name'        => Input::get('name'),
+            'alias'       => Input::get('alias'),
+            'description' => Input::get('description'),
             'accredit'    => serialize(Input::get('accredit')),
+            'language'    => Input::get('language'),
         ];
 
         Channel::update($channel_id, $data);
@@ -87,16 +96,22 @@ class Channel_Controller extends Base_Controller {
 
     // 删除渠道
     public function action_delete(){
-        $channel_id = Input::get('channelid');
+        $channel_id = Input::get('channel_id');
 
         $channel_id = intval($channel_id);
 
-        if (empty($channel_id)){
-            return Response::json([ 'status' => 'error', 'message' => '渠道id无效']);
+        if (empty($channel_id)) {
+            return Response::json([ 'status' => 'fail', 'message' => '渠道id无效']);
         }
 
-        $response = Channel::delete($channel_id);
+        $result = Channel::delete($channel_id);
 
-        return $response ? Response::json([ 'status' => 'success', 'message' => '删除成功！']) :Response::json([ 'status' => 'error', 'message' => '删除失败！']);
+        if ($result) {
+            $return = [ 'status' => 'success', 'message' => '删除成功！'];
+        } else {
+            $return = [ 'status' => 'fail', 'message' => '删除失败！'];
+        }
+
+        return Response::json($return);
     }
 }

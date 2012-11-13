@@ -20,6 +20,43 @@ class Product_Sale {
     public static function filter($fields) {
         return DB::table('products_sale')->select($fields);
     }
-}
 
-?>
+    /**
+     * 插入数据
+     * @param: $data array 插入的数据
+     * return boolean
+     */
+    public static function insert($data){
+        return DB::table('products_sale')->insert( $data );
+    }
+
+    /**
+     * 更新数据
+     *
+     * @param: $product_sale_id intgrean
+     * @param: $data array 更新的数据
+     * return boolen
+     */
+    public static function update($product_sale_id, $data){
+        return DB::table('products_sale')->where('id', '=', $product_sale_id)->update();
+    }
+
+    /**
+     * 获取在售商品的id
+     *
+     * 通过代理商id，产品池id，销售渠道id进行获取
+     *
+     * @param: $agent_id   intgrean 代理商id
+     * @param: $product_id intgrean 产品池中产品id
+     * @param: $channel_id intgrean 销售渠道id
+     *
+     * return intgrean|boolen 正确则返回整数否则返回false
+     */
+    public static function getId($agent_id, $product_id, $channel_id){
+        return DB::table('product_sale')->where('product_id', '=', $product_id)
+                                        ->where('channel_id', '=', $channel_id)
+                                        ->where('agent_id', '=', $agent_id)
+                                        ->only('id');
+
+    }
+}

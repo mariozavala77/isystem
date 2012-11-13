@@ -62,28 +62,39 @@
                         <div class="clear"></div>
                     </div>
                     <div class="formRow">
-                        <div class="grid3"><label>卖家编号：</label></div>
+                        <div class="grid3"><label>渠道所属语言：</label></div>
+                        <div class="grid9">
+                            <select name="language">
+                                <option value="zh" @if ( $channel->language == 'zh' )
+                                selected="true"
+                                @endif>中文</option><option value="en" @if ( $channel->language == 'en' )
+                                selected="true"
+                                @endif>英文</option>
+                                <option value="de" @if ( $channel->language == 'de' )
+                                selected="true"
+                                @endif>德语</option>
+                            </select>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+                    <div class="formRow">
+                        <div class="grid3"><label>卖家编号(SellerId)：</label></div>
                         <div class="grid9"><input type="text" name="accredit['SellerId']" style="width: 50%" required="true" value="{{$channel->accredit['SellerId']}}"/></div>
                         <div class="clear"></div>
                     </div>
                     <div class="formRow">
-                        <div class="grid3"><label>AWS 访问密钥编号：</label></div>
+                        <div class="grid3"><label>AWS 访问密钥编号(AWSAccessKeyId)：</label></div>
                         <div class="grid9"><input type="text" name="accredit['AWSAccessKeyId']" style="width: 50%" required="true" value="{{$channel->accredit['AWSAccessKeyId']}}"/></div>
                         <div class="clear"></div>
                     </div>
                     <div class="formRow">
-                        <div class="grid3"><label>密钥：</label></div>
+                        <div class="grid3"><label>密钥(Key)：</label></div>
                         <div class="grid9"><input type="text" name="accredit['Key']" style="width: 50%" required="true" value="{{$channel->accredit['Key']}}"/></div>
                         <div class="clear"></div>
                     </div>
                     <div class="formRow">
-                        <div class="grid3"><label>商城编号：</label></div>
+                        <div class="grid3"><label>商城编号(MarketplaceId.Id)：</label></div>
                         <div class="grid9"><input type="text" name="accredit['MarketplaceId.Id.1']" style="width: 50%" required="true" value="{{$channel->accredit['MarketplaceId.Id.1']}}"/></div>
-                        <div class="clear"></div>
-                    </div>
-                    <div class="formRow">
-                        <div class="grid3"><label>服务请求地址：</label></div>
-                        <div class="grid9"><input type="text" name="accredit['Server']" style="width: 50%" required="true" value="{{$channel->accredit['Server']}}"/></div>
                         <div class="clear"></div>
                     </div>
                     <div class="formRow">
@@ -92,6 +103,7 @@
                         <div class="clear"></div>
                     </div>
                     <div class="formRow textC">
+                        <input type="hidden" name="accredit['Server']" value="https://mws.amazonservices.com/" />
                         <input type="hidden" name="channel_id" value="{{ $channel->id }}">
                         <span><input type="submit" class="bBlue buttonM" value="保存" /></span>
                     </div>

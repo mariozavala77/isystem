@@ -18,6 +18,7 @@ class Product {
      * return object
      */
     public static function filter( $fields, $filter = [] ) {
+
         $query = DB::table('products as p')->left_join('products_extensions as pe', 'p.id', '=', 'pe.product_id')
                                            ->select($fields);
 
@@ -149,7 +150,7 @@ class Product {
      * return void
      */
     private static function _insertProductExtension( $data ) {
-        DB::table('products_extension')->insert( $data );;
+        DB::table('products_extension')->insert( $data );
     }
 }
 ?>

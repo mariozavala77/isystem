@@ -1,13 +1,13 @@
 @layout('layout.base')
 @section('script')
 {{ HTML::script('js/plugins/tables/jquery.dataTables.js') }}
-{{ HTML::script('js/agent.js') }}
+{{ HTML::script('js/channel.js') }}
 @endsection
 @section('sidebar')
-    @include('block.sidebar')
+@include('block.sidebar')
 @endsection
 @section('content')
-<!-- Content begins -->    
+<!-- Content begins -->
 <div id="content">
     <div class="contentTop">
         <span class="pageTitle"><span class="icon-user-2"></span>渠道管理</span>
@@ -59,70 +59,6 @@
             <div class="shownpars">
                 <table cellpadding="0" cellspacing="0" border="0" class="dTable" id="channel_list_table"></table>
             </div>
-            <script type="text/javascript">
-                var del_id = 0;
-                $(function(){
-                    aTable = $('#channel_list_table').dataTable({
-                        bSort: false,
-                        bProcessing: true,
-                        bFilter: true,
-                        bServerSide: true,
-                        bJQueryUI: false,
-                        sPaginationType: 'full_numbers',
-                        sAjaxSource: '{{ URL::base() }}/channel/filter',
-                        sDom: '<"H"fl<"clear">>tr<"F"ip>',
-                        oLanguage: { sUrl: '/js/plugins/tables/lang_cn.txt' },
-                        aoColumnDefs: [
-                                        { sTitle: "类别",  aTargets: [0] },
-                                        { sTitle: "名称",  aTargets: [1] },
-                                        { sTitle: "别名", aTargets: [2] },
-                                        { sTitle: "加入时间", aTargets: [3] ,bSearchable: false},
-                                        { sTitle: "操作", "aTargets": [4], bSearchable: false, sClass: "tableActs", sWidth: '80px' }
-                                    ],
-                        fnRowCallback: function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
-                            var id = aData[4];
-                            var operation = '<a href="/channel/edit?channel_id=' + id + '" class="tablectrl_small bDefault tipS" original-title="编辑"><span class="iconb" data-icon=""></span></a>' + 
-                                            '<a href="javascript:void(0);" data-id="' + id + '" class="tablectrl_small bDefault tipS" original-title="删除" onclick="del('+id+')"><span class="iconb" data-icon=""></span></a>';
-                            $('td:eq(4)', nRow).html(operation);
-                        },
-                });
-                    $('#channel_add_modal').dialog({
-                        autoOpen: false,
-                        width: 400,
-                        modal: true,
-                        buttons: {
-                            "取消": function() {
-                                $( this ).dialog( "close" );
-                            }
-                        }
-                    });
-                    $('#channel_delete_confirm').dialog({
-                        autoOpen: false,
-                        width: 400,
-                        buttons: {
-                            "删除": function () {
-                                $.post('{{ URL::base() }}/channel/delete',{channelid:del_id},function(response){
-                                    alert(response.message);
-                                    $(this).dialog("close");
-                                },'json');
-                            },
-                            "取消": function () {
-                                $(this).dialog("close");
-                            }
-                        }
-                    });
-
-                    $('#channel_add_modal_open').click(function () {
-                        $('#channel_add_modal').dialog('open');
-                        return false;
-                    });
-            });
-                function del(id){
-                    del_id = id;
-                    $('#channel_delete_confirm').dialog('open');
-                    return false;
-                }
-            </script>
             <div class="clear"></div>
         </div>
         <!-- agent ends -->
@@ -132,10 +68,11 @@
             <p>你确认删除此渠道？</p>
         </div>
         <!--产品添加-->
-        <div id="channel_add_modal" style='display: none' title='渠道添加类别选择'>
-            @foreach ($channel_type as $channel)
-            <a class="buttonM bDefault floatR" href="{{ URL::base() }}/channel/add?type={{ $channel['en'] }}" title="添加{{ $channel['cn'] }}渠道">{{ $channel['en'] }}</a>
-            @endforeach
+        <div id="channel_add_modal" style='display: none' title='渠道类别'>
+            <ul class="middleNavA" style="margin: 4px 0 0;">
+                <li><a title="添加亚马逊美国渠道" href="{{ URL::base() }}/channel/add?type=Amazon"><img alt="Amazon" src="{{ URL::base() }}/images/channel/Amazon.jpg"><span></span></a></li>
+                <li><a title="添加亚马逊英国渠道" href="{{ URL::base() }}/channel/add?type=Amazon"><img alt="AmazonUK" src="{{ URL::base() }}/images/channel/AmazonUK.jpg"><span></span></a></li>
+            </ul>
         </div>
     </div>
     <!-- Main content ends -->

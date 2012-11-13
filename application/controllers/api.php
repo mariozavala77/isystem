@@ -3,30 +3,31 @@
 /**
  * 接口控制器
  *
- * @author: shaoqi <413729863@qq.com>
+ * @author: shaoqi <shaoqisq123@gmail.com>
  * @copyright: Copyright (c) 2012 UFCEC Tech All Rights Reserved.
  * @version: $Id$
  */
 
-class Api_Controller extends Base_Controller {
+class Api_Controller extends Controller {
 
-    // 产品列表
-    public function product(){
 
+    private $response_id = 0;
+
+    private $response = '';
+
+    public function __construct(){
+        if($_SERVER['REQUEST_METHOD'] != 'POST' || empty($_SERVER['CONTENT_TYPE']) || $_SERVER['CONTENT_TYPE'] != 'application/json'){
+            exit;
+        }
+
+        $this->response = json_decode(file_get_contents('php://input'), true);
+        $this->response_id = $this->response['id'];
     }
 
-    // 渠道列表
-    public function channel(){
 
-    }
+    public function action_index(){
+        $api = new AgentAPI($this->response['method'],$this->response['params'],$this->response_id);
 
-    // 产品分类列表
-    public function categoty(){
-
-    }
-
-    // 产品上架
-    public function addlist(){
-
+        return Response::json($api->handle());
     }
 }
