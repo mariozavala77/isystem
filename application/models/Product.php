@@ -19,13 +19,15 @@ class Product {
      */
     public static function filter( $fields, $filter = [] ) {
 
-        $table = DB::table('products as p')->left_join('products_extension as pe', 'p.id', '=', 'pe.product_id');
+        $table = DB::table('products as p')->left_join('products_extensions as pe', 'p.id', '=', 'pe.product_id');
 
-        if(!empty($filter)){
-            foreach($filter as $value){
-                $table->where($value[0], '=', $value[1]);
+
+        foreach ($filter as $key => $value) {
+            if(!empty($value)){
+                $table->where($key, '=', $value);
             }
         }
+
         return  $table->select($fields);
     }
 
@@ -86,4 +88,3 @@ class Product {
         DB::table('products_extension')->insert( $data );
     }
 }
-?>

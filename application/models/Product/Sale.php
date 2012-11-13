@@ -59,4 +59,13 @@ class Product_Sale {
                                         ->only('id');
 
     }
+
+    /**
+     * 在售商品详细信息
+     *
+     */
+    public static function info($sale_id){
+
+    }
+    
 }

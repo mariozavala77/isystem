@@ -8,7 +8,7 @@
  * @version: $Id$
  */
 
-class AgentAPI_Category
+class AgentAPI_Category extends AgentAPI_Base
 {
     /**
      * 产品分类列表
