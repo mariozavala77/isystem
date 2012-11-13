@@ -30,6 +30,26 @@ class Product {
     }
 
     /**
+     * 获取指定产品信息
+     *
+     * @param: $product_id integer 产品ID
+     * @param: $language   string  语言
+     *
+     * return object
+     */
+    public static function info($product_id, $language = 'cn') {
+
+        $info = DB::table('products as p')->left_join('products_extensions as pe', 'p.id', '=', 'pe.product_id')
+                                          ->where('p.id', '=', $product_id)
+                                          ->where('pe.language', '=', $language)
+                                          ->first();
+
+        $info->images = DB::table('products_images')->where('product_id', '=', $product_id)->get();
+
+        return $info;
+    }
+
+    /**
      * 写入产品表
      *
      * @param: $data array 数据
@@ -78,72 +98,27 @@ class Product {
     }
 
     /**
-     * 添加产品
+     * 更新数据
      *
-     * @param: $data array 提交数据
+     * @param: $product_id integer 产品ID
+     * @param: $data       array   产品数据
      *
-     * return boolean
+     * return bool
      */
-    /*
-    public static function insert( $data ) {
-
-        $product_data = [
-            'sku'         => $data['sku'],
-            'cost'        => $data['cost'],
-            'category_id' => $data['category_id'], 
-            'supplier_id' => $data['supplier_id'], 
-            'devel_id'    => $data['devel_id'], 
-            'min_price'   => $data['min_price'],
-            'max_price'   => $data['max_price'],
-            'weight'      => $data['weight'] * 1000,
-            'size'        => $data['size'],
-            'status'      => $data['status'],
-            ];
-
-        $product_id = static::_insertProduct( $product_data );
-
-        if($product_id) {
-            $product_extension_data = [
-                'product_id'        => $product_id,
-                'name'              => $data['name'],
-                'language'          => $data['language'],
-                'keywords'          => $data['keywords'],
-                'short_description' => $data['short_description'],
-                'description'       => $data['description'],
-                'created_at'        => date('Y-m-d H:i:s'),
-                ];
-
-            static::_insertProductExtension( $product_extension_data );
-
-            if($data['images']) {
-                Product_Image::insert($product_id, $data['images']);
-            }
-        }
-
-        return $product_id ? true : false;
-    }
-     */
-
-    /**
-     * 写入products表
-     *
-     * @param: $data array 插入数据
-     *
-     * return integer
-     */
-    private static function _insertProduct( $data ) {
-        return DB::table('products')->insert_get_id($data);
+    public static function update($product_id, $data) {
+        return DB::table('products')->where('id', '=', $product_id)->update($data);
     }
 
     /**
-     * 写入proudcts_extension表
+     * 删除数据
+     * 
+     * @param: $product_id integer 产品ID
      *
-     * @param: $data array 插入数据
-     *
-     * return void
+     * return bool
      */
-    private static function _insertProductExtension( $data ) {
-        DB::table('products_extension')->insert( $data );
+    public static function delete($product_id) {
+        return DB::table('products')->delete($product_id);
     }
+
 }
 ?>

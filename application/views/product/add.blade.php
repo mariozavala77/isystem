@@ -48,16 +48,6 @@
                         <div class="grid5"><input type="text" name="name"/></div>
                         <div class="clear"></div>
                     </div>
-                    <!--div class="formRow">
-                        <div class="grid1"><label style="float: right">关键词：</label></div>
-                        <div class="grid5"><input type="text" name="keywords"/><label>用英文逗号","分隔</label></div>
-                        <div class="clear"></div>
-                    </div>
-                    <div class="formRow">
-                        <div class="grid1"><label style="float: right">简要描述：</label></div>
-                        <div class="grid5"><textarea name="short_description"></textarea></div>
-                        <div class="clear"></div>
-                    </div-->
                     <div class="formRow">
                         <div class="grid1"><label style="float: right">SKU：</label><em class="req">*</em></div>
                         <div class="grid2"><input type="text" name="sku"/></div>
@@ -157,11 +147,12 @@
 
         uploader.bind('FileUploaded', function(up, files, info){
             var response = jQuery.parseJSON(info.response);
-            console.log(files);
-            console.log(info);
             $('#images').append('<li style="height: 60px">' +
                                 '   <img src="{{ URL::to('/') }}'+ response.result+'" style="width: 60px; height: 60px">' +
                                 '   <input name="images[]" value="'+ files.name+'" type="hidden">' +
+                                '   <div class="actions" style="display: none; height: 60px; width: 60px">' +
+                                '      <a class="remove" style="margin: 35px 34px"><img src="/images/icons/delete.png" /></a>' +
+                                '   </div>' +
                                 '</li>');
         });
 

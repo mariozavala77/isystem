@@ -27,9 +27,9 @@ class UploadHelper {
         }
     
         if($file)
-            return $root.$fileinfo['basename'];
+            return $root.static::rename($fileinfo['basename']);
         else
-            return [ 'dir' => $root , 'name' => $fileinfo['basename'] ];
+            return [ 'dir' => $root , 'name' => static::rename($fileinfo['basename']) ];
     }
 
     /**
@@ -48,7 +48,7 @@ class UploadHelper {
 
             switch ($type) {
                 case 'timestamp':
-                    $filename = microtime(true).'.'.$info['extension'];
+                    $filename = microtime(true).'.'.strtolower($info['extension']);
                     break;
                 default:
                     break;
@@ -70,10 +70,10 @@ class UploadHelper {
         $new_filename = md5($fileinfo['filename']);
 
         $dirs = [
-           substr($new_filename, 0, 8),
-           substr($new_filename, 8, 8),
-           substr($new_filename, 16, 8),
-           substr($new_filename, 24, 8)
+           substr($new_filename, 0, 3),
+           substr($new_filename, 3, 3),
+           substr($new_filename, 6, 3),
+           substr($new_filename, 9, 23)
         ];
 
         return $dirs;

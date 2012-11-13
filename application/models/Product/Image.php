@@ -60,5 +60,30 @@ class Product_Image {
         }
     
     }
+
+    /**
+     * 更新
+     *
+     * @param: $product_id integer 产品ID
+     * @param: $images     array   图片数据
+     *
+     * return boolean
+     */
+    public static function update($product_id, $images) {
+        static::delete($product_id);
+        static::insert($product_id, $images);
+    }
+
+    /**
+     * 删除
+     *
+     * @param: $product_id integer 产品ID
+     *
+     * return boolean
+     */
+    public static function delete($product_id) {
+        return DB::table('products_images')->where('product_id', '=', $product_id)->delete();
+    }
+
 }
 ?>

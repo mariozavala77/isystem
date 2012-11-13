@@ -11,7 +11,6 @@ class Product_Controller extends Base_Controller {
 
     // 产品列表
     public function action_index() {
-    
         return View::make('product.list');
     }
 
@@ -99,17 +98,63 @@ class Product_Controller extends Base_Controller {
             //session::setFlash('tips', '产品['.$input['sku'].']插入成功');
         }
 
-        return Redirect::back();
+        return Redirect::to('product');
     }
 
     // 产品编辑
     public function action_edit() {
+
+        $product_id = Input::get('product_id');
+        $product = Product::info($product_id);
+
+        $fields = [ 'id', 'name' ];
+        $filter = [ 'parent_id' => 0 ];
+        $categories = Category::filter($fields, $filter)->get();
+
+        $fields = ['id', 'company'];
+        $suppliers = Supplier::filter($fields)->get();
+
+        $fields = ['id', 'username'];
+        $users = User::filter($fields)->get();
     
+        return View::make('product.edit')->with('categories', $categories)
+                                         ->with('suppliers', $suppliers)
+                                         ->with('product', $product)
+                                         ->with('users', $users);
     }
 
     // 产品编辑处理
     public function action_update() {
+        $input = Input::all();
 
+        // 验证
+
+        $product_id = Input::get('product_id');
+        // 插入product表
+        $data = [
+            'sku'         => $input['sku'],
+            'cost'        => $input['cost'],
+            'price'       => $input['price'],
+            'category_id' => $input['category_id'],
+            'supplier_id' => $input['supplier_id'],
+            'devel_id'    => $input['devel_id'],
+            'min_price'   => $input['min_price'],
+            'max_price'   => $input['max_price'],
+            'weight'      => $input['weight'],
+            'size'        => $input['size'],
+            ]; 
+        Product::update($product_id, $data);
+
+        // 插入products_extensions
+        $data = [
+            'language'    => $input['language'],
+            'name'        => $input['name'],
+            'description' => $input['description'],
+            ];
+        Product_Extension::update($product_id, $data);
+        Product_Image::update($product_id, $input['images']);
+
+        return Redirect::to('product');
     }
 
     // 导入产品
@@ -150,6 +195,17 @@ class Product_Controller extends Base_Controller {
         }
 
         return Response::json( $result );
+    }
+
+    // 产品删除
+    public function action_delete() {
+        $product_id = Input::get('product_id');
+
+        Product::delete($product_id);
+        Product_Extension::delete($product_id);
+        Product_Image::delete($product_id);
+
+        return Response::json(['status'=>'success', 'message'=>'删除成功！']);
     }
 }
 ?>

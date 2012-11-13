@@ -30,8 +30,8 @@
     <div class="wrapper">
 
         <div style="margin-top: 35px">
-            <a href="{{ URL::base() }}/product/import" class="buttonM bDefault floatR ml10"><span class="icon-home-5"></span><span>导入产品</span></a>
-            <a href="{{ URL::base() }}/product/add" class="buttonM bDefault floatR ml10"><span class="icon-home-5"></span><span>添加产品</span></a>
+            <a href="{{ URL::to('product/import') }}" class="buttonM bDefault floatR ml10"><span class="icon-home-5"></span><span>导入产品</span></a>
+            <a href="{{ URL::to('product/add') }}" class="buttonM bDefault floatR ml10"><span class="icon-home-5"></span><span>添加产品</span></a>
             <div class="clear"></div>
         </div>
         <!-- products list begins -->
@@ -44,6 +44,10 @@
         <!-- products list ends -->
     </div>
     <!-- Main content ends -->
+
+    <div id="product_delete_confirm">
+        <p>您确认删除此产品，点击确定将会对此产品包括其他语言版本一并删除。</p>
+    </div>
 </div>
 <!-- Content ends -->    
 @endsection
