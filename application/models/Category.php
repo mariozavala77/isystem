@@ -24,11 +24,17 @@ class Category {
      * 列表
      *
      * @param: $fields array 字段
+     * @param: $filter array 附加过滤
      *
      * return object
      */
-    public static function filter($fields) {
-        return DB::table('category')->select($fields);
+    public static function filter($fields, $filter = []) {
+        $query = DB::table('category')->select($fields);
+        foreach($filter as $key => $value) {
+            $query = $query->where($key, '=', $value);
+        }
+
+        return $query;
     }
 
     /**
@@ -36,7 +42,7 @@ class Category {
      *
      * 包括父级别名称
      *
-     * @param: $category_id integer 类别ID
+     * @param: $category_id integer 分类ID
      *
      * return string
      */
@@ -53,14 +59,20 @@ class Category {
     /**
      * 获取下级分类
      *
-     * @param: $parent_id integer 父级分类ID
+     * 如果$repeat为true迭代获取所有下级分类
      *
-     * return 
+     * @param: $category_id integer 当前分类ID
+     * @param: $repeat      bool    是否迭代
+     *
+     * return object
      */
-    public static function children($parent_id = 0) {
-       $categories = DB::table('category')->where('parent_id', '=', $parent_id)->get();
-       foreach($categories as $category) {
-           $category->children = static::children($category->id);
+    public static function children($category_id = 0, $repeat = true) {
+       $categories = DB::table('category')->where('parent_id', '=', $category_id)->get();
+
+       if($repeat) {
+           foreach($categories as $category) {
+               $category->children = static::children($category->id);
+           }
        }
 
        return $categories;

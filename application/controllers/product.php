@@ -18,7 +18,11 @@ class Product_Controller extends Base_Controller {
     // 产品列表
     public function action_filter() {
 
-        $fields = [ 'p.id as check', 'p.id as id', 'name', 'sku', 'category_id', 'cost', 'min_price', 'max_price', 'status', 'created_at', 'p.id as operate' ];
+        $fields = [ 
+            'p.id as check', 'p.id as id', 'name', 'sku', 'category_id', 'cost', 'min_price', 
+            'max_price', 'status', 'created_at', 'p.id as operate' 
+            ];
+
         $products = Product::filter($fields);
         $data = Datatables::of($products)->make();
 
@@ -37,26 +41,65 @@ class Product_Controller extends Base_Controller {
 
     // 产品添加
     public function action_add() {
+
+        $fields = [ 'id', 'name' ];
+        $filter = [ 'parent_id' => 0 ];
+        $categories = Category::filter($fields, $filter)->get();
+
+        $fields = ['id', 'company'];
+        $suppliers = Supplier::filter($fields)->get();
+
+        $fields = ['id', 'username'];
+        $users = User::filter($fields)->get();
     
-        return View::make('product.add');
+        return View::make('product.add')->with('categories', $categories)
+                                        ->with('suppliers', $suppliers)
+                                        ->with('users', $users);
     }
 
     // 产品添加处理
     public function action_insert() {
-        $data = Input::all();
+        $input = Input::all();
 
         // 验证
+
         
-        // 插入
-        if(Product::insert( $data )) {
-            session::flash('tips', sprintf('产品%s添加成功！', $data['sku']) );
+        // 插入product表
+        $data = [
+            'sku'         => $input['sku'],
+            'cost'        => $input['cost'],
+            'price'       => $input['price'],
+            'category_id' => $input['category_id'],
+            'supplier_id' => $input['supplier_id'],
+            'devel_id'    => $input['devel_id'],
+            'min_price'   => $input['min_price'],
+            'max_price'   => $input['max_price'],
+            'weight'      => $input['weight'],
+            'size'        => $input['size'],
+            'status'      => 1,
+            ]; 
+        $product_id = Product::insertGetid($data);
 
-            return Redirect::to('product');
-        } else {
-            session::flash('tips', '添加失败。');       
+        // 插入products_extensions
+        if($product_id) {
+            $data = [
+                'product_id'  => $product_id,
+                'language'     => $input['language'],
+                'name'        => $input['name'],
+                'description' => $input['description'],
+                'created_at'  => date('Y-m-d H:i:s'),
+                ];
 
-            return Redirect::back();
+            Product_Extension::insert($data);
+
+            if(isset($input['images'])) {
+                Product_Image::insert($product_id, $input['images']);
+            }
+
+            //session::setFlash('tips', '产品['.$input['sku'].']插入成功');
         }
+
+        return Redirect::back();
     }
 
     // 产品编辑

@@ -47,7 +47,7 @@ class Product {
      *
      * return integer
      */
-    public static function insert_get_id($data) {
+    public static function insertGetId($data) {
         return DB::table('products')->insert_get_id($data);
     }
 
@@ -63,14 +63,7 @@ class Product {
     public static function import($filepath) {
         try {
             $import = new Import('product', $filepath);
-            //$import->valid();
-            //$produts = $import->products();  // products 表数据
-            //foreach($products as $product) {
-            //    $product_id = Product::insert_get_id($product);
-            // }
-            //$product_ = $import->products_extensions(); // products_extension 表数据
-            //$result = ['status' => 'success', 'message'=> '导入成功！'];
-            exit;
+            $result = ['status' => 'success', 'message'=> '导入成功！'];
         } catch(Import\ImportRowException $e) {
             $result = ['status' => 'fail', 'message' => $e->getMessage()];
         } catch(Import\ImportFileException $e) {

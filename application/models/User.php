@@ -44,7 +44,12 @@ class User {
      * @return: object
      */
     public static function filter( $fields, $filter = [] ) {
-        return DB::table('users')->select( $fields );
+        $query = DB::table('users')->select( $fields );
+        foreach($filter as $key => $value) {
+            $query = $query->where($key, '=', $value);
+        }
+
+        return $query;
     }
 
     /**

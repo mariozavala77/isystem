@@ -26,6 +26,14 @@ class Product_Category_Controller extends Base_Controller {
         return Response::json($data);
     }
 
+    // 获取下级
+    public function action_children() {
+        $category_id = intval(Input::get('category_id'));
+        $categories  =  Category::children($category_id, false);
+
+        return Response::json($categories);
+    }
+
     // 类别添加
     public function action_add() {
         return View::make('product.category.add');
