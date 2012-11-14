@@ -17,7 +17,7 @@ class AgentAPI_Channel extends AgentAPI_Base
      * @return mixed 仅返回 id 别名 描述
      */
     public static function lists($params){
-        $fields = ['id', 'alias', 'description', 'lang'];
+        $fields = ['id', 'alias', 'description', 'language'];
         $request = Channel::filter($fields)->get();
 
         return $request;

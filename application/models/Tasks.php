@@ -17,15 +17,16 @@ class Tasks {
      * return object
      */
     public static function filter($fields, $filter = []) {
-        $table = DB::table('tasks');
+        $query = DB::table('tasks')->left_join('users', 'tasks.from_uid', '=', 'users.id')
+                                   ->select($fields);
 
         foreach ($filter as $key => $value) {
             if(!empty($value)){
-                $table->where($key, '=', $value);
+                $query->where($key, '=', $value);
             }
         }
 
-        return $table->select($fields);
+        return $query;
     }
 
     /**
@@ -62,5 +63,3 @@ class Tasks {
         return DB::table('tasks')->where('id', '=', $tasks_id)->update($data);
     }
 }
-
-?>

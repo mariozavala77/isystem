@@ -206,6 +206,8 @@ class AgentAPI{
             ];
             //Log::insert($data); // 写入日志
             return $this->_rpc_error(-32003, '内容获取失败');
+        }catch(Exception $e){
+            return $this->_rpc_error(-32003, $e->getMessage());
         }
     }
 }

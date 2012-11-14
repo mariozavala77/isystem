@@ -16,9 +16,10 @@ class Task_Controller extends Base_Controller {
 
     // 列表
     public function action_filter() {
-        $fields = ['type', 'content', 'level', 'created_at', 'id'];
-        $tasks = Tasks::filter($fields);
-        $data = Datatables::of($tasks)->make();
+        $fields = ['tasks.type', 'users.username as form', 'tasks.content', 'tasks.level', 'tasks.created_at', 'tasks.id'];
+        $filter = ['to_uid' => $this->user_id, 'parent_id' => 0];
+        $tasks  = Tasks::filter($fields, $filter);
+        $data   = Datatables::of($tasks)->make();
 
         return Response::json($data);
     }
@@ -30,7 +31,22 @@ class Task_Controller extends Base_Controller {
             session::flash('tips', '任务不存在');
             return Redirect::back();
         }
-        
+
+        // 任务详细
+        $task = Tasks::info($task_id);
+        $fields = ['tasks.type', 'users.username as form', 'tasks.content', 'tasks.level', 'tasks.created_at', 'tasks.id'];
+        $filter = ['parent_id' => $task->id];
+        // 任务的备注
+        $task_child  = Tasks::filter($fields, $filter)->order_by('created_at', 'asc')
+                                                      ->get();
+        // 根据type类型 拉取相应的数据
+        $interface = $task->type;
+        $task_info = $interface::info($task->entity_id);
+
+        return Response::make('task.' . $interface . '_info')->with('task' ,$task)
+                                                             ->with('task_child', $task_child)
+                                                             ->with('info', $task_info);
+
     }
 
     // 任务转发
@@ -51,6 +67,39 @@ class Task_Controller extends Base_Controller {
             $request = [ 'status' => 'fail', 'message' => '处理失败'];
         }
     }
-}
 
-?>
+    // 插入新任务
+    public function action_insert(){
+        $data = [
+            'from_uid'   => $this->user_id,
+            'to_uid'     => Input::get('to_uid'),
+            'parent_id'  => Input::get('parent_id'),
+            'type'       => Input::get('type'),
+            'entity_id'  => Input::get('entity_id'),
+            'content'    => Input::get('content'),
+            'level'      => Input::get('level'),
+            'created_at' => date('Y-m-d H:i:s'),
+        ];
+
+        if(Tasks::insert($data)){
+            $request = [ 'status' => 'success', 'message' => '处理成功'];
+        }else{
+            $request = [ 'status' => 'fail', 'message' => '处理失败'];
+        }
+    }
+
+    // 任务处理状态更新
+    public function action_hidden(){
+        $tasks_id = Input::get('tasks_id');
+        $data = [
+            'handle' => 1,
+            'modified_at' => date('Y-m-d H:i:s')
+        ];
+
+        if(Tasks::update($tasks_id, $data)){
+            $request = [ 'status' => 'success', 'message' => '处理成功'];
+        }else{
+            $request = [ 'status' => 'fail', 'message' => '处理失败'];
+        }
+    }
+}

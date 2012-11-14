@@ -38,16 +38,17 @@ class Product_Sale_Controller extends Base_Controller {
 
         // 远程通信的参数
         $param = ['agent_id' => $agent_id, 'channel_id' => $channel_id, 'product_id' => $product_id, 'status' => $status];
+        // 数据库更新值
+        $data = ['status' => $status];
 
         if(1==$status){
-
+            
         }else{
             // 不通过的原因
             $msg = Input::get('msg');
             if(empty($msg)){
                 return Response::json(['status' => 'fail', 'message' => '请填写审核不通过的原因']);       
             }
-            $data = ['status' => $status];
         }
     }
 
