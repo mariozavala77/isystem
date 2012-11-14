@@ -26,7 +26,7 @@ class Api_Controller extends Controller {
 
 
     public function action_index(){
-        $api = new AgentAPI($this->response['method'],$this->response['params'],$this->response_id);
+        $api = new AgentAPI($this->response['method'], $this->response['params'], $this->response_id, 'get');
 
         return Response::json($api->handle());
     }

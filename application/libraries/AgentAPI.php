@@ -29,14 +29,12 @@ class AgentAPI{
     /**
      * 请求的方法
      *
-     * 方法的格式 如 get.class.function 方式.类.方法
-     * 不对外请求 则是get.class.function
-     * 对外请求 post.class.function
+     * 方法的格式 如 class.function 类.方法
      */
     private $_method ='';
     
-    public function __construct($method, $params, $id = 1){
-        $this->_method = $method;
+    public function __construct($method, $params, $id = 1, $type = 'post'){
+        $this->_method = $type . '.' . $method;
         $this->_params = $params;
         $this->_id     = $id;
         if(Sentry::check()) $this->_user_id = Sentry::user()->get('id');
@@ -68,7 +66,7 @@ class AgentAPI{
      * @return mixed
      */
     private function _rpc_error($code, $message){
-        return $this->_rpc_callbak([],['code'=>$code, 'message' => $message]);
+        return $this->_rpc_callback([],['code'=>$code, 'message' => $message]);
     }
 
     /**
@@ -88,9 +86,9 @@ class AgentAPI{
      * @param $error  array 错误的处理
      * @return mixed
      */
-    private function _rpc_callbak($result = [], $error = []){
+    private function _rpc_callback($result = [], $error = []){
         $response = [
-            'jsonrpc' => selt::JSONRPC,
+            'jsonrpc' => self::JSONRPC,
             ];
         if(!empty($result)){
             $response['result'] = $result;

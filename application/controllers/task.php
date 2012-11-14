@@ -28,16 +28,29 @@ class Task_Controller extends Base_Controller {
         $task_id = Input::get('task_id');
         if(empty($task_id)){
             session::flash('tips', '任务不存在');
-
             return Redirect::back();
         }
+        
     }
 
-    // 任务处理
-    public function action_handle(){
+    // 任务转发
+    public function action_forward(){
+
         $task_id = Input::get('task_id');
-    }
 
+        $data = [
+            'to_uid'  => Input::get('user_id'),
+            'is_read' => 0
+        ];
+
+        $request = Tasks::update($task_id, $data);
+
+        if($request){
+            $request = [ 'status' => 'success', 'message' => '任务转发成功'];           
+        }else{
+            $request = [ 'status' => 'fail', 'message' => '处理失败'];
+        }
+    }
 }
 
 ?>

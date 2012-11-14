@@ -23,6 +23,41 @@ class Product_Sale_Controller extends Base_Controller {
         return Response::json($data);
     
     }
-}
 
-?>
+    // 审核信息
+    public function action_check(){
+        $sale_id = Input::get('sale_id');
+        $channel_id = Input::get('channel_id');
+        $product_id = Input::get('product_id');
+        $agent_id = Input::get('agent_id');
+        $status = Input::get('status');
+        
+        if(empty($sale_id) || empty($channel_id) || empty($product_id) || empty($agent_id) || empty($status)){
+            return Response::json(['status' => 'fail', 'message' => '信息不完整']);
+        }
+
+        // 远程通信的参数
+        $param = ['agent_id' => $agent_id, 'channel_id' => $channel_id, 'product_id' => $product_id, 'status' => $status];
+
+        if(1==$status){
+
+        }else{
+            // 不通过的原因
+            $msg = Input::get('msg');
+            if(empty($msg)){
+                return Response::json(['status' => 'fail', 'message' => '请填写审核不通过的原因']);       
+            }
+            $data = ['status' => $status];
+        }
+    }
+
+    // 编辑销售信息
+    public function action_edit(){
+
+    }
+
+    // 更新销售
+    public function action_update(){
+
+    }
+}

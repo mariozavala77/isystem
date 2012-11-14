@@ -7,7 +7,7 @@
  * @version: $Id$
  */
 
-class AgentAPI_Channel
+class AgentAPI_Channel extends AgentAPI_Base
 {
     /**
      * 渠道列表

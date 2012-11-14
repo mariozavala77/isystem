@@ -130,6 +130,5 @@ class Product {
     public static function delete($product_id) {
         return DB::table('products')->delete($product_id);
     }
-
 }
 ?>

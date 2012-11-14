@@ -68,6 +68,7 @@ class Agent {
 
     /**
      * 检测代理商是否可以使用api
+     *
      * 通过代理商id和密钥进行检测代理商是否可以使用api
      *
      * @param: $agent_id integer 代理商ID
