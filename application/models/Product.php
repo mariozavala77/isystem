@@ -26,7 +26,7 @@ class Product {
             $query = $query->where($key, '=', $value);
         }
 
-        return $query;
+        return $query->order_by('product_id', 'DESC');
     }
 
     /**
@@ -107,6 +107,17 @@ class Product {
      */
     public static function update($product_id, $data) {
         return DB::table('products')->where('id', '=', $product_id)->update($data);
+    }
+
+    /**
+     * 获取语言版本
+     *
+     * @param: $product_id  integer 产品ID
+     *
+     * return object
+     */
+    public static function language($product_id) {
+        return DB::table('products_extensions')->where('product_id', '=', $product_id)->lists('language');
     }
 
     /**

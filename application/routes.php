@@ -39,6 +39,7 @@ Route::group(array('before' => 'auth'), function() {
     });
 
     Route::controller('product.sale');
+    Route::controller('product.language');
     Route::controller('product.category');
     Route::controller('product');
     Route::controller('supplier');

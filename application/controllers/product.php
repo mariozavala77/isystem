@@ -22,7 +22,9 @@ class Product_Controller extends Base_Controller {
             'max_price', 'status', 'created_at', 'p.id as operate' 
             ];
 
-        $products = Product::filter($fields);
+        $filter = ['language' => 'cn'];
+
+        $products = Product::filter($fields, $filter);
         $data = Datatables::of($products)->make();
 
         foreach($data['aaData'] as $key => $datum) {
@@ -147,11 +149,10 @@ class Product_Controller extends Base_Controller {
 
         // 插入products_extensions
         $data = [
-            'language'    => $input['language'],
             'name'        => $input['name'],
             'description' => $input['description'],
             ];
-        Product_Extension::update($product_id, $data);
+        Product_Extension::update($product_id, $input['language'], $data);
         Product_Image::update($product_id, $input['images']);
 
         return Redirect::to('product');

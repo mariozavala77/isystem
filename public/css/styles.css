@@ -2320,6 +2320,8 @@ table .dropdown-menu.pull-right { right: auto; left: 0; }
 .loginWrapper { top: 100px; margin-top: 0; }
 .logControl { padding-bottom: 50px; }
 
+}
+
 /***********  add by weelion *******************/
 
 .remove_position {
@@ -2359,5 +2361,22 @@ table .dropdown-menu.pull-right { right: auto; left: 0; }
 
 #track_list .tableFooter, #tlist_options .formRow {
     border: 0;
+} 
+
+.list-dropdown {
+    display: none;
+    position: absolute;
+    z-index: 1000;
+    left: -1px;
+    list-style: none;
+    border: 1px solid #ccc;
 }
+
+.list-dropdown li a[class*="dataNum"] {
+    margin: 0px!important;
+}
+
+
+
+
 /***********  end by weelion *******************/

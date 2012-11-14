@@ -17,7 +17,6 @@ $(function(){
 		$(".leftUser").slideUp(200);
 	});
 
-
     // 全屏
     $('.doFullscreen').toggle(function() {
         var target_id = $(this).attr('key');
@@ -72,6 +71,8 @@ $(function(){
 	};
 	$("div[class^='widget']").contentTabs(); //Run function on any div with class name of "Content Tabs"
 
+    // 下拉菜单 
+    $('.dropdown-toggle').dropdown();
 
     // 抓取订单
     $('#spider').click(function() {

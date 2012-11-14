@@ -24,13 +24,15 @@ class Product_Extension {
     /**
      * 更新
      *
-     * @param: $product_id integer  ID
-     * @param: $data       array    数据
+     * @param: $product_id integer ID
+     * @param: $language   string  语言
+     * @param: $data       array   数据
      *
      * return boolean
      */
-    public static function update($product_id, $data) {
+    public static function update($product_id, $language, $data) {
         return DB::table('products_extensions')->where('product_id', '=', $product_id)
+                                               ->where('language', '=', $language)
                                                ->update($data);
     }
 

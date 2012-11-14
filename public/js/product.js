@@ -29,7 +29,13 @@ $(function(){
             var image = '<a class="lightbox" target="_blank" href="' + aData[1] + '"><img src="' + aData[1] + '" style="width: 36px; height:36px;"/></a>';
             var limit = '$' + aData[6] + '~' + '$' + aData[7];
             var operation = '<a href="/product/edit/?product_id='+id+'" action="edit" class="tablectrl_small bDefault tipS" original-title="编辑"><span class="iconb" data-icon=""></span></a>' + 
-                            '<a href="javascript:void(0);" data-id="'+id+'" action="multi-language" class="tablectrl_small bDefault tipS" original-title="多语言"><span class="iconb" data-icon=""></span></a>' + 
+                            '<div class="btn-group">' +
+                            '   <a data-id="'+id+'" action="multi-language" class="tablectrl_small bDefault tipS" original-title="多语言"><span class="iconb" data-icon=""></a>' +
+                            '   <ul class="list-dropdown">' +
+                            '       <li><a class="dataNumGrey hand">中</a></li>' +
+                            '       <li><a class="dataNumGrey hand">英</a></li>' +
+                            '   </ul>' +
+                            '</div>' + 
                             '<a href="javascript:void(0);" data-id="'+id+'" action="delete" class="tablectrl_small bDefault tipS" original-title="删除"><span class="iconb" data-icon=""></span></a>';
 
             $('td:eq(0)', nRow).html(checkbox);
@@ -71,14 +77,41 @@ $(function(){
         $(this).closest('tr').toggleClass("thisRow", this.checked);
     });
 
-    // 列表操作
+    // 多语言
     $('a.tablectrl_small[action="multi-language"]').live('click', function(){
-        alert('multi-language');
+        var product_id = $(this).attr('data-id');
+        var $this = $(this);
+        $.ajax({
+            url: '/product/language',
+            type: 'POST',
+            data: {product_id: product_id},
+            dataType: 'json',
+            success: function(data) {
+                var li = '';
+                for(i in data) {
+                    if(data[i].exists) {
+                        li += '<li><a href="/product/language/edit?language='+data[i].language+'&product_id='+product_id+'" class="dataNumGreen">' + data[i].name + '</a></li>';
+                    } else {
+                        li += '<li><a href="/product/language/add?language='+data[i].language+'&product_id='+product_id+'" class="dataNumGrey">' + data[i].name + '</a></li>';
+                    }
+                
+                }
+                $this.next().html(li);
+            },
+            error: function() {
+                $.jGrowl('请求失败！'); 
+            }
+        });
+        $(this).next().slideToggle(150);
     });
+    // 产品删除操作
     $('a.tablectrl_small[action="delete"]').live('click', function(){
         var product_id = $(this).attr('data-id');
         $('#product_delete_confirm').attr('data-id', product_id).dialog('open');
     });
+
+
+
 
     // 删除dialog提示
     $('#product_delete_confirm').dialog({
