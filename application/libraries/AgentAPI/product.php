@@ -40,7 +40,7 @@ class AgentAPI_Product extends AgentAPI_Base
             $images      = Product_Image::get($datum->id);
             $root       = '/uploads/images/products/';
             foreach($images as $k => $val){
-                $imgs[$k]= str_replace('\\', '/', UploadHelper::path($root, $val->image, true));
+                $imgs[$k]= URL::to(str_replace('\\', '/', UploadHelper::path($root, $val->image, true)));
             }
 
             $data[$key]->images = $imgs;
@@ -74,7 +74,7 @@ class AgentAPI_Product extends AgentAPI_Base
 
         $product_sale_id = Product_Sale::getId($data['agent_id'], $data['product_id'], $data['channel_id']);
 
-        if($sale_id){
+        if($product_sale_id){
             $data['status']=0;
             $requslt = Product_Sale::update($product_sale_id, $data);
             if($requslt){

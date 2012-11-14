@@ -52,37 +52,6 @@
             </div>
         </div>
     </div>
-    <!-- Main content ends-->
-    <script type="text/javascript">
-        $(function() {
-            tTable = $('#task_list_table').dataTable({
-                bSort: false,
-                bProcessing: true,
-                bFilter: true,
-                bServerSide: true,
-                bJQueryUI: false,
-                sPaginationType: 'full_numbers',
-                sAjaxSource: '/task/filter',
-                sDom: '<"H"fl<"clear">>tr<"F"ip>',
-                oLanguage: { sUrl: '/js/plugins/tables/lang_cn.txt' },
-                aoColumnDefs: [
-                    { sTitle: "任务类型", aTargets: [0] },
-                    { sTitle: "内容", aTargets: [1] },
-                    { sTitle: "级别", aTargets: [2] },
-                    { sTitle: "分配时间", aTargets: [3] },
-                    { sTitle: "操作", aTargets: [4], bSearchable: false, sClass: "tableActs", sWidth: "60px" },
-                ],
-                fnRowCallback: function(nRow,aData, iDisplayIndex, iDisplayIndexFull) {
-                    var id = aData[4];
-                    var operation = '<a href="/product/category/edit?category_id=' + id + '" class="tablectrl_small bDefault tipS" original-title="编辑"><span class="iconb" data-icon=""></span></a>' + 
-                                    '<a href="javascript:void(0);" data-id="' + id + '" class="tablectrl_small bDefault tipS" original-title="删除"><span class="iconb" data-icon=""></span></a>';
-                    $('td:eq(4)', nRow).html(operation);
-                }
-            });
-
-        });
-    </script>
-
     <!-- delete confirm begins-->
     <div id="task_finish_confirm" style="display:none" title="提示">
         <p>你确认标记此任务已完成?</p>
