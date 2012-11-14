@@ -40,6 +40,9 @@ $(function(){
             $('td:eq(0)', nRow).html(checkbox);
             $('td:eq(3)', nRow).html(price);
             $('td:eq(8)', nRow).html(operation);
+            $('td:eq(1)', nRow).attr('title', '双击查看订单详情').dblclick(function(){
+                order_info(id, $(this).html());
+            });
         },
         fnInitComplete: function(){
             $('.dataTables_info').css('clear', 'none').css('line-height', '34px');
@@ -60,7 +63,7 @@ $(function(){
         }
         
     });
-    
+
     // 列表全选
     $("#checkAll").live('click', function() {
         var checkedStatus = this.checked;
@@ -110,7 +113,38 @@ $(function(){
 
     });
 
-})
+});
+
+// 订单详情
+function order_info(order_id, entity_id) {
+    $('#order_info_dialog').attr('title', entity_id + '订单详情');
+
+    // 获取产品信息
+    $.ajax({
+        url: '/order/info',
+        type: 'POST',
+        data: {order_id: order_id},
+        dataType: 'json',
+        success: function(data) {
+
+            for(i in data){
+                $('#order_info_dialog table tbody tr td[field="'+i+'"]').html(data[i]);
+            }
+
+            // 打开产品信息窗口
+            $('#order_info_dialog').dialog({
+                autoOpen: false,
+                width: "80%",
+                modal: true,
+            });
+            $('#order_info_dialog').dialog('open');
+        
+        },
+        error: function(){
+            $.jGrowl('获取产品信息失败！');
+        }
+    });
+}
 /*
  * 列隐藏显示
  var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;

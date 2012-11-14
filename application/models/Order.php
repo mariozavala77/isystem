@@ -29,7 +29,6 @@ class Order {
         return $table->first();
     }
 
-
     /**
      * 新增订单
      *
@@ -63,6 +62,17 @@ class Order {
     public static function filter( $fields ) {
 
         return DB::table('orders')->left_join('channels', 'orders.channel_id', '=', 'channels.id')->select( $fields )->order_by('orders.id', 'DESC');
+    }
+
+    /**
+     * 订单详情
+     *
+     * @param: $order_id integer 订单ID
+     *
+     * return object
+     */
+    public static function info($order_id) {
+        return DB::table('orders')->where('id', '=', $order_id)->first();
     }
 
     /**

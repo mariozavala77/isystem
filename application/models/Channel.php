@@ -57,7 +57,6 @@ class Channel {
     /**
      * 删除渠道
      *
-     * @static
      * @param $channel_id integer 渠道ID
      *
      * retrun boolean

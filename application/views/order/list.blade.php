@@ -52,6 +52,66 @@
         <!-- products list ends -->
     </div>
     <!-- Main content ends -->
+
+    <div id="order_info_dialog" style="display: none">
+        <div class="widget" style="margin-top: 0px">
+            <div>
+                <ul class="tbar" style="border-bottom: 0px">
+                    <li><a>详细信息</a></li>
+                    <li><a>物流信息</a></li>
+                </ul>
+            </div>
+            <table  cellpadding="0" cellspacing="0" border="0" class="dTable dataTable" >
+                <tbody>
+                  <tr>
+                    <td>ID:</td>
+                    <td field="entity_id"></td>
+                    <td>金额:</td>
+                    <td field="total_price"></td>
+                    <td>配送紧急程度:</td>
+                    <td colspan="3"field="shipment_level"></td>
+                  </tr>
+                  </tr>
+                  <tr>
+                    <td>订单状态:</td>
+                    <td field="status"></td>
+                    <td>处理状态:</td>
+                    <td field="broken"></td>
+                    <td>同步状态:</td>
+                    <td field="is_sync">已同步</td>
+                    <td>是否是AFN订单:</td>
+                    <td field="auto">是</td>
+                  </tr>
+                  <tr>
+                    <td>购买人:</td>
+                    <td field="name">$23.5</td>
+                    <td>购买时间:</td>
+                    <td field="purchased_at">$23.5</td>
+                    <td>购买渠道:</td>
+                    <td field="channel"></td>
+                    <td>支付方式:</td>
+                    <td field="payment_method"></td>
+                  </tr>
+                  <tr>
+                    <td>配送地址：</td>
+                    <td colspan="7" field="shipping"></td>
+                  </tr>
+                  <tr>
+                    <td>产品信息：</td>
+                    <td colspan="7" field="products"></td>
+                  </tr>
+                  <tr>
+                    <td>生成时间：</td>
+                    <td field="created_at"></td>
+                    <td>更新时间：</td>
+                    <td field="updated_at"></td>
+                    <td>修改时间：</td>
+                    <td colspan="3" field="modified_at"></td>
+                  </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 <!-- Content ends -->    
 @endsection

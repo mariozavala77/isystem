@@ -44,8 +44,38 @@ class Order_Controller extends Base_Controller {
         return Response::json($results);
     }
 
-    // 订单处理
-    public function action_handle() {
+    // 订单详情
+    public function action_info() {
+        $order_id = Input::get('order_id');
+
+        $order = Order::info($order_id);
+
+        $channel = Channel::info($order->channel_id);
+        $results = [
+            'entity_id'      => $order->entity_id,
+            'status'         => Config::get('application.order_status')[$order->status],
+            'total_price'    => $order->currency . ' ' . $order->total_price,
+            'broken'         => $order->broken ? '正常' : '异常',
+            'auto'           => $order->auto ? '是' : '否',
+            'is_sync'        => $order->is_sync ? '是' : '否',
+            'channel'        => $channel->name,
+            'shipment_level' => $order->shipment_level,
+            'purchased_at'   => $order->purchased_at,
+            'payment_method' => $order->payment_method,
+            'updated_at'     => $order->updated_at,
+            'modified_at'    => $order->modified_at,
+            'created_at'     => $order->created_at,
+            'name'           => $order->name,
+            'shipping'       => $order->shipping_name ? $order->shipping_name. '<br />' . 
+                                $order->email . '<br .>' . 
+                                $order->shipping_address . '<br />' .
+                                $order->shipping_city . ' ' . $order->shipping_state_or_region . ' ' . $order->shipping_country . '<br />zip:' .
+                                $order->shipping_postcode . '<br />tel:' .
+                                $order->shipping_phone : '',
+            'products'        => '暂无',
+            ];
+
+        return Response::json($results);
     
     }
 }
