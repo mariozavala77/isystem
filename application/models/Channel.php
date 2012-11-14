@@ -50,7 +50,7 @@ class Channel {
      * return boolean
      */
     public static function update($channel_id, $data) {
-        $data['accredit'] = serialize($data['accredit']);
+        if(isset($data['accredit'])) $data['accredit'] = serialize($data['accredit']);
         return DB::table('channels')->where('id', '=', $channel_id)->update($data);
     }
 
