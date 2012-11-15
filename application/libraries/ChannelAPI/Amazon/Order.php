@@ -8,8 +8,9 @@ class ChannelAPI_Amazon_Order {
                         'Pending'       => 1,  // 待付款
                         'Unshipped'     => 2,  // 未发货
                         'Shipped'       => 3,  // 已发货
-                        'Canceled'      => 4,  // 已取消
-                        'Unfulfillable' => 5,  // 无法处理
+                        'unset'         => 4,  // 部分发货预留
+                        'Canceled'      => 5,  // 已取消
+                        'Unfulfillable' => 6,  // 无法处理
                         ];
 
     private $_shipping_level = [

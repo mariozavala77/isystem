@@ -198,6 +198,16 @@ return array(
     // 产品语言支持
     'support_language' => ['cn' => '中', 'en' => '英'],
 
+    // 订单状态制定
+    'order_status' => [
+        '1' => ['name' => '待付款', 'define' => 'ORDER_PENDING'],
+        '2' => ['name' => '未发货', 'define' => 'ORDER_UNSHIPPED'],
+        '3' => ['name' => '已发货', 'define' => 'ORDER_SHIPPED'],
+        '4' => ['name' => '部分发货', 'define' => 'ORDER_PARTIALLYSHIPPED'],
+        '5' => ['name' => '已取消', 'define' => 'ORDER_CANCELED'],
+        '6' => ['name' => '无法处理', 'define' => 'UNFULFILLABLE'],
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | 渠道分类

@@ -117,7 +117,7 @@
                                 <ul id="images" class="textL">
                                     @foreach($product->images as $image)
                                     <li style="height: 60px">
-                                        <img src="{{ UploadHelper::path('/uploads/images/products/', $image->image, true) }}" style="width: 60px; height: 60px"/>
+                                        <img src="{{ str_replace('\\', '/', UploadHelper::path('/uploads/images/products/', $image->image, true)) }}" style="width: 60px; height: 60px"/>
                                         <input name="images[]" value="{{$image->image}}" type="hidden">
                                         <div class="actions" style="display: none; height: 60px; width: 60px">
                                             <a class="remove" style="margin: 35px 34px"><img src="/images/icons/delete.png" /></a>

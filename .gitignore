@@ -4,3 +4,4 @@
 *.php~
 *~
 *.xls
+database.php

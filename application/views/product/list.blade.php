@@ -21,7 +21,7 @@
             </ul>
         </div>
         
-        @include('block.bread');
+        @include('block.bread')
 
     </div>
     <!-- Breadcrumbs line ends -->

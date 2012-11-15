@@ -27,7 +27,6 @@ class Product_Language_Controller extends Base_Controller {
             if(in_array($key, $languages)) {
                 $datum['exists'] = true;
             }
-
             $data[] = $datum;
         }
         
@@ -89,6 +88,4 @@ class Product_Language_Controller extends Base_Controller {
     }
 
 }
-
-
 ?>

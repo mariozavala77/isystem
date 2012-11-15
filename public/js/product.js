@@ -78,7 +78,7 @@ $(function(){
     });
 
     // 多语言
-    $('a.tablectrl_small[action="multi-language"]').live('click', function(){
+    $('a[action="multi-language"]').live('click', function(){
         var product_id = $(this).attr('data-id');
         var $this = $(this);
         $.ajax({
@@ -105,7 +105,7 @@ $(function(){
         $(this).next().slideToggle(150);
     });
     // 产品删除操作
-    $('a.tablectrl_small[action="delete"]').live('click', function(){
+    $('a[action="delete"]').live('click', function(){
         var product_id = $(this).attr('data-id');
         $('#product_delete_confirm').attr('data-id', product_id).dialog('open');
     });
