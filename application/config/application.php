@@ -200,12 +200,12 @@ return array(
 
     // 订单状态制定
     'order_status' => [
-        '1' => '待付款',
-        '2' => '未发货',
-        '3' => '已发货',
-        '4' => '部分发货',
-        '5' => '已取消',
-        '6' => '无法处理',
+        '1' => ['name' => '待付款', 'define' => 'ORDER_PENDING'],
+        '2' => ['name' => '未发货', 'define' => 'ORDER_UNSHIPPED'],
+        '3' => ['name' => '已发货', 'define' => 'ORDER_SHIPPED'],
+        '4' => ['name' => '部分发货', 'define' => 'ORDER_PARTIALLYSHIPPED'],
+        '5' => ['name' => '已取消', 'define' => 'ORDER_CANCELED'],
+        '6' => ['name' => '无法处理', 'define' => 'UNFULFILLABLE'],
     ],
 
     /*

@@ -183,3 +183,10 @@ set_path('product_import', path('base').'storage'.DS.'product'.DS.'import'.DS.da
 // 定义产品图片存放目录
 // --------------------------------------------------------------
 set_path('product_image', path('base').'public'.DS.'uploads'.DS.'images'.DS.'products'.DS);
+
+// --------------------------------------------------------------
+// 定义订单状态
+// --------------------------------------------------------------
+foreach(Config::get('application.order_status') as $key => $value) {
+    if(!defined($value['define'])) define($value['define'], $key);
+}

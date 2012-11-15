@@ -49,6 +49,13 @@ class Order {
      * return void
      */
     public static function update( $order_id, $data ) {
+
+        // 如果修改订单状态需要更新
+        /*
+           修改更新时间用于平台同步
+
+        */
+
         DB::table('orders')->where('id', '=', $order_id)->update($data);
     }
 
@@ -116,6 +123,52 @@ class Order {
                 }
 
                 Channel::update($channel->id, ['synced_at' => $data['synced_at']]);
+            }
+        }
+    }
+
+
+    /**
+     * 获取可以发货的订单
+     *
+     * @param: $order_ids array 订单ID
+     *
+     * return array
+     */
+    public static function ship($order_ids) {
+        return DB::table('orders')->where('status', '=', ORDER_UNSHIPPED)
+                                  ->where('auto', '=', '0')  // 不是FBA订单
+                                  ->where_in('id', $order_ids)
+                                  ->lists('id');
+    }
+
+    /**
+     * 批量发货处理
+     *
+     * @param: $company string 快递公司 
+     * @param: $method  string 投递方式
+     * @param: $tracking array  订单跟踪信息
+     *
+     * return void
+     */
+    public static function doBatchShip($company, $method, $tracking) {
+
+        foreach($tracking as $order_id => $tracking_no) {
+            if(!empty($tracking_no)) {
+                //$info = static::info($order_id);
+                $data = [
+                    'company' => $company,
+                    'method'  => $method,
+                    'order_id' => $order_id,
+                    'item_id' => 0,
+                    'quantity' => 0,
+                    'tracking_no' => $tracking_no,
+                    'status' => 0,
+                    'created_at' => date('Y-m-d H:i:s'),
+                    'modified_at' => date('Y-m-d H:i:s'),
+                    ];
+
+                Track::insert($data);
             }
         }
     }

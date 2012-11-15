@@ -7,10 +7,10 @@ $(function(){
         bJQueryUI: false,
         sPaginationType: 'full_numbers',
         sAjaxSource: '/order/filter',
-        sDom: '<"H"fl<"clear">>tr<"F"ip>',
+        sDom: '<"H"<"#olist_options"l<"clear">><"#olist_search"<"clear">>>tr<"F"ip>',
         oLanguage: { sUrl: '/js/plugins/tables/lang_cn.txt'},
         aoColumnDefs: [
-            { sTitle: "<input id='checkAll' type='checkbox'/>", bSearchable: false, aTargets: [0], sWidth: '20px' },
+            { aTargets: [0], bSearchable: false, sTitle: "<input class='checkAll' type='checkbox' key='order_list_table'/>",  sWidth: '20px' },
             { sTitle: "订单ID", aTargets: [1] }, // 订单ID
             { sTitle: "购买人", aTargets: [2] }, 
             { bVisible: false, aTargets: [3] },  // email
@@ -31,43 +31,78 @@ $(function(){
         ],
         fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
             var id = aData[0];
-            var checkbox = '<input type="checkbox" value="'+id+'" name="product_ids[]"/>';
+            var checkbox = '<input type="checkbox" value="'+id+'" name="order_ids[]"/>';
             var price = aData[5] + ' ' + aData[4];
             var operation = '<a href="#" class="tablectrl_small bDefault tipS" original-title="同步"><span class="iconb" data-icon=""></span></a>' + 
                             '<a href="#" class="tablectrl_small bDefault tipS" original-title="发货"><span class="iconb" data-icon=""></span></a>' +
                             '<a href="#" class="tablectrl_small bDefault tipS" original-title="取消"><span class="iconb" data-icon=""></span></a>';
 
+            $(nRow).attr('id', 'oid'+id);
             $('td:eq(0)', nRow).html(checkbox);
-            $('td:eq(3)', nRow).html(price);
-            $('td:eq(8)', nRow).html(operation);
             $('td:eq(1)', nRow).attr('title', '双击查看订单详情').dblclick(function(){
                 order_info(id, $(this).html());
             });
+            $('td:eq(3)', nRow).html(price);
+            $('td:eq(8)', nRow).html(operation);
         },
-        fnInitComplete: function(){
+        fnInitComplete: function() {
             $('.dataTables_info').css('clear', 'none').css('line-height', '34px');
-            $('.tableFooter').prepend('<div class="itemActions" style="width: 250px">'+
+
+            // 批量操作按钮
+            $('.tableFooter').prepend('<input class="checkAll" type="checkbox" key="order_list_table"><div class="itemActions" style="width: 250px">'+
                                 '<label>批量操作:</label>'+
                                 '<select name="action">'+
                                 '    <option value="">--请选择--</option>'+
-                                '    <option value="Edit">订单发货</option>'+
-                                '    <option value="Delete">取消订单</option>'+
-                                '    <option value="Move">同步订单</option>'+
-                                '</select><a class="buttonS bDefault ml10">确定</a></div>'+
+                                '    <option value="ship">订单发货</option>'+
+                                '    <option value="cancel">取消订单</option>'+
+                                '    <option value="sync">同步订单</option>'+
+                                '</select><a class="buttonS bDefault ml10" id="actions">确定</a></div>'+
                                 '</div>');
-            $('select, #checkAll').uniform();
+            // 每页记录样式修改
+            $('#order_list_table_length').addClass('mb15');
+            // 美化dom元素
+            $('select, .checkAll').uniform();
+
+            // 初始化搜索div
+            var search = '<div class="formRow">' +
+                         '  <div class="grid1 textR">' +
+                         '      <span>订单ID：</span>' +
+                         '  </div>' +
+                         '  <div id="filter_order_entity_id" class="grid2"></div>' +
+                         '  <div class="grid1 textR">' +
+                         '      <span>购买人：</span>' +
+                         '  </div>' +
+                         '  <div id="filter_order_name" class="grid2"></div>' +
+                         '  <div class="grid1 textR">' +
+                         '      <span>Email：</span>' +
+                         '  </div>' +
+                         '  <div id="filter_order_email" class="grid2"></div>' +
+                         '  <div class="clear"></div>' +
+                         '</div>';
+            $('#olist_search').html(search);
         },
         fnDrawCallback: function() {
             $('#order_list_table').css('width', '100%');
-            $('#order_list_table :checkbox').not('#checkAll').uniform();
+            $('#order_list_table :checkbox').not('.checkAll').uniform();
         }
         
     });
 
     // 列表全选
-    $("#checkAll").live('click', function() {
+    $(".checkAll").live('click', function() {
         var checkedStatus = this.checked;
-        $('#order_list_table tbody tr td:first-child input:checkbox').each(function(){
+
+        // 指定范围
+        var key = $(this).attr('key');
+
+        // 多个全选按钮
+        var multi = $('.checkAll[key="'+key+'"]').attr('checked', this.checked);
+        if(this.checked)
+            multi.parent().addClass('checked');
+        else 
+            multi.parent().removeClass('checked');
+
+        $('#'+key+' tbody tr td:first-child input:checkbox').each(function(){
             this.checked = checkedStatus;
             if (checkedStatus == this.checked) {
                 $(this).closest('.checker > span').removeClass('checked');
@@ -82,7 +117,7 @@ $(function(){
     });
 
     // 列表单选效果
-    $('#order_list_table tbody tr td:first-child input:checkbox').live('change', function() {
+    $('tbody tr td:first-child input:checkbox').live('change', function() {
         $(this).closest('tr').toggleClass("thisRow", this.checked);
     });
 
@@ -110,6 +145,92 @@ $(function(){
                 $.jGrowl('同步请求失败！');
             }
         });
+    });
+
+    // 批量操作
+    $('#actions').live('click', function(){
+        var action = $(this).prev().children('select').val();
+        // 判断有无选操作
+        if(action == '') {
+            $.jGrowl('请先选择操作。');
+
+            return false;
+        }
+
+        // 收集选中的订单
+        var order_ids = new Array;
+        $('input:checkbox[name="order_ids[]"]:checked').each(function(){
+            order_ids[order_ids.length] = $(this).val();
+        });
+
+        // 判断有无选订单
+        if(order_ids.length < 1) {
+            $.jGrowl('请先选择你要操作的订单。');
+
+            return false; 
+        }
+
+        // 批量发货
+        if(action == 'ship') {
+            $.ajax({
+                url: '/order/batch',
+                type: 'POST',
+                data: {action: action, order_ids: order_ids},
+                dataType: 'json',
+                success: function(data) {
+                    if(data.status == 'success') {
+                        if(data.message.length < 1) {
+                            $.jGrowl('没有需要操作的订单。');
+                            return false;
+                        }
+
+                        if(order_ids.length != data.message.length) {
+                            var num = order_ids.length - data.message.length;
+                            $.jGrowl(num + '个订单已忽略。');
+                        }
+                        order_ids = data.message;
+
+                        $('.shipRow').remove();
+                        $('input[name="ship_company"]').val('');
+                        $('input[name="ship_method"]').val('');
+
+                        // 创建发货表单
+                        var row = '<div class="formRow shipRow nopadding" style="border-bottom: 0; max-height: 487px; overflow:auto;">' +
+                                  '    <table width="100%"  border="0" cellspacing="0" cellpadding="0" class="tLight noBorderT">' +
+                                  '        <thead><tr><td width="50%">订单ID</td><td>跟踪号</td></tr></thead>' +
+                                  '        <tbody>';
+                        for(i in order_ids) {
+                            row += '<tr>' +
+                                   '    <td class="textC">' + $('#oid'+order_ids[i] +' td:eq(1)').html() + '</td>' +
+                                   '    <td class="textC">' +
+                                   '        <input type="text" style="width: 50%" name="ship_tracking_nos[]" />' +
+                                   '        <input type="hidden" value="'+order_ids[i]+'" name="ship_order_ids[]" />' +
+                                   '    </td>' +
+                                   '</tr>';
+                        }
+                        row += '</tbody></table></div>';
+
+                        var dialog = $('#order_batch_ship_dialog form');
+                        dialog.children('div:first').append(row);
+
+                        // 打开产品信息窗口
+                        dialog.dialog({
+                            autoOpen: false,
+                            width: "80%",
+                            modal: true,
+                        });
+                        dialog.dialog('open');
+                    } else if(data.status == 'fail') {
+                        $.jGrowl(data.message);
+                    } else {
+                        $.jGrowl('发货列表加载失败。');
+                    }
+                },
+                error: function(){
+                    $.jGrowl('批量操作请求失败。');
+                }
+            });
+        }
 
     });
 

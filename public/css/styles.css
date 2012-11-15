@@ -1016,7 +1016,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', end
 .titleToolbar > li.drd > a { padding: 8px 10px 7px 10px; }
 .titleOpt > a { padding: 6px 10px 7px 10px; border-left: 1px solid #c3c3c3; display: block; color: #636363; clear: both; }
 .widget .cOptions { position: absolute; top: 0; right: 0; }
-.widget .tOptions { float: right; cursor: pointer; padding: 11px 12px 10px 12px; border-left: 1px solid #cdcdcd; }
+.widget .tOptions { float: right; cursor: pointer; padding: 11px 12px 12px 12px; border-left: 1px solid #cdcdcd; } /* by weelion change padding: 11px 12px 10px 12px*/
 .widget .tOptions:active, .act { background: #f5f5f5; }
 .act { box-shadow: 0 1px 0 #eaeaea; -webkit-box-shadow: 0 1px 0 #eaeaea; -moz-box-shadow: 0 1px 0 #eaeaea; -webkit-border-top-right-radius: 3px; -moz-border-radius-topright: 3px; }
 

@@ -29,7 +29,7 @@ class Order_Controller extends Base_Controller {
         $data = Datatables::of($orders)->make();
 
         foreach($data['aaData'] as $key => $datum) {
-            $data['aaData'][$key][16] = Config::get('application.order_status')[$datum[16]];
+            $data['aaData'][$key][16] = Config::get('application.order_status')[$datum[16]]['name'];
         }
 
         return Response::json( $data );
@@ -53,7 +53,7 @@ class Order_Controller extends Base_Controller {
         $channel = Channel::info($order->channel_id);
         $results = [
             'entity_id'      => $order->entity_id,
-            'status'         => Config::get('application.order_status')[$order->status],
+            'status'         => Config::get('application.order_status')[$order->status]['name'],
             'total_price'    => $order->currency . ' ' . $order->total_price,
             'broken'         => $order->broken ? '正常' : '异常',
             'auto'           => $order->auto ? '是' : '否',
@@ -76,7 +76,38 @@ class Order_Controller extends Base_Controller {
             ];
 
         return Response::json($results);
-    
+    }
+
+    // 批量操作
+    public function action_batch() {
+        $action = Input::get('action');
+        $order_ids = Input::get('order_ids');
+
+        $results = ['status' => 'fail', 'message' => '参数传递失败。'];
+
+        switch ($action) {
+            case 'ship':
+                $results = ['status' => 'success', 'message' => Order::ship($order_ids)];
+                break;
+            
+            default:
+                break;
+        }
+
+        return Response::json($results);
+    }
+
+    // 订单发货处理
+    public function action_ship() {
+        $input = Input::all();
+
+        // 如果多个ID为批量
+        if(isset($input['ship_order_ids']) && !empty($input['ship_order_ids'])) {
+            $tracking = array_combine($input['ship_order_ids'], $input['ship_tracking_nos']);
+            Order::doBatchShip($input['ship_company'], $input['ship_method'], $tracking);
+        } else {
+            Order::doShip();
+        }
     }
 }
 ?>
