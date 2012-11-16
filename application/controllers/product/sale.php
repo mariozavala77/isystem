@@ -3,7 +3,7 @@
 /**
  * 产品销售控制器
  *
- * @author: william <377658@qq.com>
+ * @author: shaoqi <shaoqisq123@gmail.com>
  * @copyright: Copyright (c) 2012 UFCEC Tech All Rights Reserved.
  * @version: $Id:sale.php  2012年11月06日 星期二 15时38分29秒Z $
  */
@@ -72,13 +72,18 @@ class Product_Sale_Controller extends Base_Controller {
         }
 
         $sale_info = Product_Sale::info($sale_id);
+
         if(empty($sale_info)){
-            return false;
+            return Response::json(['status' => 'fail', 'message' => '信息不完整']);
         }
 
+        $sale_info->validation = empty($sale_info->validation)?'':json_decode($sale_info->validation);
+
         $channel = Channel::info($sale_info->channel_id);
+        
         $sale_info->channel = $channel->name;
         $sale_info->agent = Agent::info($sale_info->agent_id);
+
         return Response::json(['status' => 'success', 'message' => $sale_info]);
     }
 }
