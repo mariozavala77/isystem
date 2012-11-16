@@ -79,6 +79,10 @@ Autoloader::directories(array(
     path('app').'helpers',
 ));
 
+Autoloader::underscored([
+    'Task' => path('app').'tasks',
+    ]);
+
 /*
 |--------------------------------------------------------------------------
 | Laravel View Loader

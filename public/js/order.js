@@ -1,4 +1,5 @@
 $(function(){
+    initsearch = false;
     oTable = $('#order_list_table').dataTable({
         bSort: false,
         bProcessing: true,
@@ -73,10 +74,17 @@ $(function(){
                          '      <span>购买人：</span>' +
                          '  </div>' +
                          '  <div id="filter_order_name" class="grid2"></div>' +
+                         '  <div class="clear"></div>' +
+                         '</div>' + 
+                         '<div class="formRow">' +
                          '  <div class="grid1 textR">' +
-                         '      <span>Email：</span>' +
+                         '      <span>国家：</span>' +
                          '  </div>' +
-                         '  <div id="filter_order_email" class="grid2"></div>' +
+                         '  <div id="filter_order_country" class="grid2"></div>' +
+                         '  <div class="grid1 textR">' +
+                         '      <span>来源：</span>' +
+                         '  </div>' +
+                         '  <div id="filter_order_source" class="grid2"></div>' +
                          '  <div class="clear"></div>' +
                          '</div>';
             $('#olist_search').html(search);

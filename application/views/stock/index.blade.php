@@ -57,12 +57,16 @@ $(function(){
         oLanguage: { sUrl: '/js/plugins/tables/lang_cn.txt' },
         aoColumnDefs: [
                 { sTitle: "名称", aTargets: [0] },
-                { sTitle: "编码", aTargets: [1] },
-                { sTitle: "库存", aTargets: [2] },
-                { sTitle: "数目", aTargets: [3] },
-                { sTitle: "加入时间",aTargets: [4], bSearchable: false },
-                { sTitle: "操作", aTargets: [5], bSearchable: false, sClass: "tableActs", sWidth: '80px' }
+                { sTitle: "仓库", aTargets: [1] },
+                { sTitle: "编码", aTargets: [2] },
+                { sTitle: "可销售", aTargets: [3] },
+                { sTitle: "不可销售", aTargets: [4] },
+                { sTitle: "加入时间",aTargets: [5], bSearchable: false },
+                { sTitle: "操作", aTargets: [6], bSearchable: false, sClass: "tableActs", sWidth: '80px' }
             ],
+        fnDrawCallback: function() {
+            $('#stock_list_table').css('width', '100%');
+        }
     
     });
 });

@@ -1,6 +1,7 @@
 <?php
 
-class ChannelAPI_Amazon_Libs_Curl {
+class Amazon_Curl_Exception extends Exception{}
+class Amazon_Curl {
 
     private $param;
     private $ch;

@@ -75,20 +75,23 @@
         <script type="text/javascript">
             $(function() {
                 $('a[ckey="olist_search"]').click(function(){
-                    initSearch();
+                    if(!initsearch)
+                        initSearch();
                 });
             });
 
 
             function initSearch() {
+                initsearch = true;
                 oTable.columnFilter({
                     //bUseColVis: true,
                     aoColumns: [
                         null,
                         { type: "text", sSelector: "#filter_order_entity_id" },
                         { type: "text", sSelector: "#filter_order_name"},
-                        { type: "text", sSelector: "#filter_email"},
                         null,
+                        { type: "select", sSelector: "#filter_order_country", values: {{$countries}} },
+                        { type: "select", sSelector: "#filter_order_source", values: ['1']},
                         null,
                         null,null,null,null
                         ]

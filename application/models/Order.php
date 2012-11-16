@@ -129,6 +129,26 @@ class Order {
 
 
     /**
+     * 获取订单所属国家
+     *
+     * return object
+     */
+    public static function country() {
+        $countries = Cache::get('app.order.countries');
+
+        if(!$countries) {
+            $countries =  DB::table('orders')->where('shipping_country', '!=', '')
+                                             ->group_by('shipping_country')
+                                             ->lists('shipping_country');
+
+            Cache::put('app.order.countries', $countries, 3600);
+        }
+
+        return $countries;
+    }
+
+
+    /**
      * 获取可以发货的订单
      *
      * @param: $order_ids array 订单ID

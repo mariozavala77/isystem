@@ -1,6 +1,7 @@
 <?php
 
-class ChannelAPI_Amazon_Libs_Amazon {
+class Amazon_Exception extends Exception {}
+class Amazon {
 
     private $data = [];
     private $url = null; 

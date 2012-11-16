@@ -11,9 +11,10 @@ class Order_Controller extends Base_Controller {
 
     // 订单列表
     public function action_index() {
+        $countries = Order::country();
+        $countries = json_encode($countries);
         
-        $total['order'] = 12;
-        return View::make('order.list')->with('total', $total);
+        return View::make('order.list')->with('countries', $countries);
     }
 
     // 订单列表

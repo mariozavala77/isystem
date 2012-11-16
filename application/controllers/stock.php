@@ -16,7 +16,7 @@ class Stock_Controller extends Base_Controller {
 
     // 列表
     public function action_filter() {
-        $fields = [ 'stock.id', 'product_id', 'code', 'quantity', 'area', 'type' ];
+        $fields = [ 'product_id', 'storage_id', 'code', 'sellable', 'unsellable', 'created_at', 'stock.id' ];
         $stock = Stock::filter($fields);
         $data = Datatables::of($stock)->make();
 
