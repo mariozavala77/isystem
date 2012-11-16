@@ -1,9 +1,9 @@
 $(function() {
 get_task_message();
-get_product_info(entity_id);
-	$('#sendMessage').click(function(){
-		push_messge();
-	});
+get_entity_info();
+    $('#sendMessage').click(function(){
+        push_messge();
+    });
     $('#task_finish_confirm').dialog({
         autoOpen: false,
         resizable:false,
@@ -298,4 +298,47 @@ function push_task(){
         $('#task_confirm').dialog('close');
             $.jGrowl(response.message);
     },'json');
+}
+function get_entity_info(){
+    if(task_mod=='product'){
+        get_product_info();
+    }
+    switch(task_mod){
+        case 'product':
+            get_product_info();
+        break;
+        case 'product_sale':
+            get_product_sale_info();
+        break;
+        case 'order':
+            get_order_info();
+        break;
+    }
+}
+
+function get_product_sale_info(){
+    $.post('/product/sale/info',{sale_id:entity_id},function(response){
+        if(response.status=='fail'){
+            $.jGrowl(response.message);
+            return false;
+        }
+        $('#info').html(bulid_product_sale_info(response.message));
+    },'json');
+}
+
+
+function bulid_product_sale_info(data){
+    var html = new Array();
+    html.push('<table class="tDefault" width="100%"><tbody>');
+    var agent = data.agent;
+    if(agent){
+        html.push('<tr><td colspan="6">代理商信息</td></tr>');
+        html.push('<tr><td>公司名称:</td><td colspan="3">'+agent.company+'</td><td>电话:</td><td>'+agent.phone+'</td><tr/>');
+        html.push('<tr><td>公司地址:</td><td colspan="3">'+agent.address+'</td><td>电子邮件:</td><td>'+agent.email+'</td><tr/>');
+    }
+    html.push('<tr><td colspan="6">代理商产品信息</td></tr>');
+    //html.push('<td>商品名称：</td><td colspan="5">'+data.name+'</td>');
+    html.push('</tbody></table>');
+
+    return html.join('');
 }
