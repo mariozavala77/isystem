@@ -101,7 +101,7 @@ class Task_Controller extends Base_Controller {
 
     // 任务处理状态更新
     public function action_hidden(){
-        $tasks_id = intval(Input::get('tasks_id'));
+        $task_id = intval(Input::get('task_id'));
         $handle = intval(Input::get('handle'));
         $comment = Input::get('comment');
 
@@ -115,7 +115,7 @@ class Task_Controller extends Base_Controller {
 
         if(Tasks::update($tasks_id, $data)){
             $data = [
-                'taskid'     => $tasks_id,
+                'taskid'     => $task_id,
                 'uid'        => $this->user_id,
                 'comment'    => $comment,
                 'created_at' => time(),
