@@ -13,6 +13,7 @@ var task_id = '{{$task->id}}';
 var nowtime = '{{$nowtime}}';
 var entity_id = '{{$task->entity_id}}';
 var tasks_handle = 0;
+var task_mod ='{{$task->type}}';
 </script>
 <div id="content">
 	<div class="contentTop">
