@@ -31,6 +31,7 @@ class Product_Sale_Controller extends Base_Controller {
         $product_id = Input::get('product_id');
         $agent_id = Input::get('agent_id');
         $status = Input::get('status');
+        $task_id = Input::get('task_id');
         
         if(empty($sale_id) || empty($channel_id) || empty($product_id) || empty($agent_id) || empty($status)){
             return Response::json(['status' => 'fail', 'message' => '信息不完整']);
@@ -60,5 +61,24 @@ class Product_Sale_Controller extends Base_Controller {
     // 更新销售
     public function action_update(){
 
+    }
+
+    // 代理商认购商品信息
+    public function action_info(){
+        $sale_id = intval(Input::get('sale_id'));
+
+        if(empty($sale_id)){
+            return Response::json(['status' => 'fail', 'message' => '信息不完整']);
+        }
+
+        $sale_info = Product_Sale::info($sale_id);
+        if(empty($sale_info)){
+            return false;
+        }
+
+        $channel = Channel::info($sale_info->channel_id);
+        $sale_info->channel = $channel->name;
+        $sale_info->agent = Agent::info($sale_info->agent_id);
+        return Response::json(['status' => 'success', 'message' => $sale_info]);
     }
 }

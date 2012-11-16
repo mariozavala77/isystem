@@ -34,18 +34,17 @@ class Task_Controller extends Base_Controller {
 
         // 任务详细
         $task = Tasks::info($task_id);
-        $fields = ['tasks.type', 'users.username as form', 'tasks.content', 'tasks.level', 'tasks.created_at', 'tasks.id'];
-        $filter = ['parent_id' => $task->id];
-        // 任务的备注
-        $task_child  = Tasks::filter($fields, $filter)->order_by('created_at', 'asc')
-                                                      ->get();
-        // 根据type类型 拉取相应的数据
-        $interface = $task->type;
-        $task_info = $interface::info($task->entity_id);
+        if(empty($task)){
+            session::flash('tips', '无此任务');
+            return Redirect::back();
+        }
+        $fields = ['id', 'username'];
+        $users = User::filter($fields)->get();
 
-        return Response::make('task.' . $interface . '_info')->with('task' ,$task)
-                                                             ->with('task_child', $task_child)
-                                                             ->with('info', $task_info);
+        return View::make('task.' . $task->type . '_info')->with('task' ,$task)
+                                                          ->with('users', $users)
+                                                          ->with('user_id', $this->user_id)
+                                                          ->with('nowtime', time());
 
     }
 
@@ -66,40 +65,67 @@ class Task_Controller extends Base_Controller {
         }else{
             $request = [ 'status' => 'fail', 'message' => '处理失败'];
         }
+
+        return Response::json($request);
     }
 
     // 插入新任务
     public function action_insert(){
         $data = [
             'from_uid'   => $this->user_id,
-            'to_uid'     => Input::get('to_uid'),
-            'parent_id'  => Input::get('parent_id'),
-            'type'       => Input::get('type'),
-            'entity_id'  => Input::get('entity_id'),
-            'content'    => Input::get('content'),
-            'level'      => Input::get('level'),
+            'to_uid'     => intval(Input::get('to_uid')),
+            'parent_id'  => intval(Input::get('parent_id')),
+            'type'       => trim(Input::get('type')),
+            'entity_id'  => intval(Input::get('entity_id')),
+            'content'    => trim(Input::get('content')),
+            'level'      => intval(Input::get('level')),
             'created_at' => date('Y-m-d H:i:s'),
         ];
+
+        if(empty($data['to_uid']) || empty($data['type']) || empty($data['entity_id']) || empty($data['content'])){
+            return Response::json([ 'status' => 'fail', 'message' => '信息不完整']);
+        }
+
+        if(!in_array($data['type'], ['product', 'order', 'product_sale'])){
+            return Response::json([ 'status' => 'fail', 'message' => '任务类型正确']);
+        }
 
         if(Tasks::insert($data)){
             $request = [ 'status' => 'success', 'message' => '处理成功'];
         }else{
             $request = [ 'status' => 'fail', 'message' => '处理失败'];
         }
+
+        return Response::json($request);
     }
 
     // 任务处理状态更新
     public function action_hidden(){
-        $tasks_id = Input::get('tasks_id');
+        $tasks_id = intval(Input::get('tasks_id'));
+        $handle = intval(Input::get('handle'));
+        $comment = Input::get('comment');
+
+        if(empty($tasks_id) || empty($comment)){
+            return Response::json([ 'status' => 'fail', 'message' => '信息不完整']);
+        }
         $data = [
-            'handle' => 1,
+            'handle' => $handle,
             'modified_at' => date('Y-m-d H:i:s')
         ];
 
         if(Tasks::update($tasks_id, $data)){
+            $data = [
+                'taskid'     => $tasks_id,
+                'uid'        => $this->user_id,
+                'comment'    => $comment,
+                'created_at' => time(),
+            ];
+            Tasks_Comment::insert($data);
             $request = [ 'status' => 'success', 'message' => '处理成功'];
         }else{
             $request = [ 'status' => 'fail', 'message' => '处理失败'];
         }
+
+        return Response::json($request);
     }
 }

@@ -46,6 +46,7 @@ Route::group(array('before' => 'auth'), function() {
     Route::controller('order');
     Route::controller('agent');
     Route::controller('stock');
+    Route::controller('task.comment');
     Route::controller('task');
     Route::controller('user.group');
     Route::controller('user.permission');

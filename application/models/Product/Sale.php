@@ -65,7 +65,7 @@ class Product_Sale {
      *
      */
     public static function info($sale_id){
-
+        return DB::table('products_sale')->where('id', '=', $sale_id)->first();
     }
     
 }

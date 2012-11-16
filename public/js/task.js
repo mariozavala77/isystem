@@ -1,5 +1,5 @@
 var task_id=0;
-
+//$('.dropdown-menu').dropdown();
 $(function() {
             tTable = $('#task_list_table').dataTable({
                 bSort: false,
@@ -17,13 +17,12 @@ $(function() {
                     { sTitle: "内容", aTargets: [2] },
                     { sTitle: "级别", aTargets: [3], sWidth: '30px' },
                     { sTitle: "分配时间", aTargets: [4], sWidth: '110px' },
-                    { sTitle: "操作", aTargets: [5], bSearchable: false, sClass: "tableToolbar", sWidth: "80px" },
+                    { sTitle: "操作", aTargets: [5], bSearchable: false, sClass: "tableActs", sWidth: "100px" },
                 ],
                 fnRowCallback: function(nRow,aData, iDisplayIndex, iDisplayIndexFull) {
                     var id = aData[5];
-                    var operation = '<a href="/task/edit?category_id=' + id + '" class="tablectrl_small bDefault tipS" original-title="编辑"><span class="iconb" data-icon=""></span></a>' + 
-                                    '<a href="javascript:void(0);" data-id="' + id + '" class="tablectrl_small bDefault tipS" original-title="删除" onclick="handle('+id+')"><span class="iconb" data-icon=""></span></a>'+
-                                    '<div class="btn-group"><a href="#" class="tablectrl_small bDefault" data-toggle="dropdown"><span class="iconb" data-icon="&#xe1f7;"></span></a><ul class="dropdown-menu pull-right"><li><a href="#"><span class="icos-add"></span>Add</a></li><li><a href="#"><span class="icos-trash"></span>Remove</a></li><li><a href="#" class=""><span class="icos-pencil"></span>Edit</a></li><li><a href="#" class=""><span class="icos-heart"></span>Do whatever you like</a></li></ul></div>';
+                    var operation = '<a href="/task/info?task_id=' + id + '" class="tablectrl_small bDefault tipS" original-title="详情"><span class="iconb" data-icon=""></span></a>' + 
+                                    '<a href="javascript:void(0);" data-id="' + id + '" class="tablectrl_small bDefault tipS" original-title="标记处理状态" onclick="handle('+id+')"><span class="iconb" data-icon=""></span></a>';        
                     $('td:eq(5)', nRow).html(operation);
                     if(aData[1]){
                         var username=aData[1];
@@ -40,10 +39,17 @@ $(function() {
         modal: true,
         buttons: {
             "已处理": function () {
-                $.post('/channel/hidden',{tasks_id:tasks_id},function(response){
-                    $('#task_finish_confirm').dialog("close");
+                var msg = $('#message').val();
+                if(empty(msg)){
+                    $('#message').focus();
+                    $.jGrowl('请填写备注信息！');
+                    return false;
+                }
+                $.post('/task/hidden',{tasks_id:tasks_id,handle:1,comment:msg},function(response){
                     $.jGrowl(response.message);
                     if(response.status=='success'){
+                        $('#message').val('');
+                        $(this).dialog("close");
                         location.reload();
                     }
                 },'json');
@@ -53,10 +59,23 @@ $(function() {
             }
         }
     });
-
+    $('#task_finish').dialog({
+        autoOpen: false,
+        resizable:false,
+        modal: true,
+        buttons: {
+            "确认": function () {
+                $(this).dialog("close");
+                $('#task_finish_confirm').dialog('open');
+            },
+            "取消": function () {
+                $(this).dialog("close");
+            }
+        }
+    });
 });
 function handle(id){
     task_id = id;
-    $('#task_finish_confirm').dialog('open');
+    $('#task_finish').dialog('open');
     return false;
 }

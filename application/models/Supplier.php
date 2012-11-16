@@ -27,6 +27,49 @@ class Supplier {
 
         return $query;
     }
-}
 
-?>
+    /**
+     * 获取单条供应商的信息
+     *
+     * @param: $supplier_id integer 供应商ID
+     *
+     * return object
+     */
+    public static function info($supplier_id){
+        return DB::table('suppliers')->where('id', '=', $supplier_id)->first();
+    }
+
+    /**
+     * 插入供应商信息
+     *
+     * @param: $data array 数据
+     *
+     * return boolean
+     */
+    public static function insert($data){
+        return DB::table('suppliers')->insert($data);
+    }
+
+    /**
+     * 更新供应商信息
+     *
+     * @param: $supplier_id integer 供应商ID
+     * @param: $data        array   数据
+     *
+     * return boolean
+     */
+    public static function update($supplier_id, $data){
+        return DB::table('suppliers')->where('id', '=', $supplier_id)->update($data);
+    }
+
+    /**
+     * 删除供应商
+     *
+     * @param $supplier_id integer 供应商ID
+     *
+     * retrun boolean
+     */
+    public static function delete($supplier_id){
+        return DB::table('suppliers')->where('id', '=', $supplier_id)->delete();
+    }
+}

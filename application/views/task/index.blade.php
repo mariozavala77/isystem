@@ -48,7 +48,7 @@
         <div class="widget">
             <div class="whead"><h6>任务列表</h6><div class="clear"></div></div>
             <div class="shownpars">
-                <table cellpadding="0" cellspacing="0" border="0" class="dTable" id="task_list_table"></table>
+                <table cellpadding="0" cellspacing="0" border="0" class="dTable tDefault" id="task_list_table"></table>
             </div>
         </div>
     </div>
@@ -57,5 +57,9 @@
         <p>你确认标记此任务已完成?</p>
     </div>
     <!-- delete confirm ends-->
+    <div id="task_finish" style="display:none" title="提示">
+        <p><label>备注：</label>
+           <textarea rows="8" cols="" name="textarea" class="auto" placeholder="备注" id="message"></textarea></p>
+    </div>
 </div>
 @endsection
