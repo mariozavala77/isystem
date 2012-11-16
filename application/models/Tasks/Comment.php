@@ -6,10 +6,10 @@
  * @copyright: Copyright (c) 2012 UFCEC Tech All Rights Reserved.
  * @version: $Id$
  */
-class Taks_Comment {
+class Tasks_Comment {
 
     /**
-     * 任务列表
+     * 留言列表
      *
      * @param: $fields array 字段
      * @param: $filter array 过滤条件
@@ -17,8 +17,8 @@ class Taks_Comment {
      * return object
      */
     public static function filter($fields, $filter = []) {
-        $query = DB::table('tasks_comment')->left_join('users', 'tasks_comment.uid', '=', 'users.id')
-                                           ->select($fields);
+        $query = DB::table('tasks_comment as tc')->left_join('users', 'tc.uid', '=', 'users.id')
+                                                 ->select($fields);
 
         foreach ($filter as $key => $value) {
             if(!empty($value)){

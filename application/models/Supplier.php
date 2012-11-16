@@ -36,7 +36,7 @@ class Supplier {
      * return object
      */
     public static function info($supplier_id){
-        return DB::table('suppliers')->where('id', '=', $Supplier_id)->first();
+        return DB::table('suppliers')->where('id', '=', $supplier_id)->first();
     }
 
     /**
@@ -65,7 +65,6 @@ class Supplier {
     /**
      * 删除供应商
      *
-     * @static
      * @param $supplier_id integer 供应商ID
      *
      * retrun boolean

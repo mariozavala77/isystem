@@ -31,7 +31,7 @@ class Product_Controller extends Base_Controller {
             $product_id = $datum[1];
             $image      = Product_Image::get($product_id, 1);
             $root       = '/uploads/images/products/';
-            $data['aaData'][$key][1] = UploadHelper::path($root, $image->image, true);
+            $data['aaData'][$key][1] = empty($image)?'':UploadHelper::path($root, $image->image, true);
 
             $category = Category::info($datum[4]);
             $data['aaData'][$key][4] = $category->name;
@@ -208,5 +208,38 @@ class Product_Controller extends Base_Controller {
 
         return Response::json(['status'=>'success', 'message'=>'删除成功！']);
     }
+
+    // 产品详情
+    public function action_info(){
+        $product_id = intval(Input::get('product_id'));
+
+        if(empty($product_id)){
+            return Response::json([ 'status' => 'fail', 'message' => '参数丢失']);
+        }
+        
+        $product_info = Product::info($product_id);
+
+        if(empty($product_info)){
+            return Response::json([ 'status' => 'fail', 'message' => '没有找到产品信息']);   
+        }
+
+        $stock_fields = ['stock.id', 'stock.sku', 'stock.quantity', 'storage.area', 'storage.type'];
+        $stock_filter = ['stock.product_id' => $product_id];
+        // 仓储信息
+        $product_info->stock = Stock::filter($stock_fields, $stock_filter)->get();
+        // 产品分类
+        $category = Category::info($product_info->category_id);
+
+        $product_info->category = $category->name;
+        // 供应商信息
+        $suppliers = Supplier::info($product_info->supplier_id);
+
+        $product_info->supplier = $suppliers->company;
+
+        $devel = User::info($product_info->devel_id);
+
+        $product_info->devel = $devel->username;
+
+        return Response::json(['status'=>'success', 'message'=>$product_info]);
+    }
 }
-?>

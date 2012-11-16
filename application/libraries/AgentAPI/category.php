@@ -40,7 +40,7 @@ class AgentAPI_Category extends AgentAPI_Base
         $tree  = [];
         foreach ($items as $item){
             if (isset($items[$item['parent_id']])){
-                $items[$item['parent_id']]['child'][] = &$items[$item['id']];
+                $items[$item['parent_id']]['children'][] = &$items[$item['id']];
             }else{
                 $tree[] = &$items[$item['id']];
             }

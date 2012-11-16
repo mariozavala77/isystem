@@ -177,12 +177,12 @@ if ( ! Request::cli() and Config::get('session.driver') !== '')
 // --------------------------------------------------------------
 // 定义产品导入文件存放目录
 // --------------------------------------------------------------
-set_path('product_import', path('base').'storage'.DS.'product'.DS.'import'.DS.date('Ymd').DS);
+set_path('product_import', path('storage').'product'.DS.'import'.DS.date('Ymd').DS);
 
 // --------------------------------------------------------------
 // 定义产品图片存放目录
 // --------------------------------------------------------------
-set_path('product_image', path('base').'public'.DS.'uploads'.DS.'images'.DS.'products'.DS);
+set_path('product_image', path('public').'uploads'.DS.'images'.DS.'products'.DS);
 
 // --------------------------------------------------------------
 // 定义订单状态

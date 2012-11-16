@@ -21,6 +21,17 @@ class AgentAPI_Product extends AgentAPI_Base
     public static function lists($params){
         $fileds = ['p.id', 'category_id','price', 'min_price', 'max_price', 'weight', 'size', 'name', 'description'];
         $filter = ['language'=>'cn'];
+        $filters = ['category_id'];
+        foreach($filters as $value){
+            if(!empty($params[$value])){
+                $filter[$value] = $params[$value];
+            }
+        }
+        /*$category_id = isset($params['category_id'])?intval($params['category_id']):0;
+        if(!empty($category_id)){
+            var_dump(Category::children($category_id, $repeat = true));
+        }
+        exit;*/
         $table = Product::filter($fileds, $filter);
         $count = $table->count();
 
@@ -122,6 +133,12 @@ class AgentAPI_Product extends AgentAPI_Base
 
         $img = Product_Image::get($filter['product_id']);
 
-        return ['info' => $info[0], 'img' => $img];
+        $root = '/uploads/images/products/';
+        
+        foreach($img as $k => $val){
+            $img[$k]= URL::to(str_replace('\\', '/', UploadHelper::path($root, trim($val->image), true)));
+        }
+
+        return ['info' => $info[0], 'images' => $img];
     }
 }

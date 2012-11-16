@@ -43,15 +43,16 @@ class Product {
                                           ->where('p.id', '=', $product_id)
                                           ->where('pe.language', '=', $language)
                                           ->first();
-
-        $img = DB::table('products_images')->where('product_id', '=', $product_id)->get();
-        $root = '/uploads/images/products/';
-        if(!empty($img)){
-            foreach($img as $k => $val){
-                $img[$k]= URL::to(str_replace('\\', '/', UploadHelper::path($root, trim($val->image), true)));
+        if(!empty($info)){
+            $img = DB::table('products_images')->where('product_id', '=', $product_id)->get();
+            if(!empty($img)){
+                $root = '/uploads/images/products/';
+                foreach($img as $k => $val){
+                    $img[$k]->url = URL::to(str_replace('\\', '/', UploadHelper::path($root, trim($val->image), true)));
+                }
             }
+            $info->images = $img;
         }
-        $info->images = $img;
         return $info;
     }
 

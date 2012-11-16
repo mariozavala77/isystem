@@ -66,5 +66,15 @@ class User {
         Sentry::user()->create($data);
     }
 
+    /**
+     * 获取单条用户的信息
+     *
+     * @param: $users_id integer 用户ID
+     *
+     * return object
+     */
+    public static function info($users_id){
+        return DB::table('users')->where('id', '=', $users_id)->first();
+    }
+
 }
-?>
