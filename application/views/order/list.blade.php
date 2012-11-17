@@ -31,7 +31,7 @@
     <!-- Main content begins -->
     <div class="wrapper">
 
-        <div class="mt30 ">
+        <div class="mt15">
             <div class="clear"></div>
         </div>
         <!-- orders list begins -->
@@ -47,7 +47,7 @@
                     <a href="javascript:void(0);" ckey="olist_options" class="tOptions tipS" title="设置"><img src="{{ URL::base() }}/images/icons/options" alt=""/></a>
                 </div>
                 <table cellpadding="0" cellspacing="0" border="0" class="dTable" id="order_list_table">
-                    <tfoot>
+                    <tfoot style="display: none">
                         <tr>
                             <td></td>
                             <td></td>

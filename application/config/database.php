@@ -69,8 +69,8 @@ return array(
 
         'mysql' => array(
             'driver'   => 'mysql',
-            'host'     => 'localhost',
-            'database' => 'order_system',
+            'host'     => '192.168.1.110',
+            'database' => 'ufc_isystem',
             'username' => 'root',
             'password' => '123456',
             'charset'  => 'utf8',

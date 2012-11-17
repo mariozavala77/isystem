@@ -113,7 +113,7 @@ class ChannelAPI_Amazon_Order {
     private function _getOrders( $options ) {
         $param = $this->_getParam($options);
 
-        $curl = new ChannelAPI_Amazon_Libs_Curl();
+        $curl = new Amazon_Curl();
         $curl->setParam($param);
         $data = $curl->perform();
 
@@ -147,7 +147,7 @@ class ChannelAPI_Amazon_Order {
      * return array 转换后参数
      */
     private function _getParam( $options ) {
-        $amazon = new ChannelAPI_Amazon_Libs_Amazon();
+        $amazon = new Amazon();
         $amazon->setData($options, $this->_options['Server']);
         $data = $amazon->combine();
 

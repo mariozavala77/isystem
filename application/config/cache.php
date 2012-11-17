@@ -68,7 +68,7 @@ return array(
 
     ),  
     'redis' => [
-        ['host' => '127.0.0.1', 'port' => 6379, 'weight' => 100],
+        ['host' => '192.168.1.110', 'port' => 6379, 'weight' => 100],
     ]
 
 );

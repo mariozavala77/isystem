@@ -76,7 +76,7 @@ $(function(){
                          '  <div id="filter_order_name" class="grid2"></div>' +
                          '  <div class="clear"></div>' +
                          '</div>' + 
-                         '<div class="formRow">' +
+                         '<div class="formRow" style="border-bottom: 0">' +
                          '  <div class="grid1 textR">' +
                          '      <span>国家：</span>' +
                          '  </div>' +
