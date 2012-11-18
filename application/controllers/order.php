@@ -45,11 +45,19 @@ class Order_Controller extends Base_Controller {
         return Response::json($results);
     }
 
+    // test items
+    public function action_item() {
+        $channels = Channel::filter(['accredit', 'synced_at', 'type', 'id'])->get();
+        $results = Item::sync($channels);
+        print_r($results);
+    }
+
     // 订单详情
     public function action_info() {
         $order_id = Input::get('order_id');
 
         $order = Order::info($order_id);
+
 
         $channel = Channel::info($order->channel_id);
         $results = [
@@ -58,7 +66,7 @@ class Order_Controller extends Base_Controller {
             'total_price'    => $order->currency . ' ' . $order->total_price,
             'broken'         => $order->broken ? '正常' : '异常',
             'auto'           => $order->auto ? '是' : '否',
-            'is_sync'        => $order->is_sync ? '是' : '否',
+            'is_sync'        => $order->is_synced ? '是' : '否',
             'channel'        => $channel->name,
             'shipment_level' => $order->shipment_level,
             'purchased_at'   => $order->purchased_at,
@@ -73,7 +81,7 @@ class Order_Controller extends Base_Controller {
                                 $order->shipping_city . ' ' . $order->shipping_state_or_region . ' ' . $order->shipping_country . '<br />zip:' .
                                 $order->shipping_postcode . '<br />tel:' .
                                 $order->shipping_phone : '',
-            'products'        => '暂无',
+            'products'       => Item::info($order_id),
             ];
 
         return Response::json($results);

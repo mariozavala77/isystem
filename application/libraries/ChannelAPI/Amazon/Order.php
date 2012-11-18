@@ -48,10 +48,15 @@ class ChannelAPI_Amazon_Order {
         if( !$options['LastUpdatedAt'] ) return false;
         $options['LastUpdatedAfter'] = date('c', strtotime($options['LastUpdatedAt']));
         $options['Action'] = 'ListOrders';
+        $options['OrderStatus.Status.1'] = 'Unshipped';
+        $options['OrderStatus.Status.2'] = 'PartiallyShipped';
+        $options['OrderStatus.Status.3'] = 'Shipped';
+        $options['OrderStatus.Status.4'] = 'Canceled';
+        $options['OrderStatus.Status.5'] = 'Unfulfillable';
         unset($options['LastUpdatedAt'], $options['Server']);
         
         $data = $this->_getOrders($options);
-        $new_data = [];
+        $orders = [];
         foreach($data as $datum) {
 
             // 地址处理，多个地址用|分割
@@ -59,7 +64,7 @@ class ChannelAPI_Amazon_Order {
             $address .= isset($datum['ShippingAddress']['AddressLine2']) ? $datum['ShippingAddress']['AddressLine2'] . '|' : '';
             $address .= isset($datum['ShippingAddress']['AddressLine1']) ? $datum['ShippingAddress']['AddressLine1'] : '';
 
-            $new_data[] = [
+            $orders[] = [
                 'entity_id'                => isset($datum['AmazonOrderId']) ? $datum['AmazonOrderId'] : '',
                 'name'                     => isset($datum['BuyerName']) ? $datum['BuyerName'] : '',
                 'email'                    => isset($datum['BuyerEmail']) ? $datum['BuyerEmail'] : '',
@@ -81,7 +86,37 @@ class ChannelAPI_Amazon_Order {
                 ];
         }
 
-        return [ 'synced_at' => $this->_last_updated, 'data' => $new_data ];
+        return [ 'synced_at' => $this->_last_updated, 'data' => $orders ];
+    }
+
+    /**
+     * 获取订单下产品
+     *
+     * @param: $options array 附近参数
+     *
+     * return array
+     */
+    public function items($options) {
+        $options = array_merge($this->_options, $options);
+        if(!$options['entity_id']) return false;
+        $options['AmazonOrderId'] = $options['entity_id'];
+        $options['Action'] = 'ListOrderItems';
+        unset($options['entity_id']);
+
+        $data = $this->_getItems($options);
+
+        $items = [];
+        foreach($data as $datum) {
+            $items[] = [
+                'entity_id'      => $datum['OrderItemId'],
+                'sku'            => $datum['SellerSKU'],
+                'quantity'       => $datum['QuantityOrdered'],
+                'price'          => isset($datum['ItemPrice']['Amount']) ? $datum['ItemPrice']['Amount'] : 0,
+                'shipping_price' => isset($datum['ShippingPrice']['Amount']) ? $datum['ShippingPrice']['Amount'] : 0,
+                ];
+        }
+
+        return $items;
     }
 
     /**
@@ -106,22 +141,20 @@ class ChannelAPI_Amazon_Order {
     /**
      * 获取订单
      *
-     * $options array API请求参数
+     * @param: $options array API请求参数
      *
      * return array
      */
     private function _getOrders( $options ) {
-        $param = $this->_getParam($options);
+        $params = $this->_getParam($options);
 
         $curl = new Amazon_Curl();
-        $curl->setParam($param);
+        $curl->setParam($params);
         $data = $curl->perform();
 
         $orders = [];
         if($data['httpcode'] == 200) {
             $data = $this->_xml2Array($data['data']);
-
-            // 订单
             if( isset($data['ListOrdersResult']) || isset($data['ListOrdersByNextTokenResult']) ) {
                 $result = isset($data['ListOrdersResult']) ? $data['ListOrdersResult'] : $data['ListOrdersByNextTokenResult'];
                 if(isset($result['Orders']['Order'])) {
@@ -137,6 +170,40 @@ class ChannelAPI_Amazon_Order {
         }
 
         return $orders;
+    }
+
+    /**
+     * 获取产品
+     *
+     * @param: $options array API请求参数
+     *
+     * return array
+     */
+    private function _getItems($options) {
+        $params = $this->_getParam($options);
+
+        $curl = new Amazon_Curl();
+        $curl->setParam($params);
+        $data = $curl->perform();
+
+        $items = [];
+        if($data['httpcode'] == 200) {
+            $data = $this->_xml2Array($data['data']);
+            if(isset($data['ListOrderItemsResult'])) {
+                $result = $data['ListOrderItemsResult'];
+                if($result['OrderItems']['OrderItem']) {
+                    $item = $result['OrderItems']['OrderItem'];
+                    if(isset($item['OrderItemId'])) 
+                        $items[0] = $item;
+                    else 
+                        $items = $item;
+                }
+            }
+        } else {
+            Throw new Amazon_Exception("抓取订单产品失败。[Entity ID:]{$options['AmazonOrderId']}");
+        }
+
+        return $items;
     }
 
     /**

@@ -13,12 +13,19 @@ class Product_Sale {
     /**
      * 销售列表
      *
-     * @param: $fields array  字段
+     * @param: $fields array 字段
+     * @param: $filter array 附加过滤
      *
      * return object
      */
-    public static function filter($fields) {
-        return DB::table('products_sale')->select($fields);
+    public static function filter($fields, $filter = []) {
+        $query = DB::table('products_sale')->select($fields);
+
+        foreach ($filter as $key => $value) {
+            $query = $query->where($key, '=', $value);
+        }
+
+        return $query;
     }
 
     /**

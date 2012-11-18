@@ -34,10 +34,10 @@ class Order {
      *
      * @param: $data array  新增数据
      *
-     * return void
+     * return integer
      */
     public static function insert( $data ) {
-        DB::table('orders')->insert( $data );
+        return DB::table('orders')->insert_get_id( $data );
     }
 
     /**
@@ -63,12 +63,19 @@ class Order {
      * 订单列表
      *
      * @param: $fields array 字段
+     * @param: $filter array 附加过滤
      *
      * return object
      */
-    public static function filter( $fields ) {
+    public static function filter($fields, $filter = []) {
+        $query = DB::table('orders')->left_join('channels', 'orders.channel_id', '=', 'channels.id')
+                                    ->select( $fields );
 
-        return DB::table('orders')->left_join('channels', 'orders.channel_id', '=', 'channels.id')->select( $fields )->order_by('orders.id', 'DESC');
+        foreach($filter as $key => $value) {
+            $query = $query->where($key, '=', $value);
+        }
+
+        return $query->order_by('orders.id', 'DESC');
     }
 
     /**
@@ -85,7 +92,7 @@ class Order {
     /**
      * 同步所有订单
      *
-     * @param: $channel  object  渠道信息
+     * @param: $channels object 渠道信息
      *
      * return void
      */
@@ -94,6 +101,8 @@ class Order {
             $interface = $channel->type;
             $options = unserialize($channel->accredit);
             $api = new ChannelAPI($interface, $options);
+
+            // 订单处理
             $data = $api->order()->sync(['LastUpdatedAt' => $channel->synced_at]);
             if(!empty($data['data'])) {
                 foreach($data['data'] as $datum) {
@@ -101,32 +110,45 @@ class Order {
                     $datum['channel_id'] = $channel->id;
 
                     // 如果订单存在
-                    if($order_info = Order::exists( ['entity_id' => $datum['entity_id'], 'channel_id' => $datum['channel_id'] ])) {
+                    if($order_info = static::exists(['entity_id' => $datum['entity_id'], 'channel_id' => $datum['channel_id'] ])) {
                         // 如果渠道端状态有更新，覆盖数据
-                        if( $datum['updated_at'] > $order_info->updated_at && $datum['status'] > $order_info->status ) {
+                        if( $datum['updated_at'] > $order_info->updated_at && $datum['status'] != $order_info->status ) {
                             foreach($datum as $key => $value) {
                                 if(empty($value)) {
                                     unset($datum[$key]);
                                 }
                             }
-                            Order::update($order_info->id, $datum);
+                            static::update($order_info->id, $datum);
                         // 如果内控端状态有更新，更新渠道
-                        } else if( $datum['updated_at'] < $order_info->updated_at && $datum['status'] < $order_info->status ) { 
-                            Order::sync($order_info->id);
+                        } else if( $datum['updated_at'] < $order_info->updated_at && $datum['status'] != $order_info->status ) { 
+                            // 写队列
+                            static::push($order_info->id);
                         }
                     // 订单不存在插入订单
                     } else {
                         $datum['created_at']  = date('Y-m-d H:i:s');
                         $datum['modified_at'] = date('Y-m-d H:i:s');
-                        Order::insert($datum);
+                        static::insert($datum);
                     }
                 }
-
                 Channel::update($channel->id, ['synced_at' => $data['synced_at']]);
             }
+
         }
+        echo 'ok';
     }
 
+    /**
+     * 订单更新推送到渠道
+     *
+     * @param: $order_id integer 订单ID
+     *
+     * 
+     */
+    public static function push($order_id) {
+    
+        return false;
+    }
 
     /**
      * 获取订单所属国家
@@ -134,7 +156,7 @@ class Order {
      * return object
      */
     public static function country() {
-        $countries = Cache::get('app.order.countries');
+        $countries = Cache::get('isystem.order.countries');
 
         if(!$countries) {
             $countries =  DB::table('orders')->where('shipping_country', '!=', '')
@@ -146,7 +168,6 @@ class Order {
 
         return $countries;
     }
-
 
     /**
      * 获取可以发货的订单
