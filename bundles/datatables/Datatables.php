@@ -97,11 +97,10 @@ class Datatables
 
     private function init()
     {
+        $this->filtering();
         $this->count();
         $this->paging();
         $this->ordering();
-        $this->filtering();
-
     }
 
 

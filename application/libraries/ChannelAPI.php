@@ -25,11 +25,17 @@ class ChannelAPI {
     }
 
     /**
-     * 订单
-     *
+     * 订单处理
      */
     public function order() {
         return $this->_api->order();
+    }
+
+    /**
+     * 销售产品处理
+     */
+    public function product() {
+        return $this->_api->product();
     }
 }
 ?>

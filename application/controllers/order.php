@@ -12,9 +12,13 @@ class Order_Controller extends Base_Controller {
     // 订单列表
     public function action_index() {
         $countries = Order::country();
-        $countries = json_encode($countries);
+        $status = Config::get('application.order_status');
+        $fields = ['id', 'name'];
+        $channels = Channel::filter($fields)->get();
         
-        return View::make('order.list')->with('countries', $countries);
+        return View::make('order.list')->with('countries', $countries)
+                                       ->with('status', $status)
+                                       ->with('channels', $channels);
     }
 
     // 订单列表
@@ -22,11 +26,13 @@ class Order_Controller extends Base_Controller {
         $fields = [ 
             'orders.id', 'entity_id', 'orders.name', 'email', 'total_price', 'currency', 'shipping_name',
             'shipping_address', 'shipping_city', 'shipping_state_or_region', 'shipping_country',    
-            'shipping_postcode', 'shipping_phone', 'channels.name as scource', 
+            'shipping_postcode', 'shipping_phone', 'channels.name as source', 
             'purchased_at', 'payment_method', 'orders.status', 'orders.id as option'
             ];
+
+        $filter = ['is_auto' => 0];
         
-        $orders = Order::filter($fields);
+        $orders = Order::filter($fields, $filter);
         $data = Datatables::of($orders)->make();
 
         foreach($data['aaData'] as $key => $datum) {
@@ -45,11 +51,19 @@ class Order_Controller extends Base_Controller {
         return Response::json($results);
     }
 
+    // test items
+    public function action_item() {
+        $channels = Channel::filter(['accredit', 'synced_at', 'type', 'id'])->get();
+        $results = Item::sync($channels);
+        print_r($results);
+    }
+
     // 订单详情
     public function action_info() {
         $order_id = Input::get('order_id');
 
         $order = Order::info($order_id);
+
 
         $channel = Channel::info($order->channel_id);
         $results = [
@@ -60,7 +74,7 @@ class Order_Controller extends Base_Controller {
             'auto'           => $order->is_auto ? '是' : '否',
             'is_sync'        => $order->is_synced ? '是' : '否',
             'channel'        => $channel->name,
-            'shipment_level' => $order->shipment_level,
+            'shipment_level' => Config::get('application.order_shipment_level')[$order->shipment_level],
             'purchased_at'   => $order->purchased_at,
             'payment_method' => $order->payment_method,
             'updated_at'     => $order->updated_at,
@@ -73,7 +87,7 @@ class Order_Controller extends Base_Controller {
                                 $order->shipping_city . ' ' . $order->shipping_state_or_region . ' ' . $order->shipping_country . '<br />zip:' .
                                 $order->shipping_postcode . '<br />tel:' .
                                 $order->shipping_phone : '',
-            'products'        => '暂无',
+            'products'       => Item::info($order_id),
             ];
 
         return Response::json($results);

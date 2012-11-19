@@ -29,7 +29,7 @@
     <!-- Main content begins -->
     <div class="wrapper">
 
-        <div style="margin-top: 35px">
+        <div class="mt15">
             <a href="{{ URL::to('product/import') }}" class="buttonM bDefault floatR ml10"><span class="icon-home-5"></span><span>导入产品</span></a>
             <a href="{{ URL::to('product/add') }}" class="buttonM bDefault floatR ml10"><span class="icon-home-5"></span><span>添加产品</span></a>
             <div class="clear"></div>

@@ -31,6 +31,26 @@ class Storage {
     public static function info($storage_id) {
         return DB::table('storage')->where('id', '=', $storage_id)->first();
     }
+
+   /**
+    * 列表
+    *
+    * @param: $fields array 字段
+    * @param: $filter array 附加搜索
+    *
+    * return object
+    */
+    public static function filter($fields, $filter = []) {
+
+        $query = DB::table('storage')->select($fields);
+
+        foreach($filter as $key => $value) {
+            $query = $query->where($key, '=', $value);
+        }
+
+        return $query;
+    }
+
 }
 
 

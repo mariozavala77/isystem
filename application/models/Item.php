@@ -21,6 +21,42 @@ class Item {
     }
 
     /**
+     * 获取订单信息
+     *
+     * 表格版
+     *
+     * @param: $order_id integer 订单ID
+     *
+     * return string
+     */
+    public static function info($order_id) {
+        $items = static::get($order_id);
+
+        $fields = ['product_id'];
+        foreach($items as $item) {
+            $filter = ['sku' => $item->sku];
+            $product_id = Product_Sale::filter($fields, $filter)->only('product_id');
+            if($product_id) {
+                $product = Product::info($product_id);
+                $item->name = $product->name;
+                $fields = ['id', 'type', 'area'];
+                $storages = Storage::filter($fields)->get();
+                $item->stock = '';
+                foreach($storages as $storage) {
+                    $stock = Stock::info($product_id, $storage->id);
+                    $stock = $stock ? $stock : 0;
+                    $item->stock .= $storage->area . '(' . $storage->type . '):' . $stock . '个<br/>';
+                }
+            } else {
+                $item->name = '<span class="red">未关联产品池，无法获取名称。</span>';
+                $item->stock = '无法获取';
+            }
+        }
+
+        return View::make('block.item')->with('items', $items)->render();
+    }
+
+    /**
      * 插入订单产品信息
      *
      * @param: $data array 数据
@@ -29,5 +65,54 @@ class Item {
      */
     public static function insert($data) {
         return DB::table('items')->insert($data);
+    }
+
+    /**
+     * 是否存在此订单产品
+     *
+     * @param: $order_id  integer 订单ID
+     * @param: $entity_id string 产品实际ID
+     *
+     * return integer
+     */
+    public static function exists($order_id, $entity_id) {
+        return DB::table('items')->where('order_id', '=', $order_id)
+                                 ->where('entity_id', '=', $entity_id)
+                                 ->only('id');
+    }
+
+    /**
+     * 同步订单产品
+     *
+     * @param: $channels object 渠道信息
+     *
+     * return void
+     */
+    public static function sync($channels) {
+        foreach($channels as $channel) {
+            $fields = ['orders.id', 'orders.entity_id'];
+            $filter = ['channel_id' => $channel->id, 'is_crawled' => 0];
+            $orders = Order::filter($fields, $filter)->get();
+
+            if(!$orders) continue;
+
+            $interface = $channel->type;
+            $options = unserialize($channel->accredit);
+            $api = new ChannelAPI($interface, $options);
+            foreach($orders as $order) {
+                $options['entity_id'] = $order->entity_id;
+                $data = $api->order()->items($options);
+                foreach($data as $datum) {
+                    $item_id = static::exists($order->id, $datum['entity_id']);
+                    if(!$item_id) {
+                        $datum['order_id'] = $order->id;
+                        static::insert($datum);
+                    }
+                }
+
+                $data = ['is_crawled' => 1];
+                Order::update($order->id, $data);
+            }
+        }
     }
 }

@@ -5,6 +5,7 @@ $(function(){
         bProcessing: true,
         bFilter: true,
         bServerSide: true,
+        sServerMethod: 'POST',
         bJQueryUI: false,
         sPaginationType: 'full_numbers',
         sAjaxSource: '/order/filter',
@@ -24,21 +25,26 @@ $(function(){
             { sTitle: "国家", aTargets: [10], sWidth: '30px' },
             { bVisible: false, aTargets: [11] }, // 邮编
             { bVisible: false, aTargets: [12] }, // 电话
-            { sTitle: "来源", bSearchable: false, aTargets: [13], sWidth: '90px' },  // 来源
+            { sTitle: "来源", aTargets: [13], sWidth: '90px' },  // 来源
             { sTitle: "购买时间", aTargets: [14], sWidth: '120px' },
             { bVisible: false, aTargets: [15] }, // 支付方式
-            { sTitle: "状态", aTargets: [16], bSearchable: false, sWidth: '40px' },
+            { sTitle: "状态", aTargets: [16], sWidth: '40px' },
             { sTitle: "操作", aTargets: [17], bSearchable: false, sClass: "tableActs", sWidth: '80px' },
         ],
         fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
             var id = aData[0];
             var checkbox = '<input type="checkbox" value="'+id+'" name="order_ids[]"/>';
             var price = aData[5] + ' ' + aData[4];
-            var operation = '<a href="#" class="tablectrl_small bDefault tipS" original-title="同步"><span class="iconb" data-icon=""></span></a>' + 
-                            '<a href="#" class="tablectrl_small bDefault tipS" original-title="发货"><span class="iconb" data-icon=""></span></a>' +
-                            '<a href="#" class="tablectrl_small bDefault tipS" original-title="取消"><span class="iconb" data-icon=""></span></a>';
+            var operation = '<!--a class="tablectrl_small bDefault tipS" original-title="同步"><span class="iconb" data-icon=""></span></a-->' + 
+                            '<a class="tablectrl_small bDefault tipS" original-title="发货"><span class="iconb" data-icon=""></span></a>' +
+                            '<a class="tablectrl_small bDefault tipS" original-title="取消"><span class="iconb" data-icon=""></span></a>';
 
             $(nRow).attr('id', 'oid'+id);
+
+            if(aData[16] == '未发货') {
+                $('td:eq(7)', nRow).html('<span class="red">' + aData[16] + '</span>');
+            }
+
             $('td:eq(0)', nRow).html(checkbox);
             $('td:eq(1)', nRow).attr('title', '双击查看订单详情').dblclick(function(){
                 order_info(id, $(this).html());
@@ -55,8 +61,6 @@ $(function(){
                                 '<select name="action">'+
                                 '    <option value="">--请选择--</option>'+
                                 '    <option value="ship">订单发货</option>'+
-                                '    <option value="cancel">取消订单</option>'+
-                                '    <option value="sync">同步订单</option>'+
                                 '</select><a class="buttonS bDefault ml10" id="actions">确定</a></div>'+
                                 '</div>');
             // 每页记录样式修改
@@ -78,6 +82,10 @@ $(function(){
                          '</div>' + 
                          '<div class="formRow">' +
                          '  <div class="grid1 textR">' +
+                         '      <span>状态：</span>' +
+                         '  </div>' +
+                         '  <div id="filter_order_status" class="grid2"></div>' +
+                         '  <div class="grid1 textR">' +
                          '      <span>国家：</span>' +
                          '  </div>' +
                          '  <div id="filter_order_country" class="grid2"></div>' +
@@ -85,6 +93,13 @@ $(function(){
                          '      <span>来源：</span>' +
                          '  </div>' +
                          '  <div id="filter_order_source" class="grid2"></div>' +
+                         '  <div class="clear"></div>' +
+                         '</div>' +
+                         '<div class="formRow" style="border-bottom: 0">' + 
+                         '  <div class="grid12 textC">' +
+                         '      <a class="buttonS bDefault" id="order_search_reset">重置</a>' +
+                         '      <a class="buttonS bDefault" id="order_search">搜索</a>' +
+                         '  </div>' +
                          '  <div class="clear"></div>' +
                          '</div>';
             $('#olist_search').html(search);
@@ -155,6 +170,15 @@ $(function(){
         });
     });
 
+    var dialog = $('#order_batch_ship_dialog form');
+
+    // 打开产品信息窗口
+    dialog.dialog({
+        autoOpen: false,
+        width: "80%",
+        modal: true,
+    });
+
     // 批量操作
     $('#actions').live('click', function(){
         var action = $(this).prev().children('select').val();
@@ -218,15 +242,8 @@ $(function(){
                         }
                         row += '</tbody></table></div>';
 
-                        var dialog = $('#order_batch_ship_dialog form');
                         dialog.children('div:first').append(row);
 
-                        // 打开产品信息窗口
-                        dialog.dialog({
-                            autoOpen: false,
-                            width: "80%",
-                            modal: true,
-                        });
                         dialog.dialog('open');
                     } else if(data.status == 'fail') {
                         $.jGrowl(data.message);
@@ -239,9 +256,7 @@ $(function(){
                 }
             });
         }
-
     });
-
 });
 
 // 订单详情

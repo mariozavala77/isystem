@@ -1,4 +1,11 @@
 <?php
+/**
+ * 获取FBA库存详细数据
+ *
+ * @author: william <377658@qq.com>
+ * @copyright: Copyright (c) 2012 UFCEC Tech All Rights Reserved.
+ * @version: $Id:Info.php  2012年11月16日 星期五 18时20分46秒Z $
+ */
 
 class StockAPI_Fba_Info {
 

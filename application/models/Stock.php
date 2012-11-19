@@ -28,13 +28,27 @@ class Stock {
     }
 
     /**
+     * 获取产品库存信息
+     *
+     * @param: $product_id integer 产品ID
+     * @param: $storage_Id integer 仓库ID
+     *
+     * return integer
+     */
+    public static function info($product_id, $storage_id) {
+        return DB::table('stock')->where('product_id', '=', $product_id)
+                                 ->where('storage_id', '=', $storage_id)
+                                 ->only('sellable');
+    }
+
+    /**
      * 从外面仓储获取库存
      *
      * @param: $storage_id integer 仓储ID
      *
      * return void
      */
-    public static function info($storage_id) {
+    public static function sync($storage_id) {
         $storage = Storage::info($storage_id);
         if($storage->channel_id) {
             $channel = Channel::info($storage->channel_id);
