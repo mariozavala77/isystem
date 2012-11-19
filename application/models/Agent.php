@@ -81,4 +81,14 @@ class Agent {
                                   ->where('secret', '=', $secret)
                                   ->only('id');
     }
+
+    /**
+     * 生成密钥
+     *
+     * return string
+     */
+    public static function secret(){
+        $charid = md5(uniqid(mt_rand(), true));
+        return $charid;
+    }
 }

@@ -13,9 +13,10 @@ var task_id = '{{$task->id}}';
 var nowtime = '{{$nowtime}}';
 var entity_id = '{{$task->entity_id}}';
 var tasks_handle = 0;
+var task_mod ='{{$task->type}}';
 </script>
 <div id="content">
-	<div class="contentTop">
+    <div class="contentTop">
         <span class="pageTitle"><span class="icon-user-2"></span>控制中心</span>
         <div class="clear"></div>
     </div>

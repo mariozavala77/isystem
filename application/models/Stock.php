@@ -18,7 +18,13 @@ class Stock {
      * return object
      */
     public static function filter( $fields, $filter = [] ) {
-        return DB::table('stock')->left_join('storage', 'stock.storage_id', '=', 'storage.id')->select($fields);
+        $table = DB::table('stock')->left_join('storage', 'stock.storage_id', '=', 'storage.id');
+        if($filter){
+            foreach ($filter as $key => $value) {
+                $table->where($key, '=', $value);
+            }
+        }
+        return $table->select($fields);
     }
 
     /**

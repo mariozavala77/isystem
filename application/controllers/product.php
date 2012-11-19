@@ -223,7 +223,7 @@ class Product_Controller extends Base_Controller {
             return Response::json([ 'status' => 'fail', 'message' => '没有找到产品信息']);   
         }
 
-        $stock_fields = ['stock.id', 'stock.sku', 'stock.quantity', 'storage.area', 'storage.type'];
+        $stock_fields = ['stock.id', 'stock.code', 'stock.sellable', 'stock.unsellable', 'storage.area', 'storage.type'];
         $stock_filter = ['stock.product_id' => $product_id];
         // 仓储信息
         $product_info->stock = Stock::filter($stock_fields, $stock_filter)->get();

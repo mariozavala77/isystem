@@ -144,10 +144,11 @@ class AgentAPI{
             }
         }catch(AgentAPILogException $e){
             $content = [
-                'errormsg' =>$e->getMessage(),
-                'file'     =>$e->getFile(),
-                'line'     =>$e->getLine(),
-                'trace'    =>$e->getTraceAsString(),
+                'errormsg' => $e->getMessage(),
+                'file'     => $e->getFile(),
+                'line'     => $e->getLine(),
+                'trace'    => $e->getTraceAsString(),
+                'params'   => $params
             ];
             $data = [
                 'user_id'    => $this->_user_id,

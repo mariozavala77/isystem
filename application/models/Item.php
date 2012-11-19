@@ -17,7 +17,7 @@ class Item {
      * return object
      */
     public static function get($order_id) {
-        return DB::table('items')->where('order_id', '=', $order_id)->get()
+        return DB::table('items')->where('order_id', '=', $order_id)->get();
     }
 
     /**
@@ -30,7 +30,4 @@ class Item {
     public static function insert($data) {
         return DB::table('items')->insert($data);
     }
-
 }
-
-?>

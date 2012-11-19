@@ -36,6 +36,9 @@
             <li>
                 <a href="{{ URL::base() }}/agent" title="" class="active"><img src="{{ URL::base() }}/images/icons/mainnav/dashboard.png" alt="代理管理" /><span>代理管理</span></a>
             </li>
+            <li>
+                <a href="{{ URL::base() }}/supplier" title="" class="active"><img src="{{ URL::base() }}/images/icons/mainnav/dashboard.png" alt="供货管理" /><span>供货管理</span></a>
+            </li>
         </ul>
     </div>
 </div>

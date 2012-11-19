@@ -111,7 +111,9 @@ var task_mod ='{{$task->type}}';
         <!--任务操作-->
         <ul class="middleNavA">
             <li><a title="创建新任务" href="javascript:void(0);" id="bulidtask" class="tipS"><img alt="创建新任务" src="/images/icons/color/order-149.png"><span>创建新任务</span></a></li>
-            <li><a title="创建仓储以及添加库存" href="javascript:void(0);" class="tipS"><img alt="" src="/images/icons/color/issue.png"><span>创建仓储</span></a></li>
+            <li><a title="审核产品信息" href="javascript:void(0);" class="tipS" id="agent_examine"><img alt="" src="/images/icons/color/issue.png"><span>审核信息</span></a></li>
+            <li><a title="产品上架信息推送" href="javascript:void(0);" class="tipS"><img alt="" src="/images/icons/color/issue.png" id="agent_sale"><span>产品上架</span></a></li>
+            <li><a title="产品下架信息推送" href="javascript:void(0);" class="tipS"><img alt="" src="/images/icons/color/issue.png" id="agent_off"><span>产品下架</span></a></li>
         </ul>
         <div class="divider"><span></span></div>
         <!--任务操作-->
@@ -148,7 +150,7 @@ var task_mod ='{{$task->type}}';
     <!--订单详细 或者 产品详细-->
         <div class="widget grid6">
             <div class="whead">
-                        <h6>商品信息</h6>
+                        <h6>代理商商品信息</h6>
                         <div class="on_off">
                             <a href="javascript:void(0);" title="点击刷新商品信息"><span class="icon-reload-CW"></span></a>  
                         </div>
@@ -212,5 +214,21 @@ var task_mod ='{{$task->type}}';
 <!-- 创建任务 ends -->
 <div id="task_finish" style="display:none" title="提示">
     <p>你确认标记此任务已完成?</p>
+</div>
+<!--代理商详细-->
+<div id="agent_info" style="display:none" title="代理商信息">
+</div>
+<div id="agent_info_examine" style="display:none" title="销售产品审核">
+    <div class="formRow">
+            <div class="grid12">
+                <input type="radio" id="info_pass" name="info_status" value="1" checked="checked"/><label for="info_pass"  class="mr20">通过</label>
+                <input type="radio" id="info_not_pass" name="info_status" value="2" /><label for="info_not_pass"  class="mr20">不通过</label>
+            </div>
+        <div class="clear"></div>
+    </div>
+    <div class="formRow" style="display:none" id="examine_content_form">
+        <label>原因：</label>
+        <textarea name="content" id="examine_content" class="validate[required]"></textarea>
+    </div>    
 </div>
 @endsection

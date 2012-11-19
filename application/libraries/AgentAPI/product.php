@@ -73,7 +73,7 @@ class AgentAPI_Product extends AgentAPI_Base
      */
     public static function sale($params){
         $fields = [
-            'product_id', 'channel_id', 'agent_id', 'language', 'price', 
+            'product_id', 'agent_id', 'language', 'price', 
             'title', 'keywords', 'short_description', 'description'
         ];
 
@@ -83,14 +83,14 @@ class AgentAPI_Product extends AgentAPI_Base
             throw new AgentAPIException($e->getMessage(), -32004);
         }
 
-        $product_sale_id = Product_Sale::getId($data['agent_id'], $data['product_id'], $data['channel_id']);
+        $product_sale_id = Product_Sale::getId($data['agent_id'], $data['product_id']);
 
         if($product_sale_id){
             $data['status']=0;
             $requslt = Product_Sale::update($product_sale_id, $data);
             if($requslt){
                 // 发送任务tasks
-                return ['product_id'=>$data['product_id'], 'channel_id'=>$data['channel_id']];
+                return ['product_id'=>$data['product_id']];
             }else{
                 throw new AgentAPILogException("代理商产品更新失败", 1);            }
         }else{
@@ -99,7 +99,7 @@ class AgentAPI_Product extends AgentAPI_Base
             $requset = Product_Sale::insert($data);
             if($requset){
                 // 发送任务插入tasks
-                return ['product_id'=>$data['product_id'], 'channel_id'=>$data['channel_id']];
+                return ['product_id'=>$data['product_id']];
             }else{
                 throw new AgentAPILogException("代理商产品新增不成功", 1);
             }

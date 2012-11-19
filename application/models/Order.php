@@ -37,7 +37,7 @@ class Order {
      * return void
      */
     public static function insert( $data ) {
-        DB::table('orders')->insert( $data );
+       return DB::table('orders')->insert_get_id( $data );
     }
 
     /**

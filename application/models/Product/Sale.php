@@ -48,15 +48,13 @@ class Product_Sale {
      *
      * @param: $agent_id   intgrean 代理商id
      * @param: $product_id intgrean 产品池中产品id
-     * @param: $channel_id intgrean 销售渠道id
      *
      * return intgrean|boolen 正确则返回整数否则返回false
      */
-    public static function getId($agent_id, $product_id, $channel_id){
+    public static function getId($agent_id, $product_id){
         return DB::table('products_sale')->where('product_id', '=', $product_id)
-                                        ->where('channel_id', '=', $channel_id)
-                                        ->where('agent_id', '=', $agent_id)
-                                        ->only('id');
+                                         ->where('agent_id', '=', $agent_id)
+                                         ->only('id');
 
     }
 

@@ -41,10 +41,12 @@ class Task_Controller extends Base_Controller {
         $fields = ['id', 'username'];
         $users = User::filter($fields)->get();
 
-        return View::make('task.' . $task->type . '_info')->with('task' ,$task)
-                                                          ->with('users', $users)
-                                                          ->with('user_id', $this->user_id)
-                                                          ->with('nowtime', time());
+        $view = 'task.' . $task->type . '_info';
+
+        return View::make($view)->with('task' ,$task)
+                                ->with('users', $users)
+                                ->with('user_id', $this->user_id)
+                                ->with('nowtime', time());
 
     }
 
@@ -100,7 +102,7 @@ class Task_Controller extends Base_Controller {
     }
 
     // 任务处理状态更新
-    public function action_hidden(){
+    public function action_handle(){
         $task_id = intval(Input::get('task_id'));
         $handle = intval(Input::get('handle'));
         $comment = Input::get('comment');

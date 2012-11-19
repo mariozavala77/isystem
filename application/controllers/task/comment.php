@@ -1,11 +1,18 @@
 <?php
+/**
+ * 任务留言控制器
+ *
+ * @author: shaoqi <shaoqisq123@gmail.com>
+ * @copyright: Copyright (c) 2012 UFCEC Tech All Rights Reserved.
+ * @version: $Id$
+ */
 class Task_Comment_Controller extends Base_Controller {
 
     // 留言列表
     public function action_filter(){
-        $fields = ['tasks_comment.uid', 'users.username', 'tasks_comment.comment',
-                   'tasks_comment.created_at', 'tasks_comment.id'];
-        $filter = ['tasks_comment.taskid'=>Input::get('taskid')];
+        $fields = ['tc.uid', 'users.username', 'tc.comment',
+                   'tc.created_at', 'tc.id'];
+        $filter = ['tc.taskid'=>Input::get('taskid')];
         $comment = Tasks_Comment::filter($fields, $filter)->get();
         
         return Response::json($comment);
