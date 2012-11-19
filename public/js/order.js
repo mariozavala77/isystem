@@ -1,5 +1,8 @@
 $(function(){
+    // 初始化搜索标识
     initsearch = false;
+
+    // 订单列表
     oTable = $('#order_list_table').dataTable({
         bSort: false,
         bProcessing: true,
@@ -57,12 +60,12 @@ $(function(){
 
             // 批量操作按钮
             $('.tableFooter').prepend('<input class="checkAll" type="checkbox" key="order_list_table"><div class="itemActions" style="width: 250px">'+
-                                '<label>批量操作:</label>'+
-                                '<select name="action">'+
-                                '    <option value="">--请选择--</option>'+
-                                '    <option value="ship">订单发货</option>'+
-                                '</select><a class="buttonS bDefault ml10" id="actions">确定</a></div>'+
-                                '</div>');
+                                      '<label>批量操作:</label>'+
+                                      '<select name="action">'+
+                                      '    <option value="">--请选择--</option>'+
+                                      '    <option value="ship">订单发货</option>'+
+                                      '</select><a class="buttonS bDefault ml10" id="actions">确定</a></div>'+
+                                      '</div>');
             // 每页记录样式修改
             $('#order_list_table_length').addClass('mb15');
             // 美化dom元素

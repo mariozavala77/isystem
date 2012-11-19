@@ -1,4 +1,6 @@
 $(function(){
+    // 初始化搜索标识
+    initsearch = false;
 
     // 产品列表
     pTable = $('#product_list_table').dataTable({
@@ -6,16 +8,17 @@ $(function(){
         bProcessing: true,
         bFilter: true,
         bServerSide: true,
+        sServerMethod: 'POST',
         bJQueryUI: false,
         sPaginationType: 'full_numbers',
         sAjaxSource: '/product/filter',
-        sDom: '<"H"fl<"clear">>tr<"F"ip>',
+        sDom: '<"H"<"#plist_options"l<"clear">><"#plist_search"<"clear">>>tr<"F"ip>',
         aoColumnDefs: [
                 { sTitle: "<input id='checkAll' type='checkbox'/>",  aTargets: [0], bSearchable: false, sWidth: '20px' },
                 { sTitle: "图片",  aTargets: [1], sWidth: '40px', bSearchable: false },
                 { sTitle: "名称", aTargets: [2] } ,
                 { sTitle: "SKU", aTargets: [3], sWidth: "100px"},
-                { sTitle: "分类", aTargets: [4] , sWidth: "80px", bSearchable: false },
+                { sTitle: "分类", aTargets: [4] , sWidth: "80px" },
                 { sTitle: "成本价", aTargets: [5], bSearchable: false, sWidth: "100px"},
                 { sTitle: "价格范围", aTargets: [6], bSearchable: false, sWidth: "150px"},
                 { bVisible: false, aTargets: [7] },
@@ -47,6 +50,34 @@ $(function(){
 
         fnInitComplete: function() {
             $('select, #checkAll').uniform();
+            // 每页记录样式修改
+            $('#product_list_table_length').addClass('mb15');
+
+            // 初始化搜索
+            var search = '<div class="formRow">' +
+                         '  <div class="grid1 textR">' +
+                         '      <span>SKU：</span>' +
+                         '  </div>' +
+                         '  <div id="filter_product_sku" class="grid2"></div>' +
+                         '  <div class="grid1 textR">' +
+                         '      <span>名称：</span>' +
+                         '  </div>' +
+                         '  <div id="filter_product_name" class="grid2"></div>' +
+                         '  <div class="grid1 textR">' +
+                         '      <span>分类：</span>' +
+                         '  </div>' +
+                         '  <div id="filter_product_category" class="grid5"></div>' +
+                         '  <div class="clear"></div>' +
+                         '</div>' +
+                         '<div class="formRow" style="border-bottom: 0">' + 
+                         '  <div class="grid12 textC">' +
+                         '      <a class="buttonS bDefault" id="product_search_reset">重置</a>' +
+                         '      <a class="buttonS bDefault" id="product_search">搜索</a>' +
+                         '  </div>' +
+                         '  <div class="clear"></div>' +
+                         '</div>';
+            $('#plist_search').html(search);
+
         },
         fnDrawCallback: function() {
             $('#product_list_table :checkbox').not('#checkAll').uniform();
@@ -109,9 +140,6 @@ $(function(){
         var product_id = $(this).attr('data-id');
         $('#product_delete_confirm').attr('data-id', product_id).dialog('open');
     });
-
-
-
 
     // 删除dialog提示
     $('#product_delete_confirm').dialog({

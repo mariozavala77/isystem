@@ -45,30 +45,7 @@
                     <a href="javascript:void(0);" ckey="olist_search" class="tOptions tipS" title="搜索"><img src="{{ URL::base() }}/images/icons/search" alt=""/></a>
                     <a href="javascript:void(0);" ckey="olist_options" class="tOptions tipS" title="设置"><img src="{{ URL::base() }}/images/icons/options" alt=""/></a>
                 </div>
-                <table cellpadding="0" cellspacing="0" border="0" class="dTable" id="order_list_table">
-                    <tfoot style="display: none">
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                    </tfoot><!--列搜索专用-->
-                </table>
+                <table cellpadding="0" cellspacing="0" border="0" class="dTable" id="order_list_table"></table>
             </div>
         </div>
         <script type="text/javascript">
@@ -78,6 +55,7 @@
                         initSearch();
                 });
 
+                // 订单搜索
                 $('#order_search').live('click', function() {
                     $('.order_search').each(function() {
                         var value = $(this).val();
@@ -85,13 +63,13 @@
                     
                         if(value != '') {
                             oTable.fnSetFilter(index, value);
-                            //oTable.fnFilter(value, index, false, false, false, false);
                         }
                     });
 
                     oTable.fnDraw();
                 });
 
+                // 重置搜索
                 $('#order_search_reset').live('click', function() {
                     oTable.fnFilterClear();
                 });
@@ -220,6 +198,6 @@
     <!-- order batch operation ends -->
 
 </div>
-<!-- Content ends -->    
+<!-- Content ends --> 
 @endsection
 

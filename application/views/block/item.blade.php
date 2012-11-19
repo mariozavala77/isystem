@@ -14,7 +14,7 @@
     @foreach($items as $item)
         <tr>
             <td>{{$item->entity_id}}</td>
-            <td class="re">{{$item->name}}</td>
+            <td>{{$item->name}}</td>
             <td>{{$item->sku}}</td>
             <td>{{$item->quantity}}</td>
             <td>{{$item->price}}</td>

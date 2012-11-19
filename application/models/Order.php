@@ -212,20 +212,40 @@ class Order {
 
         foreach($tracking as $order_id => $tracking_no) {
             if(!empty($tracking_no)) {
-                //$info = static::info($order_id);
-                $data = [
-                    'company' => $company,
-                    'method'  => $method,
-                    'order_id' => $order_id,
-                    'item_id' => 0,
-                    'quantity' => 0,
-                    'tracking_no' => $tracking_no,
-                    'status' => 0,
-                    'created_at' => date('Y-m-d H:i:s'),
-                    'modified_at' => date('Y-m-d H:i:s'),
-                    ];
+                $items = Item::get($order_id);
+                foreach($items as $item) {
+                    $data = [
+                        'company'     => $company,
+                        'method'      => $method,
+                        'order_id'    => $order_id,
+                        'item_id'     => $item->id,
+                        'quantity'    => $item->quantity,
+                        'tracking_no' => $tracking_no,
+                        'status'      => 0,
+                        'created_at'  => date('Y-m-d H:i:s'),
+                        'modified_at' => date('Y-m-d H:i:s'),
+                        ];
 
-                Track::insert($data);
+                    Track::insert($data);
+                }
+
+                // 更新订单状态
+                $data = [
+                    'is_synced'  => 0,
+                    'status'     => ORDER_SHIPPED,
+                    'updated_at' => date('Y-m-d H:i:s'),
+                    ];
+                Order::update($order_id, $data);
+
+                // 发送同步队列
+                $data = [
+                    'type'      => 'order',
+                    'action'    => 'ship',
+                    'entity_id' => $order_id,
+                    'status'    => 0,
+                    'created_at' => date('Y-m-d H:i:s'),
+                    ];
+                Queue::insert($data);
             }
         }
     }
