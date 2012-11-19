@@ -2,7 +2,7 @@
 /**
  * 任务留言模型
  *
- * @author: shaoqi <shaoqisq123@gmail.compact(varname)	>
+ * @author: shaoqi <shaoqisq123@gmail.com>
  * @copyright: Copyright (c) 2012 UFCEC Tech All Rights Reserved.
  * @version: $Id$
  */

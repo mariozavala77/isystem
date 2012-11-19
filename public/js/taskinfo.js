@@ -4,6 +4,33 @@ get_entity_info();
     $('#sendMessage').click(function(){
         push_messge();
     });
+    $('#agent_examine').click(function(){
+        $('#agent_info_examine').dialog('open');
+    });
+    $('#agent_sale').click(function(){
+        alert('销售商品');
+    });
+    $('#agent_off').click(function(){
+        alert('产品下架');
+    });
+    $('input[name="info_status"]').change(function(){
+        if($(this).val()==2){
+            $('#examine_content_form').show();
+        }else{
+            $('#examine_content_form').hide();
+        }
+    });
+    $('#agent_info').dialog({
+        autoOpen: false,
+        modal: true,
+        width:'500px',
+        resizable:false,
+        buttons: {
+            "取消": function () {
+                $(this).dialog("close");
+            }
+        }
+    });
     $('#task_finish_confirm').dialog({
         autoOpen: false,
         resizable:false,
@@ -65,20 +92,32 @@ get_entity_info();
             }
         }
     });
+    $('#agent_info_examine').dialog({
+        autoOpen: false,
+        resizable:false,
+        modal: true,
+        buttons: {
+            "确定": function () {
+                agent_info_pass();
+            },
+            "取消": function () {
+                $(this).dialog("close");
+            }
+        }
+    });
 });
 /**
  * 获取任务留言的信息
  */
 function get_task_message(){
-	$.post('/task/comment/filter',{taskid:task_id},function(response){
-
-		if(response){
-			var html = buildmessge(response);
-		}else{
-			var html = '暂时没有留言';
-		}
-		$('#msg_lists').html(html);
-	},'json');
+    $.post('/task/comment/filter',{taskid:task_id},function(response){
+        if(!empty(response)){
+            var html = buildmessge(response);
+        }else{
+            var html = '<li style="text-align:center;padding-top:10px;">暂时没有备注</li>';
+        }
+        $('#msg_lists').html(html);
+    },'json');
 }
 
 /**
@@ -87,25 +126,25 @@ function get_task_message(){
  * @param: data object 留言的内容
  */
 function buildmessge(data){
-	var html = new Array();
-	var length = data.length;
-	for(var i=0;i<length;i++){
-		var msg = data[i];
-		html.push('<li class="');
-		if(msg.uid==user_id){
-			html.push('by_me');
-		}else{
-			html.push('by_user');
-		}
-		html.push('"><div class="messageArea" style="margin:0px"><div class="infoRow"><span class="name"><strong>');
-		html.push(msg.username);
-		html.push('</strong> says:</span><span class="time">');
-		html.push(timedesc(nowtime, msg.created_at)+'</span><div class="clear"></div></div>');
-		html.push(msg.comment);
-		html.push('</div><div class="clear"></div></li>');
-	}
+    var html = new Array();
+    var length = data.length;
+    for(var i=0;i<length;i++){
+        var msg = data[i];
+        html.push('<li class="');
+        if(msg.uid==user_id){
+            html.push('by_me');
+        }else{
+            html.push('by_user');
+        }
+        html.push('"><div class="messageArea" style="margin:0px"><div class="infoRow"><span class="name"><strong>');
+        html.push(msg.username);
+        html.push('</strong> says:</span><span class="time">');
+        html.push(timedesc(nowtime, msg.created_at)+'</span><div class="clear"></div></div>');
+        html.push(msg.comment);
+        html.push('</div><div class="clear"></div></li>');
+    }
 
-	return html.join('');
+    return html.join('');
 }
 /**
  * 两个时间戳的间隔
@@ -206,12 +245,14 @@ function bulid_product_html(data){
     html.push('<td>认领价：</td><td>'+data.price+'</td>');
     html.push('<td>售价范围：</td><td>'+data.min_price+'-'+data.max_price+'</td></tr>');
     if(!empty(data.stock)){
-        html.push('<tr><td colspan="6" align="center">商品库存</td></tr><tr><td align="center">SKU</td><td align="center">库存</td><td align="center">仓储类型</td><td colspan="3" align="center">所在区域</td></tr>');
-        var length = data.stock.length;
+        var stocks = data.stock;
+        html.push('<tr><td colspan="6" align="center">商品库存</td></tr><tr><td align="center">SKU</td><td align="center">可售数量</td><td align="center">不可售数量</td><td align="center">仓储类型</td><td colspan="2" align="center">所在区域</td></tr>');
+        var length = stocks.length;
         for (var i = 0; i < length; i++) {
-            var stock = data.stock.i;
-            html.push('<tr><td align="center">'+stock.sku+'</td>');
-            html.push('<td align="center">'+stock.quantity+'</td>');
+            var stock = stocks[i];
+            html.push('<tr><td align="center">'+stock.code+'</td>');
+            html.push('<td align="center">'+stock.sellable+'</td>');
+            html.push('<td align="center">'+stock.unsellable+'</td>');
             html.push('<td align="center">'+stock.type+'</td>');
             html.push('<td colspan="3" align="center">'+stock.area+'</td></tr>');
         }
@@ -262,7 +303,7 @@ function handle(){
         return false;
     }
     $('#task_finish_confirm').dialog("close");
-    $.post('/task/hidden',{tasks_id:task_id,handle:task_handle,comment:msg},function(response){
+    $.post('/task/handle',{task_id:task_id,handle:task_handle,comment:msg},function(response){
         $.jGrowl(response.message);
         if(response.status=='success'){
             $('#message').val('');
@@ -300,12 +341,9 @@ function push_task(){
     },'json');
 }
 function get_entity_info(){
-    if(task_mod=='product'){
-        get_product_info();
-    }
     switch(task_mod){
         case 'product':
-            get_product_info();
+            get_product_info(entity_id);
         break;
         case 'product_sale':
             get_product_sale_info();
@@ -332,13 +370,89 @@ function bulid_product_sale_info(data){
     html.push('<table class="tDefault" width="100%"><tbody>');
     var agent = data.agent;
     if(agent){
-        html.push('<tr><td colspan="6">代理商信息</td></tr>');
-        html.push('<tr><td>公司名称:</td><td colspan="3">'+agent.company+'</td><td>电话:</td><td>'+agent.phone+'</td><tr/>');
-        html.push('<tr><td>公司地址:</td><td colspan="3">'+agent.address+'</td><td>电子邮件:</td><td>'+agent.email+'</td><tr/>');
+        bulid_agent_info(agent);
     }
-    html.push('<tr><td colspan="6">代理商产品信息</td></tr>');
-    //html.push('<td>商品名称：</td><td colspan="5">'+data.name+'</td>');
+    html.push('<tr><td colspan="6" align="center">代理商产品信息</td></tr>');
+    var validation = data.validation;
+    html.push('<tr><td>商品名称：</td><td colspan="5">'+(empty(validation.title)?data.title:validation.title)+'</td></tr>');
+    html.push('<tr><td>代理商:</td><td colspan="5"><a href="javascript:void(0);" onclick="agent_info('+data.agent_id+')" title="点击查看代理商详细信息" class="tipS">'+agent.company+'<span class="icos-info"></span></a></td></tr>');
+    html.push('<tr><td>SKU：</td><td>'+data.sku+'</td><td>单价：</td><td>'+(empty(validation.price)?data.price:validation.price)+'</td>');
+    html.push('<td>审核：</td><td>'+(data.status==1?'通过':(data.status==2?'未通过':'未审核'))+'</td></tr>');
+    html.push('<tr><td>关键词：</td><td colspan="3">'+(empty(validation.keywords)?data.keywords:validation.keywords)+'</td>');
+    if(data.sold==0){
+        html.push('<td>上架状态：</td><td>未处理</td>');
+    }else if(data.sold==1){
+        html.push('<td>上架时间：</td><td>'+data.sold_at+'</td>');
+    }else{
+        html.push('<td>下架时间：</td><td>'+data.solad_at+'</td>');
+    }
+    html.push('</tr><tr><td>短描述：</td><td colspan="5">');
+    html.push(empty(validation.short_description)?data.short_description:validation.short_description);
+    html.push('</td></tr>');
+    html.push('<tr><td colspan="6" align="center">产品详细描述</td></tr><tr><td colspan="6">');
+    html.push(empty(validation.description)?data.description:validation.description);
+    html.push('</td></tr>');
     html.push('</tbody></table>');
-
     return html.join('');
+}
+
+function bulid_agent_info(agent){
+    var html = new Array();
+    html.push('<table class="tDefault" width="100%"><tbody>');
+    html.push('<tr><td colspan="6" align="center">代理商信息</td></tr>');
+    html.push('<tr><td align="center">公司名称：</td><td colspan="3">'+agent.company+'</td><td align="center">公司电话:</td><td>'+agent.phone+'</td><tr/>');
+    html.push('<tr><td align="center">公司地址：</td><td colspan="3">'+agent.address+'</td><td align="center">电子邮件:</td><td>'+agent.email+'</td><tr/>');
+    html.push('</tbody></table>');
+    $('#agent_info').html(html.join(''));
+}
+
+function agent_info(){
+    $('#agent_info').dialog('open');
+}
+
+function agent_info_pass(){
+    var status  = $('input[name="info_status"]:checked').val();
+    var comment = $('#examine_content').val();
+    if(empty(status)){
+        $.jGrowl('请选择信息的状态');
+        return false;
+    }
+
+    if(empty(comment) && status ==1){
+        $.jGrowl('请填写不通过的原因');
+        return false;
+    }
+    $('#agent_info_examine').dialog("close");
+    $.post('/product/sale/check',{task_id:task_id,sale_id:entity_id,status:status,msg:comment},function(response){
+        $.jGrowl(response.message);
+        if(response.status=='success'){
+            location.reload();
+        }
+    },'json');
+}
+
+function agent_sale(){
+    $.post('/product/sale/sale',{task_id:task_id,sale_id:entity_id},function(response){
+        $.jGrowl(response.message);
+        if(response.status=='success'){
+            location.reload();
+        }
+    },'json');
+}
+
+function agent_off(){
+    $.post('/product/sale/off',{task_id:task_id,sale_id:entity_id},function(response){
+        $.jGrowl(response.message);
+        if(response.status=='success'){
+            location.reload();
+        }
+    },'json');
+}
+
+function get_order_info(){
+    $.post('/order/info', {order_id: entity_id},function(response){
+        for(i in response){
+            $('#order_info_dialog table tbody tr td[field="'+i+'"]').html(response[i]);
+        }
+    },'json');
 }

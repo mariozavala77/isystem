@@ -32,14 +32,29 @@ class Agent_Controller extends Base_Controller {
 
     // 添加操作
     public function action_insert() {
+
+        $secret = Input::get('secret');
+        $secret = empty($secret)?Agent::secret():$secret;
+        // 先创建渠道后插入
         $data = [
             'company'    => Input::get('company'),
             'phone'      => Input::get('phone'),
             'email'      => Input::get('email'),
             'address'    => Input::get('address'),
+            'secret'     => $secret,
             'created_at' => date('Y-m-d H:i:s'),
             ];
+        $channel_data = [
+            'type'        => 'Agent',
+            'name'        => $data['company'],
+            'alias'       => $data['company'],
+            'description' => $data['company'],
+            'accredit'    => serialize(['secret' => $secret]),
+            'synced_at'   => date('Y-m-d H:i:s'),
 
+        ];
+        $channel_id = Channel::insert($channel_data);
+        $data['channel_id'] = $channel_id;
         Agent::insert($data);
     
         return Redirect::to('agent');
@@ -58,15 +73,27 @@ class Agent_Controller extends Base_Controller {
 
         $agent_id = Input::get('agent_id');
 
+        $secret = Input::get('secret');
+        $secret = empty($secret)?Agent::secret():$secret;
+        $agent = Agent::info($agent_id);
+
         $data = [
             'company'    => Input::get('company'),
             'phone'      => Input::get('phone'),
             'email'      => Input::get('email'),
             'address'    => Input::get('address'),
+            'secret'     => $secret,
             ];
+        $channel_data = [
+            'name'        => $data['company'],
+            'alias'       => $data['company'],
+            'description' => $data['company'],
+            'accredit'    => serialize(['secret' => $secret]),
+
+        ];
 
         Agent::update($agent_id, $data);
-
+        Channel::update($agent->channel_id, $channel_data);
         return Redirect::to('agent');
     }
 
@@ -74,9 +101,15 @@ class Agent_Controller extends Base_Controller {
     public function action_delete() {
         $agent_id = Input::get('agent_id');
         $result = [ 'status' => 'success', 'message' => '删除成功！' ];
+        $agent = Agent::info($agent_id);
         Agent::delete($agent_id);
-
+        Channel::delete($agent->channel_id);
         return Response::json($result);
+    }
+
+    // 生成密钥
+    public function action_secret(){
+        return Response::json(['status' => 'success', 'message' => Agent::secret()]);
     }
 }
 ?>

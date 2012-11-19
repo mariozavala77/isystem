@@ -37,7 +37,7 @@ class Order {
      * return integer
      */
     public static function insert( $data ) {
-        return DB::table('orders')->insert_get_id( $data );
+       return DB::table('orders')->insert_get_id( $data );
     }
 
     /**
@@ -250,5 +250,3 @@ class Order {
         }
     }
 }
-
-?>

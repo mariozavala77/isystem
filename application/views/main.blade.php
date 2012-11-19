@@ -8,7 +8,7 @@
 {{ HTML::script('js/plugins/charts/jquery.sparkline.min.js') }}
 @endsection
 @section('sidebar')
-    @include('block.sidebar')
+@include('block.sidebar')
 @endsection
 @section('content')
 <!-- Content begins -->    

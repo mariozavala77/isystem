@@ -70,9 +70,9 @@ class Order_Controller extends Base_Controller {
             'entity_id'      => $order->entity_id,
             'status'         => Config::get('application.order_status')[$order->status]['name'],
             'total_price'    => $order->currency . ' ' . $order->total_price,
-            'is_broken'      => $order->is_broken ? '异常' : '正常',
-            'is_auto'        => $order->is_auto ? '是' : '否',
-            'is_synced'      => $order->is_synced ? '已同步' : '未同步',
+            'broken'         => $order->is_broken ? '正常' : '异常',
+            'auto'           => $order->is_auto ? '是' : '否',
+            'is_sync'        => $order->is_synced ? '是' : '否',
             'channel'        => $channel->name,
             'shipment_level' => Config::get('application.order_shipment_level')[$order->shipment_level],
             'purchased_at'   => $order->purchased_at,
@@ -127,4 +127,3 @@ class Order_Controller extends Base_Controller {
         return Redirect::to('order');
     }
 }
-?>

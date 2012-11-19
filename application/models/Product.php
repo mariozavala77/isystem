@@ -1,5 +1,4 @@
 <?php
-
 /**
  * 产品模型
  *
@@ -138,4 +137,3 @@ class Product {
         return DB::table('products')->delete($product_id);
     }
 }
-?>

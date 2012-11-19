@@ -13,6 +13,7 @@ var task_id = '{{$task->id}}';
 var nowtime = '{{$nowtime}}';
 var entity_id = '{{$task->entity_id}}';
 var tasks_handle = 0;
+var task_mod ='{{$task->type}}';
 </script>
 <div id="content">
 	<div class="contentTop">
@@ -48,10 +49,8 @@ var tasks_handle = 0;
         </div>
     </div>
     <div class="wrapper">
-    <!--任务详细-->
-    <div class="fluid">
-    <div class="grid6">
-        <div class="widget">
+        <div class="fluid">
+            <div class="grid6 widget">
             <div class="whead">
                 <h6>任务详细信息</h6>  
                 <div class="clear"></div>
@@ -105,16 +104,85 @@ var tasks_handle = 0;
                     <tr><td colspan="6" align="center">{{$task->content}}</td></tr>
                     </tbody></table>
             </div>
+            </div>
+            <div class="grid6">
+                <ul class="middleNavA">
+                    <li><a title="创建新任务" href="javascript:void(0);" id="bulidtask" class="tipS"><img alt="创建新任务" src="/images/icons/color/order-149.png"><span>创建新任务</span></a></li>
+                    <li><a title="订单发货" href="javascript:void(0);" class="tipS"><img alt="" src="/images/icons/color/issue.png"><span>订单发货</span></a></li>
+                    <li><a title="订单同步" href="javascript:void(0);" class="tipS"><img alt="" src="/images/icons/color/issue.png"><span>订单同步</span></a></li>
+                </ul>
+            </div>
         </div>
         <div class="divider"><span></span></div>
-        <!--任务操作-->
-        <ul class="middleNavA">
-            <li><a title="创建新任务" href="javascript:void(0);" id="bulidtask" class="tipS"><img alt="创建新任务" src="/images/icons/color/order-149.png"><span>创建新任务</span></a></li>
-            <li><a title="创建仓储以及添加库存" href="javascript:void(0);" class="tipS"><img alt="" src="/images/icons/color/issue.png"><span>创建仓储</span></a></li>
-        </ul>
-        <div class="divider"><span></span></div>
-        <!--任务操作-->
+        <!-- order info dialog begins -->
+    <div id="order_info_dialog">
         <div class="widget">
+            <ul class="tbar tabs" style="border-bottom: 0px">
+                <li><a href="#tab_info">详细信息</a></li>
+                <li><a href="#tab_ship">物流信息</a></li>
+            </ul>
+            <div class="tab_container">
+            <div id="tab_info" class="tab_content nopadding">
+            <table cellpadding="0" cellspacing="0" border="0" class="dTable dataTable" >
+                <tbody>
+                  <tr>
+                    <td>ID:</td>
+                    <td field="entity_id"></td>
+                    <td>金额:</td>
+                    <td field="total_price"></td>
+                    <td>配送紧急程度:</td>
+                    <td colspan="3"field="shipment_level"></td>
+                  </tr>
+                  </tr>
+                  <tr>
+                    <td>订单状态:</td>
+                    <td field="status"></td>
+                    <td>处理状态:</td>
+                    <td field="broken"></td>
+                    <td>同步状态:</td>
+                    <td field="is_sync"></td>
+                    <td>是否是AFN订单:</td>
+                    <td field="auto"></td>
+                  </tr>
+                  <tr>
+                    <td>购买人:</td>
+                    <td field="name"></td>
+                    <td>购买时间:</td>
+                    <td field="purchased_at"></td>
+                    <td>购买渠道:</td>
+                    <td field="channel"></td>
+                    <td>支付方式:</td>
+                    <td field="payment_method"></td>
+                  </tr>
+                  <tr>
+                    <td>配送地址：</td>
+                    <td colspan="7" field="shipping"></td>
+                  </tr>
+                  <tr>
+                    <td>产品信息：</td>
+                    <td colspan="7" field="products"></td>
+                  </tr>
+                  <tr>
+                    <td>生成时间：</td>
+                    <td field="created_at"></td>
+                    <td>更新时间：</td>
+                    <td field="updated_at"></td>
+                    <td>修改时间：</td>
+                    <td colspan="3" field="modified_at"></td>
+                  </tr>
+                </tbody>
+            </table>
+            </div>
+            <div id="tab_ship" class="tab_content nopadding">
+                <table>
+                </table>
+            </div>
+            </div>
+        </div>
+    </div>
+    <!-- order info dialog ends -->
+    <div class="divider"><span></span></div>
+            <div class="widget">
                 <div class="whead">
                     <h6>任务备注</h6>
                     <div class="on_off">
@@ -143,21 +211,6 @@ var tasks_handle = 0;
                     <input type="submit" value="发送留言" class="buttonS bLightBlue" name="sendMessage" id="sendMessage">
                 </div>
             </div>
-    </div>
-    <!--订单详细 或者 产品详细-->
-        <div class="widget grid6">
-            <div class="whead">
-                        <h6>商品信息</h6>
-                        <div class="on_off">
-                            <a href="javascript:void(0);" title="点击刷新商品信息"><span class="icon-reload-CW"></span></a>  
-                        </div>
-            <div class="clear"></div>
-            </div>
-            <div id="info" class="justTable">
-            </div>
-        </div>
-    </div>
-</div>
 <!-- delete confirm begins-->
 <div id="task_finish_confirm" style="display:none" title="提示">
 <p><label>备注：</label>
@@ -212,4 +265,21 @@ var tasks_handle = 0;
 <div id="task_finish" style="display:none" title="提示">
     <p>你确认标记此任务已完成?</p>
 </div>
+    <!-- order batch operation begins -->
+    <div id="order_batch_ship_dialog" title="订单发货" style="display: none">
+        <form action="{{ URL::to('order/ship') }}" method="POST">
+            <div class="widget fluid" style="margin-top: 0px">
+                <div class="formRow ">
+                    <div class="grid3">&nbsp;</div>
+                    <div class="grid1">配送公司：</div>
+                    <div class="grid2"><input name="ship_company" type="text"/></div>
+                    <div class="grid1">配送方式：</div>
+                    <div class="grid2"><input name="ship_method" type="text"/></div>
+                    <div class="clear"></div>
+                </div>
+            </div>
+            <div class="textC mt10"><input type="submit" class="buttonS bBlue" value="发货" /></div>
+        </form>
+    </div>
+    <!-- order batch operation ends -->
 @endsection

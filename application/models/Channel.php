@@ -27,7 +27,7 @@ class Channel {
      * return boolean
      */
     public static function insert($data){
-        return DB::table('channels')->insert( $data );
+        return DB::table('channels')->insert_get_id( $data );
     }
 
     /**

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * 代理商模型
  *
@@ -80,5 +79,15 @@ class Agent {
         return DB::table('agents')->where('id', '=', $agent_id)
                                   ->where('secret', '=', $secret)
                                   ->only('id');
+    }
+
+    /**
+     * 生成密钥
+     *
+     * return string
+     */
+    public static function secret(){
+        $charid = md5(uniqid(mt_rand(), true));
+        return $charid;
     }
 }
