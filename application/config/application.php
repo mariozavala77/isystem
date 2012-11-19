@@ -208,6 +208,19 @@ return array(
         '6' => ['name' => '无法处理', 'define' => 'UNFULFILLABLE'],
     ],
 
+    // 物流状态制定
+    'ship_status' => [
+        '0'
+    ],
+
+    // 订单配送紧急程度
+    'order_shipment_level' => [
+        '<span class="red">十分紧急</span>',
+        '<span class="orange">紧急</span>',
+        '<span class="green">标准</span>',
+        '<span>一般</span>',
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | 渠道分类

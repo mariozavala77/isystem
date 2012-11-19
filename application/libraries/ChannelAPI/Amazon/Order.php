@@ -80,7 +80,7 @@ class ChannelAPI_Amazon_Order {
                 'shipment_level'           => isset($datum['ShipmentServiceLevelCategory']) && in_array($datum['ShipmentServiceLevelCategory'], array_keys($this->_shipping_level)) ? $this->_shipping_level[$datum['ShipmentServiceLevelCategory']] : 4,
                 'payment_method'           => isset($datum['PaymentMethod']) ? $datum['PaymentMethod'] : '',
                 'status'                   => isset($datum['OrderStatus']) && in_array($datum['OrderStatus'], array_keys($this->_status)) ? $this->_status[$datum['OrderStatus']] : '',
-                'auto'                     => isset($datum['FulfillmentChannel']) && $datum['FulfillmentChannel'] == 'AFN' ? 1 : 0, 
+                'is_auto'                  => isset($datum['FulfillmentChannel']) && $datum['FulfillmentChannel'] == 'AFN' ? 1 : 0, 
                 'purchased_at'             => isset($datum['PurchaseDate']) ? $datum['PurchaseDate'] : '',
                 'updated_at'               => isset($datum['LastUpdateDate']) ? $datum['LastUpdateDate'] : '',
                 ];

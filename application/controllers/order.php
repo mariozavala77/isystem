@@ -12,9 +12,13 @@ class Order_Controller extends Base_Controller {
     // 订单列表
     public function action_index() {
         $countries = Order::country();
-        $countries = json_encode($countries);
+        $status = Config::get('application.order_status');
+        $fields = ['id', 'name'];
+        $channels = Channel::filter($fields)->get();
         
-        return View::make('order.list')->with('countries', $countries);
+        return View::make('order.list')->with('countries', $countries)
+                                       ->with('status', $status)
+                                       ->with('channels', $channels);
     }
 
     // 订单列表
@@ -22,11 +26,13 @@ class Order_Controller extends Base_Controller {
         $fields = [ 
             'orders.id', 'entity_id', 'orders.name', 'email', 'total_price', 'currency', 'shipping_name',
             'shipping_address', 'shipping_city', 'shipping_state_or_region', 'shipping_country',    
-            'shipping_postcode', 'shipping_phone', 'channels.name as scource', 
+            'shipping_postcode', 'shipping_phone', 'channels.name as source', 
             'purchased_at', 'payment_method', 'orders.status', 'orders.id as option'
             ];
+
+        $filter = ['is_auto' => 0];
         
-        $orders = Order::filter($fields);
+        $orders = Order::filter($fields, $filter);
         $data = Datatables::of($orders)->make();
 
         foreach($data['aaData'] as $key => $datum) {
@@ -64,11 +70,11 @@ class Order_Controller extends Base_Controller {
             'entity_id'      => $order->entity_id,
             'status'         => Config::get('application.order_status')[$order->status]['name'],
             'total_price'    => $order->currency . ' ' . $order->total_price,
-            'broken'         => $order->broken ? '正常' : '异常',
-            'auto'           => $order->auto ? '是' : '否',
-            'is_sync'        => $order->is_synced ? '是' : '否',
+            'is_broken'      => $order->is_broken ? '异常' : '正常',
+            'is_auto'        => $order->is_auto ? '是' : '否',
+            'is_synced'      => $order->is_synced ? '已同步' : '未同步',
             'channel'        => $channel->name,
-            'shipment_level' => $order->shipment_level,
+            'shipment_level' => Config::get('application.order_shipment_level')[$order->shipment_level],
             'purchased_at'   => $order->purchased_at,
             'payment_method' => $order->payment_method,
             'updated_at'     => $order->updated_at,

@@ -2,7 +2,6 @@
 @section('script')
 {{ HTML::script('js/plugins/ui/jquery.easytabs.min.js') }}
 {{ HTML::script('js/order.js') }}
-{{ HTML::script('js/plugins/tables/jquery.dataTables.columnFilter.js') }}
 @endsection
 @section('sidebar')
     @include('block.sidebar')
@@ -78,25 +77,55 @@
                     if(!initsearch)
                         initSearch();
                 });
+
+                $('#order_search').live('click', function() {
+                    $('.order_search').each(function() {
+                        var value = $(this).val();
+                        var index = $(this).attr('index');
+                    
+                        if(value != '') {
+                            oTable.fnSetFilter(index, value);
+                            //oTable.fnFilter(value, index, false, false, false, false);
+                        }
+                    });
+
+                    oTable.fnDraw();
+                });
+
+                $('#order_search_reset').live('click', function() {
+                    oTable.fnFilterClear();
+                });
             });
 
 
             function initSearch() {
                 initsearch = true;
-                oTable.columnFilter({
-                    //bUseColVis: true,
-                    aoColumns: [
-                        null,
-                        { type: "text", sSelector: "#filter_order_entity_id" },
-                        { type: "text", sSelector: "#filter_order_name"},
-                        null,
-                        { type: "select", sSelector: "#filter_order_country", values: {{$countries}} },
-                        { type: "select", sSelector: "#filter_order_source", values: ['1']},
-                        null,
-                        null,null,null,null
-                        ]
-            });
 
+                var country_select = '<select class="order_search" index="10"><option value>--请选择--</option>';
+                @foreach($countries as $country)
+                    country_select += '<option value="{{$country}}">{{$country}}';
+                @endforeach
+                country_select +='</select>';
+
+                var status_select = '<select class="order_search" index="16"><option value>--请选择--</option>';
+                @foreach($status as $key => $value)
+                    status_select += '<option value="{{$key}}">{{$value['name']}}</option>';
+                @endforeach
+                status_select += '</select>';
+
+                var source_select = '<select class="order_search" index="13"><option value>--请选择--</option>';
+                @foreach($channels as $channel)
+                    source_select += '<option value="{{$channel->id}}">{{$channel->name}}</option>';
+                @endforeach
+                source_select += '</select>';
+
+                $('#filter_order_entity_id').html('<input class="order_search" type="text" index="1">');
+                $('#filter_order_name').html('<input class="order_search" type="text" index="2">');
+                $('#filter_order_country').html(country_select);
+                $('#filter_order_status').html(status_select);
+                $('#filter_order_source').html(source_select);
+
+                $(".order_search").uniform();
             }
         </script>
         
@@ -128,18 +157,18 @@
                     <td>订单状态:</td>
                     <td field="status"></td>
                     <td>处理状态:</td>
-                    <td field="broken"></td>
+                    <td field="is_broken"></td>
                     <td>同步状态:</td>
-                    <td field="is_sync"></td>
+                    <td field="is_synced"></td>
                     <td>是否是AFN订单:</td>
-                    <td field="auto"></td>
+                    <td field="is_auto"></td>
                   </tr>
                   <tr>
                     <td>购买人:</td>
                     <td field="name"></td>
                     <td>购买时间:</td>
                     <td field="purchased_at"></td>
-                    <td>购买渠道:</td>
+                    <td>渠道来源:</td>
                     <td field="channel"></td>
                     <td>支付方式:</td>
                     <td field="payment_method"></td>
@@ -150,7 +179,7 @@
                   </tr>
                   <tr>
                     <td>产品信息：</td>
-                    <td colspan="7" field="products"></td>
+                    <td colspan="7" field="products" class="nopadding" style="padding: 0"></td>
                   </tr>
                   <tr>
                     <td>生成时间：</td>

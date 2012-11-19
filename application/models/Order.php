@@ -121,31 +121,47 @@ class Order {
                             static::update($order_info->id, $datum);
                         // 如果内控端状态有更新，更新渠道
                         } else if( $datum['updated_at'] < $order_info->updated_at && $datum['status'] != $order_info->status ) { 
-                            // 写队列
-                            static::push($order_info->id);
+                            // 同步发货和取消订单
+                            if(in_array($order_info->status, [ORDER_CANCELED, ORDER_SHIPPED, ORDER_PARTIALLYSHIPPED])) {
+                                if($order_info->status == ORDER_CANCELED) {
+                                    $action = 'cancel';
+                                } else {
+                                    $action = 'ship';
+                                }
+                                $queue = [
+                                    'type'       => 'order',
+                                    'action'     => $action,
+                                    'entity_id'  => $order_info->id,
+                                    'status'     => 0,
+                                    'created_at' => date('Y-m-d H:i:s'),
+                                    ];
+                                Queue::insert($queue);
+                            }
                         }
                     // 订单不存在插入订单
                     } else {
                         $datum['created_at']  = date('Y-m-d H:i:s');
                         $datum['modified_at'] = date('Y-m-d H:i:s');
+                        $datum['is_synced'] = 1;
                         static::insert($datum);
                     }
                 }
-                Channel::update($channel->id, ['synced_at' => $data['synced_at']]);
             }
-
         }
-        echo 'ok';
+
+        Item::sync($channels);
+        Channel::update($channel->id, ['synced_at' => $data['synced_at']]);
+        return ['status' => 'success', 'message' => ''];
     }
 
     /**
      * 订单更新推送到渠道
      *
      * @param: $order_id integer 订单ID
+     * @param: $status   integer 推送状态
      *
-     * 
      */
-    public static function push($order_id) {
+    public static function push() {
     
         return false;
     }
@@ -178,7 +194,7 @@ class Order {
      */
     public static function ship($order_ids) {
         return DB::table('orders')->where('status', '=', ORDER_UNSHIPPED)
-                                  ->where('auto', '=', '0')  // 不是FBA订单
+                                  ->where('is_auto', '=', '0')  // 不是FBA订单
                                   ->where_in('id', $order_ids)
                                   ->lists('id');
     }

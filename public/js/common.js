@@ -74,4 +74,54 @@ $(function(){
     // 下拉菜单 
     $('.dropdown-toggle').dropdown();
 
+
+    /***************************************************************************
+     *
+     * databtales 搜索 api
+     *
+     * by william
+     *
+     ***************************************************************************/
+
+    /**
+     * 清空搜索条件
+     *
+     * <code>
+     *    oTable.fnFilterClear();
+     * </code>
+     * 
+     * @param: oSettings object datatables的设置
+     *
+     * return void
+     */
+    $.fn.dataTableExt.oApi.fnFilterClear  = function ( oSettings ) {
+        // 清空定义的搜索
+        for ( var i=0, iLen=oSettings.aoPreSearchCols.length ; i<iLen ; i++ ) {
+            oSettings.aoPreSearchCols[i].sSearch = "";
+        }
+
+        // 需清空表单值 待添加
+        
+        // 重载table
+        oSettings.oApi._fnReDraw( oSettings );
+    };
+
+    /**
+     * 设置搜索条件
+     *
+     * <code>
+     *  oTable.fnSetFilter(1, '已支付');
+     * </code>
+     *
+     * @param: oSettings object datatables设置
+     * @param: index     integer 搜索列索引
+     * @param: value     string  搜索内容
+     *
+     * return void
+     */
+    $.fn.dataTableExt.oApi.fnSetFilter = function(oSettings, index, value) {
+        oSettings.aoPreSearchCols[index].sSearch = value;
+    }
+
+    /***********************************************************************/
 });

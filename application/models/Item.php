@@ -39,8 +39,17 @@ class Item {
             if($product_id) {
                 $product = Product::info($product_id);
                 $item->name = $product->name;
+                $fields = ['id', 'type', 'area'];
+                $storages = Storage::filter($fields)->get();
+                $item->stock = '';
+                foreach($storages as $storage) {
+                    $stock = Stock::info($product_id, $storage->id);
+                    $stock = $stock ? $stock : 0;
+                    $item->stock .= $storage->area . '(' . $storage->type . '):' . $stock . '个<br/>';
+                }
             } else {
-                $item->name = '无法获取名称，未关联产品<a href="">[关联]</a>';
+                $item->name = '<span class="red">未关联产品池，无法获取名称。</span>';
+                $item->stock = '无法获取';
             }
         }
 
