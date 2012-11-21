@@ -206,47 +206,127 @@ class Order {
      * @param: $method  string 投递方式
      * @param: $tracking array  订单跟踪信息
      *
-     * return void
+     * return array
      */
     public static function doBatchShip($company, $method, $tracking) {
-
-        foreach($tracking as $order_id => $tracking_no) {
-            if(!empty($tracking_no)) {
-                $items = Item::get($order_id);
-                foreach($items as $item) {
-                    $data = [
-                        'company'     => $company,
-                        'method'      => $method,
-                        'order_id'    => $order_id,
-                        'item_id'     => $item->id,
-                        'quantity'    => $item->quantity,
-                        'tracking_no' => $tracking_no,
-                        'status'      => 0,
-                        'created_at'  => date('Y-m-d H:i:s'),
-                        'modified_at' => date('Y-m-d H:i:s'),
-                        ];
-
-                    Track::insert($data);
-                }
-
-                // 更新订单状态
-                $data = [
-                    'is_synced'  => 0,
-                    'status'     => ORDER_SHIPPED,
-                    'updated_at' => date('Y-m-d H:i:s'),
-                    ];
-                Order::update($order_id, $data);
-
-                // 发送同步队列
-                $data = [
-                    'type'      => 'order',
-                    'action'    => 'ship',
-                    'entity_id' => $order_id,
-                    'status'    => 0,
-                    'created_at' => date('Y-m-d H:i:s'),
-                    ];
-                Queue::insert($data);
-            }
+        // 验证
+        if(empty($company)) return ['status' => 'fail', 'message' => '物流公司为必填项！'];
+        foreach($tracking as $tracking_no) {
+            if(empty($method) && empty($tracking_no)) return ['status' => 'fail', 'message' => '发货方式和跟踪号填写不完整！'];
         }
+
+        // 入库
+        foreach($tracking as $order_id => $tracking_no) {
+            $items = Item::get($order_id);
+            foreach($items as $item) {
+                $data = [
+                    'company'     => $company,
+                    'method'      => $method,
+                    'order_id'    => $order_id,
+                    'item_id'     => $item->id,
+                    'quantity'    => $item->quantity,
+                    'tracking_no' => $tracking_no,
+                    'status'      => 0,
+                    'created_at'  => date('Y-m-d H:i:s'),
+                    'modified_at' => date('Y-m-d H:i:s'),
+                    ];
+
+                Track::insert($data);
+            }
+
+            // 更新订单状态
+            $data = [
+                'is_synced'  => 0,
+                'status'     => ORDER_SHIPPED,
+                'updated_at' => date('Y-m-d H:i:s'),
+                ];
+            static::update($order_id, $data);
+
+            // 发送同步队列
+            $data = [
+                'type'      => 'order',
+                'action'    => 'ship',
+                'entity_id' => $order_id,
+                'status'    => 0,
+                'created_at' => date('Y-m-d H:i:s'),
+                ];
+            Queue::insert($data);
+        }
+
+        return ['status' => 'success'];
+    }
+
+    /**
+     * 单个订单发货
+     *
+     * @param: $ship_info array 提交的发货信息
+     *
+     * return array
+     */
+    public static function doShip($ship_info) {
+        $order_statistics = [];
+        $data = [];
+        foreach($ship_info as $item_id => $value) {
+            // 收集卖出的数量
+            $total = isset($order_statistics[$value['order_id']]) ? $order_statistics[$value['order_id']] : 0;
+            $order_statistics[$value['order_id']] = $total + $value['sold'];
+
+            if(empty($value['quantity'])) continue; // 发货数量为空直接跳过
+
+            if(!empty($value['company']) && (!empty($value['tracking_no']) || !empty($value['method']))) {
+                $shiped = Track::itemCount($item_id);
+                if($value['quantity'] + $shiped > $value['sold']) return ['status' => 'fail', 'message' => '发货数量不正确！']; // 发货数量大于卖出数量 跳过
+                // 入跟踪表
+                $data[] = [
+                    'item_id'     => $item_id,
+                    'company'     => $value['company'],
+                    'method'      => $value['method'],
+                    'order_id'    => $value['order_id'],
+                    'quantity'    => $value['quantity'],
+                    'tracking_no' => $value['tracking_no'],
+                    'status'      => 0,
+                    'created_at'  => date('Y-m-d H:i:s'),
+                    'modified_at' => date('Y-m-d H:i:s'),
+                    ];
+
+            } else {
+                return ['status' => 'fail', 'message' => '从FBA发货物流公司填Amazon发货方式填FBA跟踪号可不填，其他方式请填完整表单！'];
+            }
+        } 
+
+        foreach($data as $datum) {
+            Track::insert($datum);
+        }
+
+        // 成功发货的订单操作
+        foreach($order_statistics as $order_id => $quantity) {
+            // 更新订单状态
+            $shiped = Track::orderCount($order_id);
+            if($shiped == $quantity) {
+                $status = ORDER_SHIPPED;
+            } else {
+                $status = ORDER_PARTIALLYSHIPPED;
+            }
+
+            $data = [
+                'is_synced'  => 0,
+                'status'     => $status,
+                'updated_at' => date('Y-m-d H:i:s'),
+                ];
+
+            static::update($order_id, $data);
+
+            // 发送同步队列
+            $data = [
+                'type'      => 'order',
+                'action'    => 'ship',
+                'entity_id' => $order_id,
+                'status'    => 0,
+                'created_at' => date('Y-m-d H:i:s'),
+                ];
+            Queue::insert($data);
+        }
+
+        return ['status'=>'success'];
     }
 }

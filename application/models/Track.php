@@ -20,6 +20,34 @@ class Track {
         return DB::table('track')->insert($data);
     }
 
+    /**
+     * 获取产品的已发货数量
+     *
+     * @param: $item_id integer 订单产品ID
+     *
+     * return integer
+     */
+    public static function itemCount( $item_id ) {
+        $track = DB::query('select sum(quantity) as count from track where item_id = '. $item_id . ' group by item_id');
+
+        return isset($track[0]->count) ? $track[0]->count : 0;
+    }
+
+    /**
+     * 获取订单的已发货数量
+     *
+     * @param: $order_id integer 订单ID
+     *
+     * return integer
+     */
+    public static function orderCount( $order_id ) {
+        $track = DB::query('select sum(quantity) as count from track where order_id = '. $order_id . ' group by order_id');
+
+        return isset($track[0]->count) ? $track[0]->count : 0;
+    }
+
+
+
 }
 
 ?>

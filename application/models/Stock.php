@@ -1,7 +1,7 @@
 <?php
 
 /**
- * 库存模型
+ * 仓库模型
  *
  * @author: william <377658@qq.com>
  * @copyright: Copyright (c) 2012 UFCEC Tech All Rights Reserved.
@@ -30,21 +30,21 @@ class Stock {
     /**
      * 获取产品库存信息
      *
-     * @param: $product_id integer 产品ID
+     * @param: $product_id integer 产品池ID
      * @param: $storage_Id integer 仓库ID
      *
      * return integer
      */
-    public static function info($product_id, $storage_id) {
+    public static function sellable($product_id, $storage_id) {
         return DB::table('stock')->where('product_id', '=', $product_id)
                                  ->where('storage_id', '=', $storage_id)
                                  ->only('sellable');
     }
 
     /**
-     * 从外面仓储获取库存
+     * 从外面仓库获取库存
      *
-     * @param: $storage_id integer 仓储ID
+     * @param: $storage_id integer 仓库ID
      *
      * return void
      */
@@ -78,7 +78,7 @@ class Stock {
      * 检测库存信息是否存在
      *
      * @param: $storage_id integer 仓库ID
-     * @param: $code       string  库存编码
+     * @param: $code       string  仓库编码
      *
      * return integer 库存表ID
      */
@@ -89,7 +89,7 @@ class Stock {
     }
 
     /**
-     * 插入库存数据
+     * 插入仓库产品数据
      *
      * @param: $data array 数据
      *
@@ -100,7 +100,7 @@ class Stock {
     }
 
     /**
-     * 更新库存
+     * 更新仓库产品信息
      *
      * @param: $stock_id integer 记录ID
      * @param: $data     array   数据
