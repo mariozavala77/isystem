@@ -6,27 +6,36 @@
  * @copyright: Copyright (c) 2012 UFCEC Tech All Rights Reserved.
  * @version: $Id$
  */
-class TrackApi{
+class TrackAPI{
 
-    const KUAIDI = ['Kuaidi'    => ['dhl', 'ups', 'usps', 'fedex', 'tnt'], 
+    public function get($com, $nu){
+        $kuaidi = ['Kuaidi'    => ['dhl', 'ups', 'usps', 'fedex', 'tnt'], 
                     'Icha'      => ['ems', 'shunfeng'], 
                     'Royalmail' => ['royalmail'],
-                    ]; 
-
-    public static function get($com, $nu, $valicode){
+                   ];
         $interface = '';
-        foreach (KUAIDI as $key => $value) {
+        $com = ($com=='EUB')?'ems':$com;
+
+        foreach ($kuaidi as $key => $value) {
             if(in_array($com, $value)){
                 $interface = $key;
             }
         }
+        if(in_array($com, ['singPost', 'HK Post'])){
+            $interface = 'Royalmail';
+        }
+
+        if($com == 'Amazon FBA'){
+            $interface = 'Amazon';
+        }
 
         if(empty($interface)){
-            if($com == ''){
-
-            }else{
-
-            }
+            return FALSE;
         }
+
+        $interface = 'TrackAPI_' . $interface;
+
+        $api = new $interface();
+        var_dump($api->get($com, $nu));
     }
 }
