@@ -87,16 +87,27 @@ class AgentAPI_Order extends AgentAPI_Base{
         $agent = Agent::info($params['agent_id']);
         $data['channel_id'] = $agent->channel_id;
 
-        $order_id = Order::insert( $data );
-        if(empty($order_id)){
-            foreach($items as $key=>$value){
-                $value['order_id'] = $order_id;
-                $value['shipping_price'] = $shipping_price;
-                Item::insert($value);
+        $exists = ['entity_id' => $data['entity_id'], 'channel_id'] => $data['channel_id'];
+        $order_info = Order::exists($exists);
+
+        if(empty($order_info)){
+            $order_id = Order::insert( $data );
+            if(empty($order_id)){
+                foreach($items as $key=>$value){
+                    $value['order_id'] = $order_id;
+                    $value['shipping_price'] = $shipping_price;
+                    Item::insert($value);
+                }
+                return ['order_id' => $order_id];
+            }else{
+                throw new AgentAPILogException('order sql insert wrong', -32006);
             }
-            return ['order_id' => $order_id];
         }else{
-            throw new AgentAPILogException('order sql insert wrong', -32006);
+            if(Order::update( $order_info->id, $data )){
+                return ['order_id' => $order_info->id];
+            }else{
+                throw new AgentAPILogException('order sql update wrong', -32018);
+            }
         }
     }
 }
