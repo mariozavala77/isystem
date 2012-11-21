@@ -80,6 +80,8 @@ class AgentAPI_Order extends AgentAPI_Base{
         }
 
         unset($data['items']);
+        $shipping_price = $data['shipping_price'];
+        unset($data['shipping_price']);
         $data['ship_status'] = 0;
         $data['modified_at'] = date('Y-m-d H:i:s');
         $agent = Agent::info($params['agent_id']);
@@ -89,6 +91,7 @@ class AgentAPI_Order extends AgentAPI_Base{
         if(empty($order_id)){
             foreach($items as $key=>$value){
                 $value['order_id'] = $order_id;
+                $value['shipping_price'] = $shipping_price;
                 Item::insert($value);
             }
             return ['order_id' => $order_id];
