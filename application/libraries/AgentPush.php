@@ -48,35 +48,37 @@ class AgentPush{
      */
     public static function order_info($agent_id, $order_id){
         $return_fields = ['name', 'shipping_country', 'status', 
-                          'ship_status', 'purchased_at'];
+                          'ship_status', 'purchased_at', 'currency'];
         $order_info = Order::info($order_id);
         $params = ['id' => $order_id, 'agent_id' => $agent_id];
         foreach ($return_fields as $value) {
             $params[$value] = $order_info->$value;
         }
 
-        $items = Item::get($order_id);
+        $items_data = Item::get($order_id);
 
         // 取出订单下面的所有sku
-        foreach ($items as $key=>$value){
-            $items[$key] = $value->sku;
+        foreach ($items_data as $key=>$value){
+            $sku[$value->sku] = $value->sku;
+            $item[$value->sku] = $value;
         }
-        $fields = ['sku', 'price', 'shipping_price'];
+        $items_data = $item;
+        $fields = ['sku', 'title'];
         // 订单拆分
-        $sales = Product_Sale::filter($fields)->where_in('sku', $items)
+        $sales = Product_Sale::filter($fields)->where_in('sku', $sku)
                                               ->where('agent_id', '=', $agent_id)
                                               ->get();
         $total_price = 0;
         $item = [];
 
         foreach ($sales as $key=>$value){
-            $total_price += ($value->price + $value->shipping_price);
-            $item[$key] = ['sku' => $value->sku, 'shipping_price' => $value->shipping_price];
+            $item = $items_data[$value->sku];
+            $total_price += ($item->price + $item->shipping_price);
+            $items[$key] = ['sku' => $value->sku, 'shipping_price' => $item->shipping_price, 'title' => $value->title, 'quantity' => $item->quantity, 'price' => $item->price];
         }
 
         $params['total_price'] = $total_price;
-        $params['items'] = $item;
-
+        $params['items'] = $items;
         $api = new AgentAPI('order.save', $params);
         return $api->handle();
     }

@@ -212,6 +212,8 @@ class Product_Controller extends Base_Controller {
     // 产品详情
     public function action_info(){
         $product_id = intval(Input::get('product_id'));
+        var_dump(AgentPush::order_info(1, 79));
+        exit;
 
         if(empty($product_id)){
             return Response::json([ 'status' => 'fail', 'message' => '参数丢失']);
@@ -239,7 +241,11 @@ class Product_Controller extends Base_Controller {
         $devel = User::info($product_info->devel_id);
 
         $product_info->devel = $devel->username;
-
-        return Response::json(['status'=>'success', 'message'=>$product_info]);
+        if($this->is_ajax()){
+            return Response::json(['status'=>'success', 'message'=>$product_info]);
+        }else{
+            return View::make('product.info')->with('product_info', $product_info)
+                                             ->with('product_id', $product_id);
+        }
     }
 }

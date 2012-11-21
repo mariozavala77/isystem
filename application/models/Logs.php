@@ -1,4 +1,4 @@
-<?php namespace App\Log;
+<?php
 
 /**
  * 日志模型
@@ -8,7 +8,7 @@
  * @version: $Id:Channel.php  2012年11月04日 星期日 10时10分57秒Z $
  */
 
-class Log {
+class Logs {
 
     /**
      * 获取所有的日志

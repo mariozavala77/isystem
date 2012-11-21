@@ -148,7 +148,7 @@ var task_mod ='{{$task->type}}';
     <!--订单详细 或者 产品详细-->
         <div class="widget grid6">
             <div class="whead">
-                        <h6>代理商认购信息</h6>
+                        <h6>产品池商品信息</h6>
                         <div class="on_off">
                             <a href="javascript:void(0);" title="点击刷新商品信息"><span class="icon-reload-CW"></span></a>  
                         </div>
