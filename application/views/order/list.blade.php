@@ -157,7 +157,7 @@
                   </tr>
                   <tr>
                     <td>产品信息：</td>
-                    <td colspan="7" field="products" class="nopadding" style="padding: 0"></td>
+                    <td colspan="7" field="items_info" class="nopadding" style="padding: 0"></td>
                   </tr>
                   <tr>
                     <td>生成时间：</td>
@@ -181,22 +181,45 @@
 
     <!-- order batch operation begins -->
     <div id="order_batch_ship_dialog" title="订单批量发货" style="display: none">
-        <form action="{{ URL::to('order/ship') }}" method="POST">
-            <div class="widget fluid" style="margin-top: 0px">
-                <div class="formRow ">
-                    <div class="grid3">&nbsp;</div>
-                    <div class="grid1">配送公司：</div>
-                    <div class="grid2"><input name="ship_company" type="text"/></div>
-                    <div class="grid1">配送方式：</div>
-                    <div class="grid2"><input name="ship_method" type="text"/></div>
-                    <div class="clear"></div>
-                </div>
+        <div class="widget fluid" style="margin-top: 0px">
+            <div class="formRow">
+                <div class="grid3">&nbsp;</div>
+                <div class="grid1">配送公司：</div>
+                <div class="grid2"><input name="batch_ship_company" type="text"/></div>
+                <div class="grid1">配送方式：</div>
+                <div class="grid2"><input name="batch_ship_method" type="text"/></div>
+                <div class="clear"></div>
             </div>
-            <div class="textC mt10"><input type="submit" class="buttonS bBlue" value="发货" /></div>
-        </form>
+        </div>
+        <div class="textC mt10"><a class="buttonS bDefault" action="batch_order_ship_submit">发货</a></div>
     </div>
     <!-- order batch operation ends -->
 
+    <!-- order ship begins-->
+    <div id="order_ship_dialog" title="订单发货" style="display: none">
+        <div class="widget fluid" style="margin-top: 0px">
+            <div class="formRow">
+                <div class="grid1">订单ID：</div>
+                <div class="grid2"><span field="entity_id"></span></div>
+                <div class="grid1">购买人：</div>
+                <div class="grid2"><span field="name"></span></div>
+                <div class="grid1">国家：</div>
+                <div class="grid2"><span field="country"></span></div>
+                <div class="grid1">来源：</div>
+                <div class="grid2"><span field="channel"></span></div>
+                <div class="clear"></div>
+            </div>
+            <div class="formRow nopadding">
+                <div class="grid12" field="items_ship"></div>
+                <div class="clear"></div>
+            </div>
+            <div class="formRow">
+                <div class="grid3"><a class="bDefault buttonS" action="order_ship_submit">发货</a></div>
+                <div class="clear"></div>
+            </div>
+        </div>
+    </div>
+    <!-- order ship ends-->
 </div>
 <!-- Content ends --> 
 @endsection

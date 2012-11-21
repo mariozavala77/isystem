@@ -31,16 +31,23 @@ $(function(){
             { sTitle: "来源", aTargets: [13], sWidth: '90px' },  // 来源
             { sTitle: "购买时间", aTargets: [14], sWidth: '120px' },
             { bVisible: false, aTargets: [15] }, // 支付方式
-            { sTitle: "状态", aTargets: [16], sWidth: '40px' },
+            { sTitle: "状态", aTargets: [16], sWidth: '50px' },
             { sTitle: "操作", aTargets: [17], bSearchable: false, sClass: "tableActs", sWidth: '80px' },
         ],
         fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
             var id = aData[0];
             var checkbox = '<input type="checkbox" value="'+id+'" name="order_ids[]"/>';
             var price = aData[5] + ' ' + aData[4];
-            var operation = '<!--a class="tablectrl_small bDefault tipS" original-title="同步"><span class="iconb" data-icon=""></span></a-->' + 
-                            '<a class="tablectrl_small bDefault tipS" original-title="发货"><span class="iconb" data-icon=""></span></a>' +
-                            '<a class="tablectrl_small bDefault tipS" original-title="取消"><span class="iconb" data-icon=""></span></a>';
+
+            // 操作表格内容
+            var operation = '';
+            if(aData[16] == '未发货' || aData[16] == '部分发货') {
+               operation += '<a class="tablectrl_small bDefault tipS" action="order_ship" cid="'+id+'" original-title="发货"><span class="iconb" data-icon=""></span></a>';
+            }
+            if(aData[16] == '未发货') {
+                operation += '<a class="tablectrl_small bDefault tipS" action="order_cannel" original-title="取消"><span class="iconb" data-icon=""></span></a>';
+            }
+            operation += '<a class="tablectrl_small bDefault tipS" action="order_info" cid="'+id+'" original-title="详情"><span class="iconb" data-icon=""></span></a>';
 
             $(nRow).attr('id', 'oid'+id);
 
@@ -53,7 +60,7 @@ $(function(){
                 order_info(id, $(this).html());
             });
             $('td:eq(3)', nRow).html(price);
-            $('td:eq(8)', nRow).html(operation);
+            $('td:eq(8)', nRow).html(operation).find('.tipS').tipsy({gravity: 's',fade: true, html:true});
         },
         fnInitComplete: function() {
             $('.dataTables_info').css('clear', 'none').css('line-height', '34px');
@@ -173,12 +180,11 @@ $(function(){
         });
     });
 
-    var dialog = $('#order_batch_ship_dialog form');
-
-    // 打开产品信息窗口
-    dialog.dialog({
+    // 批量发货对话框
+    var order_batch_ship_dialog = $('#order_batch_ship_dialog');
+    order_batch_ship_dialog.dialog({
         autoOpen: false,
-        width: "80%",
+        width: "90%",
         modal: true,
     });
 
@@ -188,7 +194,6 @@ $(function(){
         // 判断有无选操作
         if(action == '') {
             $.jGrowl('请先选择操作。');
-
             return false;
         }
 
@@ -226,8 +231,8 @@ $(function(){
                         order_ids = data.message;
 
                         $('.shipRow').remove();
-                        $('input[name="ship_company"]').val('');
-                        $('input[name="ship_method"]').val('');
+                        $('input[name="batch_ship_company"]').val('');
+                        $('input[name="batch_ship_method"]').val('');
 
                         // 创建发货表单
                         var row = '<div class="formRow shipRow nopadding" style="border-bottom: 0; max-height: 487px; overflow:auto;">' +
@@ -245,9 +250,9 @@ $(function(){
                         }
                         row += '</tbody></table></div>';
 
-                        dialog.children('div:first').append(row);
+                        order_batch_ship_dialog.children('div:first').append(row);
 
-                        dialog.dialog('open');
+                        order_batch_ship_dialog.dialog('open');
                     } else if(data.status == 'fail') {
                         $.jGrowl(data.message);
                     } else {
@@ -260,13 +265,114 @@ $(function(){
             });
         }
     });
+
+    // 单个产品发货对话框
+    var order_ship_dialog = $('#order_ship_dialog');
+    order_ship_dialog.dialog({
+        autoOpen: false,
+        width: "90%",
+        modal: true,
+    });
+
+    // 单个产品发货
+    $('a[action="order_ship"]').live('click', function() {
+        var order_id = $(this).attr('cid');
+        $.ajax({
+            url: '/order/info',
+            type: 'POST',
+            data: {order_id: order_id},
+            dataType: 'json',
+            success: function(data) {
+                for(i in data) {
+                    $('#order_ship_dialog').find('[field="'+i+'"]').html(data[i]);
+                }
+                order_ship_dialog.dialog('open');
+            },
+            error: function() {
+                $.jGrowl('获取发货详情失败！');
+            }
+        });
+    });
+
+    // 单品发货提交
+    $('a[action="order_ship_submit"]').click(function(){
+        var data = $('div[field="items_ship"] input').serialize();
+        $.ajax({
+            url: '/order/ship',
+            type: 'POST',
+            data: data,
+            dataType: 'json',
+            success: function(data) {
+                if(data.status == 'success') {
+                    order_ship_dialog.dialog('close');
+                    $.jGrowl('发货成功！');
+                    oTable.fnDraw();
+                } else if(data.status == 'fail') {
+                    $.jGrowl(data.message);
+                
+                } else {
+                    $.jGrowl('未知错误！');
+                }
+            },
+            error: function() {
+                $.jGrowl('发货失败！');
+            }
+        });
+    });
+
+    // 取消
+    $('a[action="order_cannel"]').live('click', function(){
+        alert(2);
+    });
+    // 详情
+    $('a[action="order_info"]').live('click', function(){
+        var id = $(this).attr('cid');
+        var entity_id = $(this).attr('centity_id');
+        order_info(id, entity_id);
+    });
+
+
+    // 批量发货提交
+    $('a[action="batch_order_ship_submit"]').click(function(){
+        var ship_company = $('input[name="batch_ship_company"]').val();
+        var ship_method  = $('input[name="batch_ship_method"]').val();
+        var tracking_nos = new Array;
+        $('input[name="ship_tracking_nos[]"]').each(function(){
+            tracking_nos[tracking_nos.length] = $(this).val();
+        });
+        var order_ids = new Array;
+        $('input[name="ship_order_ids[]"]').each(function(){
+            order_ids[order_ids.length] = $(this).val();
+        });
+
+        $.ajax({
+            url: '/order/ship',
+            type: 'POST',
+            data: {ship_company: ship_company, ship_method: ship_method, ship_tracking_nos: tracking_nos, ship_order_ids: order_ids},
+            dataType: 'json',
+            success: function(data) {
+                if(data.status == 'success') {
+                    order_batch_ship_dialog.dialog('close');
+                    $.jGrowl('发货成功！');
+                    oTable.fnDraw();
+                } else if(data.status == 'fail'){
+                    $.jGrowl(data.message);
+                } else {
+                    $.jGrowl('未知错误！');
+                }
+            },
+            error: function() {
+                $.jGrowl('请求发货操作错误。');
+            }
+        });
+    });
 });
 
 // 订单详情
 function order_info(order_id, entity_id) {
     $('#order_info_dialog').attr('title', entity_id + '订单详情');
 
-    // 获取产品信息
+    // 获取订单信息
     $.ajax({
         url: '/order/info',
         type: 'POST',

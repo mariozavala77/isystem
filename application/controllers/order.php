@@ -70,9 +70,9 @@ class Order_Controller extends Base_Controller {
             'entity_id'      => $order->entity_id,
             'status'         => Config::get('application.order_status')[$order->status]['name'],
             'total_price'    => $order->currency . ' ' . $order->total_price,
-            'broken'         => $order->is_broken ? '正常' : '异常',
-            'auto'           => $order->is_auto ? '是' : '否',
-            'is_sync'        => $order->is_synced ? '是' : '否',
+            'is_broken'      => $order->is_broken == '0' ? '正常' : '异常',
+            'is_auto'        => $order->is_auto ? '是' : '否',
+            'is_synced'      => $order->is_synced ? '已同步' : '未同步',
             'channel'        => $channel->name,
             'shipment_level' => Config::get('application.order_shipment_level')[$order->shipment_level],
             'purchased_at'   => $order->purchased_at,
@@ -81,14 +81,19 @@ class Order_Controller extends Base_Controller {
             'modified_at'    => $order->modified_at,
             'created_at'     => $order->created_at,
             'name'           => $order->name,
+            'country'        => $order->shipping_country,
             'shipping'       => $order->shipping_name ? $order->shipping_name. '<br />' . 
                                 $order->email . '<br .>' . 
                                 $order->shipping_address . '<br />' .
                                 $order->shipping_city . ' ' . $order->shipping_state_or_region . ' ' . $order->shipping_country . '<br />zip:' .
                                 $order->shipping_postcode . '<br />tel:' .
                                 $order->shipping_phone : '',
-            'products'       => Item::info($order_id),
+            'items_info'      => Item::info($order_id),
             ];
+
+        if(in_array($order->status, [ORDER_UNSHIPPED, ORDER_PARTIALLYSHIPPED])) {
+            $results['items_ship'] = Item::ship($order_id);
+        }
 
         return Response::json($results);
     }
@@ -119,11 +124,11 @@ class Order_Controller extends Base_Controller {
         // 如果多个ID为批量
         if(isset($input['ship_order_ids']) && !empty($input['ship_order_ids'])) {
             $tracking = array_combine($input['ship_order_ids'], $input['ship_tracking_nos']);
-            Order::doBatchShip($input['ship_company'], $input['ship_method'], $tracking);
-        } else {
-            Order::doShip();
+            $result = Order::doBatchShip($input['ship_company'], $input['ship_method'], $tracking);
+        } else if(isset($input['order_ship'])) {
+            $result = Order::doShip($input['order_ship']);
         }
 
-        return Redirect::to('order');
+        return Response::json($result);
     }
 }

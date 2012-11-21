@@ -27,33 +27,94 @@ class Item {
      *
      * @param: $order_id integer 订单ID
      *
-     * return string
+     * return string|html
      */
     public static function info($order_id) {
         $items = static::get($order_id);
 
-        $fields = ['product_id'];
         foreach($items as $item) {
-            $filter = ['sku' => $item->sku];
-            $product_id = Product_Sale::filter($fields, $filter)->only('product_id');
-            if($product_id) {
-                $product = Product::info($product_id);
-                $item->name = $product->name;
-                $fields = ['id', 'type', 'area'];
-                $storages = Storage::filter($fields)->get();
-                $item->stock = '';
-                foreach($storages as $storage) {
-                    $stock = Stock::info($product_id, $storage->id);
-                    $stock = $stock ? $stock : 0;
-                    $item->stock .= $storage->area . '(' . $storage->type . '):' . $stock . '个<br/>';
+                $product_id = static::productMap($item->sku); 
+                if($product_id) {
+                    $product = Poduct::info($product_id);
+                    $storages = Storage::stock($product_id);
+
+                    $item->name = $product->name;
+                    $item->stock = static::formatStock($storages);
+                } else {
+                    $item->name = '<span class="red">未关联产品池，无法获取名称。</span>';
+                    $item->stock = '无';
                 }
-            } else {
-                $item->name = '<span class="red">未关联产品池，无法获取名称。</span>';
-                $item->stock = '无法获取';
+        }
+
+        return View::make('block.item_info')->with('items', $items)->render();
+    }
+
+    /**
+     * 产品发货表格
+     *
+     * @param: $order_id integer 订单ID
+     *
+     * return string|html
+     */
+    public static function ship($order_id) {
+        $items = static::get($order_id);
+        $items_ship = [];
+        foreach($items as $item) {
+            $shiped = Track::itemCount($item->id);
+            if($item->quantity > $shiped) {
+                $product_id = static::productMap($item->sku);
+                if($product_id) {
+                    $product = Product::info($product_id);
+                    $storages = Storage::stock($product_id);
+
+                    $item->name = $product->name;
+                    $item->stock = static::formatStock($storages);
+                } else {
+                    $item->name = '<span class="red">未关联产品池，无法获取名称。</span>';
+                    $item->stock = '无';
+                }
+                $item->unship = $item->quantity - $shiped;
+                $items_ship[] = $item;
             }
         }
 
-        return View::make('block.item')->with('items', $items)->render();
+        return View::make('block.item_ship')->with('items', $items_ship)->render();
+    }
+
+    /**
+     * 格式化库存
+     *
+     * @param: $storages array 库存信息
+     *
+     * return html
+     */
+    public static function formatStock($storages_info) {
+        $stock = '';
+        $split = '';
+        foreach($storages_info as $storage) {
+            $count = $storage['sellable'] ? $storage['sellable'] : 0;
+            $stock .= sprintf($split.'%s[%s]%s个', $storage['area'], $storage['type'], $count);
+            $split = '<br/>';
+        }
+
+        return $stock;
+    }
+
+
+
+    /**
+     * 获取产品池映射
+     *
+     * @param: $sku string 上架产品的SKU
+     *
+     * return integer
+     */
+    public static function productMap($sku) {
+        $fields = [ 'products.id' ];
+        $filter = [ 'sku' => $sku ];
+        $product_id = Product_Sale::filter($fields, $filter)->only('product_id');
+
+        return $product_id;
     }
 
     /**

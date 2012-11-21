@@ -22,6 +22,28 @@ class Storage {
     }
 
     /**
+     * 获取各个库存信息
+     *
+     * @param: $product_id integer 产品池ID
+     *
+     * return array
+     */
+    public static function stock($product_id) {
+        $fields = ['id', 'type', 'area'];
+        $storages = static::filter($fields)->get();
+        $stock_info = [];
+        foreach($storages as $storage) {
+            $stock_info[] = [
+                'area' => $storage->area,
+                'type' => $storage->type,
+                'sellable' => $stock->sellable($product_id, $storage->id),
+                ];
+        }
+
+        return $stock_info;
+    }
+
+    /**
      * 获取仓库信息
      *
      * @param: $storage_id integer 仓库ID
