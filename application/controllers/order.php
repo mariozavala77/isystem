@@ -123,5 +123,7 @@ class Order_Controller extends Base_Controller {
         } else {
             Order::doShip();
         }
+
+        return Redirect::to('order');
     }
 }

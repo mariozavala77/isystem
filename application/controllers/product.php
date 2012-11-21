@@ -11,7 +11,10 @@ class Product_Controller extends Base_Controller {
 
     // 产品列表
     public function action_index() {
-        return View::make('product.list');
+        $fields = [ 'id', 'name' ];
+        $filter = [ 'parent_id' => 0 ];
+        $categories = Category::filter($fields, $filter)->get();
+        return View::make('product.list')->with('categories', $categories);
     }
 
     // 产品列表
