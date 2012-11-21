@@ -23,5 +23,6 @@ class AgentAPI_Message extends AgentAPI_Base{
         $data['sent_time'] = time();
 
         Message::insert($data);
+        return 'ok';
     }
 }

@@ -16,12 +16,33 @@ class Product_Sale_Controller extends Base_Controller {
 
     // 列表
     public function action_filter() {
-        $fields = [ 'id', 'title', 'sku', 'price', 'channel_id', 'agent_id', 'status', 'id as operate'];
+        $fields = [ 'id', 'title', 'sku', 'price', 'channel_id', 'agent_id', 'status', 
+                    'sold', 'id as operate'];
         $products = Product_Sale::filter($fields);
         $data = Datatables::of($products)->make();
+        $channels = [];
+        $agents   = [];
+        foreach($data['aaData'] as $key=>$value){
+            $channels[$value[4]] = $value[4];
+            $agents[$value[5]]   = $value[5];
+        }
+        $agents = Agent::filter(['id', 'company'])->where_in('id', $agents)->get();
+        foreach($agents as $key=>$value){
+            $agent[$value->id] = $value->company;
+        }
+        $agents = $agent;
+        $channels = Channel::filter(['id', 'name'])->where_in('id', $channels)->get();
+        foreach($channels as $key=>$value){
+            $channel[$value->id] = $value->name;
+        }
+        $channels = $channel;
+        foreach($data['aaData'] as $key=>$value){
+            $value[9] = $channels[$value[4]];
+            $value[10] = $agents[$value[5]];
+            $data['aaData'][$key] = $value;
+        }
 
         return Response::json($data);
-    
     }
 
     // 审核信息

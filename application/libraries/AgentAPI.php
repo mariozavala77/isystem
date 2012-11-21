@@ -15,7 +15,8 @@ class AgentAPI{
     const JSONRPC = '2.0';
 
     // 请求的url 在发送的时候用到
-    const APP_URL = 'http://localhost/ceshi/testeeee.php';
+    //const APP_URL = 'http://agency.dev/api/jsonrpc';
+    const APP_URL = 'http://localhost/ceshi/ceshi.phpeee';
     
     // 请求id 可以是代理商的id 也可以是代理商随机生成
     private $_id = '';
@@ -127,18 +128,17 @@ class AgentAPI{
             
             $request = [
                 'jsonrpc' => self::JSONRPC,
-                'method'  => 'get.'.$interface.'.'.$action,
+                'method'  => $interface.'.'.$action,
                 'params'  => $params,
-                'id'      => time()
+                'id'      => (string)time()
             ];
-
             $transport = new Transport();
-            $request = $transport->request(self::APP_URL, json_encode($request), 'POST');
+            $request = $transport->request(self::APP_URL, json_encode($request), 'POST', ['Content-Type' => 'application/json']);
             if(!empty($request) || !isset($request['body'])){
                 $request = $request['body'];
                 $request = json_decode($request,TRUE);
                 if(isset($request['error'])){
-                    throw new AgentAPILogException($request['error'], 1);
+                    throw new AgentAPILogException($request['error']['message'], $request['error']['code']);
                 }
                 return TRUE;
             }
@@ -155,7 +155,7 @@ class AgentAPI{
                 'content'    => json_encode($content),
                 'created_at' => date('Y-m-d H:i:s')
             ];
-            //App\Log\Log::insert($data); // 写入日志
+            Logs::insert($data); // 写入日志
             return FALSE;
         }
     }
@@ -186,7 +186,7 @@ class AgentAPI{
             $interface = 'AgentAPI_' . $interface;
             $param['value']= $params;
             $result=call_user_func_array([$interface, $action], $param);
-            if($result == FALSE){
+            if($result === FALSE){
                 throw new AgentAPIException('请求了无效方法', -32601);
                 
             }
@@ -205,7 +205,7 @@ class AgentAPI{
                 'content'    => json_encode($content),
                 'created_at' => date('Y-m-d H:i:s')
             ];
-            //Log::insert($data); // 写入日志
+            Logs::insert($data); // 写入日志
             return $this->_rpc_error(-32003, '内容获取失败');
         }catch(Exception $e){
             return $this->_rpc_error(-32003, $e->getMessage());

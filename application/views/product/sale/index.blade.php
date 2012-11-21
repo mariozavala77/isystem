@@ -1,9 +1,9 @@
 @layout('layout.base')
 @section('script')
-    {{ HTML::script('js/sale.js') }}
+{{ HTML::script('js/sale.js') }}
 @endsection
 @section('sidebar')
-    @include('../block.sidebar')
+@include('../block.sidebar')
 @endsection
 @section('content')
 <div id="content">
@@ -53,40 +53,6 @@
             </div>
         </div>
     </div>
-    <!-- Main content ends-->
-    <script type="text/javascript">
-        $(function() {
-            sTable = $('#sale_list_table').dataTable({
-                bSort: false,
-                bProcessing: true,
-                bFilter: true,
-                bServerSide: true,
-                bJQueryUI: false,
-                sPaginationType: 'full_numbers',
-                sAjaxSource: '/product/sale/filter',
-                sDom: '<"H"fl<"clear">>tr<"F"ip>',
-                oLanguage: { sUrl: '/js/plugins/tables/lang_cn.txt' },
-                aoColumnDefs: [
-                    { sTitle: "全选", aTargets: [0] },
-                    { sTitle: "标题", aTargets: [1] },
-                    { sTitle: "SKU", aTargets: [2] },
-                    { sTitle: "价格", aTargets: [3] },
-                    { sTitle: "渠道", aTargets: [4] },
-                    { sTitle: "代理商", aTargets: [5] },
-                    { sTitle: "状态", aTargets: [6] },
-                    { sTitle: "操作", aTargets: [7], bSearchable: false, sClass: 'tableActs' },
-                ],
-                fnRowCallback: function(nRow,aData, iDisplayIndex, iDisplayIndexFull) {
-                    var id = aData[7];
-                    var operation = '<a href="/product/category/edit?category_id=' + id + '" class="tablectrl_small bDefault tipS" original-title="编辑"><span class="iconb" data-icon=""></span></a>' + 
-                                    '<a href="javascript: void(0);" data-id="' + id + '" class="tablectrl_small bDefault tipS" original-title="删除"><span class="iconb" data-icon=""></span></a>';
-                    $('td:eq(7)', nRow).html(operation);
-                }
-            });
-
-        });
-    </script>
-
     <!-- delete confirm begins-->
     <div id="sale_delete_confirm" style="display:none" title="提示">
         <p>你确定下架此产品？</p>

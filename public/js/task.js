@@ -33,14 +33,14 @@ $(function() {
                 }
             });
 
-    $('#task_finish_confirm').dialog({
+    $('#task_finish').dialog({
         autoOpen: false,
         resizable:false,
         modal: true,
         buttons: {
             "已处理": function () {
-                var msg = $('#message').val();
-                if(empty(msg)){
+                var msg = $.trim($('#message').val());
+                if(!msg){
                     $('#message').focus();
                     $.jGrowl('请填写备注信息！');
                     return false;
@@ -59,14 +59,14 @@ $(function() {
             }
         }
     });
-    $('#task_finish').dialog({
+    $('#task_finish_confirm').dialog({
         autoOpen: false,
         resizable:false,
         modal: true,
         buttons: {
             "确认": function () {
                 $(this).dialog("close");
-                $('#task_finish_confirm').dialog('open');
+                $('#task_finish').dialog('open');
             },
             "取消": function () {
                 $(this).dialog("close");
@@ -76,6 +76,6 @@ $(function() {
 });
 function handle(id){
     task_id = id;
-    $('#task_finish').dialog('open');
+    $('#task_finish_confirm').dialog('open');
     return false;
 }
