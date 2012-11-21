@@ -15,8 +15,8 @@ class AgentAPI{
     const JSONRPC = '2.0';
 
     // 请求的url 在发送的时候用到
-    //const APP_URL = 'http://agency.dev/api/jsonrpc';
-    const APP_URL = 'http://localhost/ceshi/ceshi.phpeee';
+    const APP_URL = 'http://agency.dev/api/jsonrpc';
+    //const APP_URL = 'http://localhost/ceshi/ceshi.phpeee';
     
     // 请求id 可以是代理商的id 也可以是代理商随机生成
     private $_id = '';

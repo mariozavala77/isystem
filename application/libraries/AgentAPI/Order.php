@@ -59,10 +59,10 @@ class AgentAPI_Order extends AgentAPI_Base{
             'entity_id', 'name', 'email', 'total_price', 
             'currency', 'shipping_name', 'shipping_phone', 'shipping_address', 
             'shipping_city', 'shipping_state_or_region', 'shipping_country', 
-            'shipping_postcode', 'shipment_level' ,'payment_method', 'status', 
-            'purchased_at', 'created_at', 'items'
+            'shipping_postcode' ,'payment_method', 'status', 
+            'purchased_at', 'created_at', 'items', 'shipping_price'
             ];
-        $item_fields = ['entity_id', 'sku', 'quantity', 'price', 'shipping_price'];
+        $item_fields = ['entity_id', 'sku', 'quantity', 'price'];
 
         try{
             $data = self::requeryParams($fields, $params);
@@ -82,6 +82,8 @@ class AgentAPI_Order extends AgentAPI_Base{
         unset($data['items']);
         $data['ship_status'] = 0;
         $data['modified_at'] = date('Y-m-d H:i:s');
+        $agent = Agent::info($params['agent_id']);
+        $data['channel_id'] = $agent->channel_id;
 
         $order_id = Order::insert( $data );
         if(empty($order_id)){

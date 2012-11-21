@@ -186,7 +186,13 @@
                 <div class="formRow ">
                     <div class="grid3">&nbsp;</div>
                     <div class="grid1">配送公司：</div>
-                    <div class="grid2"><input name="ship_company" type="text"/></div>
+                    <div class="grid2">
+                        <select name="ship_company" id="ship_company">
+                            @foreach($logistic_company as $key=>$company)
+                                <option value="{{$key}}">{{$company}}</option>
+                            @endforeach
+                        </select>
+                    </div>
                     <div class="grid1">配送方式：</div>
                     <div class="grid2"><input name="ship_method" type="text"/></div>
                     <div class="clear"></div>

@@ -124,15 +124,14 @@ class AgentPush{
      * 发送站内信息
      *
      * @param $agent_id integer 代理商id
-     * @param $titile   string  消息标题
+     * @param $title    string  消息标题
      * @param $content  string  消息内容
      * @param $user_id  integer 管理员id 默认为0     
      *
      * @return bool|mixed
      */
-    public static function message_send($agent_id, $titile, $content, $user_id = 0){
-        $params = ['titile' => $titile, 'agent_id' => $agent_id, 'content' => $content, 'user_id' => $user_id];
-
+    public static function message_send($agent_id, $title, $content, $user_id = 0){
+        $params = ['title' => $title, 'agent_id' => $agent_id, 'content' => $content, 'user_id' => $user_id];
         $api = new AgentAPI('message.create', $params);
         return $api->handle();
     }

@@ -16,7 +16,7 @@ class Api_Controller extends Controller {
     private $response = '';
 
     public function __construct(){
-        if($_SERVER['REQUEST_METHOD'] != 'POST' || empty($_SERVER['CONTENT_TYPE']) || $_SERVER['CONTENT_TYPE'] != 'application/json'){
+        if($_SERVER['REQUEST_METHOD'] != 'POST' || empty($_SERVER['CONTENT_TYPE']) || !preg_match('/application\/json/', $_SERVER['CONTENT_TYPE'])){
             exit;
         }
 
