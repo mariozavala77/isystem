@@ -8,25 +8,25 @@
  */
 class TrackApi{
 
-	const KUAIDI = ['Kuaidi' 	=> ['dhl', 'ups', 'usps', 'fedex', 'tnt'], 
-					'Icha'   	=> ['ems', 'shunfeng'], 
-					'Royalmail' => ['royalmail'],
-				    ]; 
+    const KUAIDI = ['Kuaidi'    => ['dhl', 'ups', 'usps', 'fedex', 'tnt'], 
+                    'Icha'      => ['ems', 'shunfeng'], 
+                    'Royalmail' => ['royalmail'],
+                    ]; 
 
     public static function get($com, $nu, $valicode){
         $interface = '';
         foreach (KUAIDI as $key => $value) {
-        	if(in_array($com, $value)){
-        		$interface = $key;
-        	}
+            if(in_array($com, $value)){
+                $interface = $key;
+            }
         }
 
         if(empty($interface)){
-        	if($com == ''){
+            if($com == ''){
 
-        	}else{
+            }else{
 
-        	}
+            }
         }
     }
 }
