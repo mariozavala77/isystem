@@ -45,7 +45,8 @@ class Order_Controller extends Base_Controller {
     // 订单同步
     public function action_sync() {
 
-        $channels = Channel::filter(['accredit', 'synced_at', 'type', 'id'])->get();
+        $filter = ['unequal' => ['type' => 'Agent']];
+        $channels = Channel::filter(['accredit', 'synced_at', 'type', 'id'], $filter)->get();
         $results = Order::sync($channels);
 
         return Response::json($results);

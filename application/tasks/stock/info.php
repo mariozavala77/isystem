@@ -28,8 +28,6 @@ class Task_Stock_Info {
 
     // 单个存库
     private function _info_one( $storage_id ) {
-        if(empty($storage_id)) return ;
-
         Stock::info( $storage_id );
     }
 }

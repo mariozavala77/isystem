@@ -120,6 +120,20 @@ class ChannelAPI_Amazon_Order {
     }
 
     /**
+     * Amazon feed
+     *
+     * @param: $info integer 订单ID
+     * @param: $action   string  订单操作
+     *
+     * return void
+     */
+    public function push($info, $action) {
+        $api = new ChannelAPI_Amazon_Feed();
+        $api->setAction($action);
+
+    }
+
+    /**
      * 获取订单通过nexttoken
      *
      * @param: $nexttoken string nexttoken
