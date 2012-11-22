@@ -161,7 +161,20 @@ class Order {
      * @param: $status   integer 推送状态
      *
      */
-    public static function push() {
+    public static function push($order_id, $action) {
+
+        $info = static::info($order_id);
+        $channel = Channel::info($info->channel_id);
+        $interface = $channel->type;
+        if($interface != 'Agent') {
+            $options = unserialize($channel->accredit);
+            $api = new ChannelAPI($interface, $options);
+            
+            // 处理
+            $data = $api->order()->push($info, $action);
+        } else { // 代理商订单处理
+        
+        }
     
         return false;
     }
@@ -209,6 +222,8 @@ class Order {
      * return array
      */
     public static function doBatchShip($company, $method, $tracking) {
+        $datetime = date('Y-m-d H:i:s');
+
         // 验证
         if(empty($company)) return ['status' => 'fail', 'message' => '物流公司为必填项！'];
         foreach($tracking as $tracking_no) {
@@ -227,8 +242,8 @@ class Order {
                     'quantity'    => $item->quantity,
                     'tracking_no' => $tracking_no,
                     'status'      => 0,
-                    'created_at'  => date('Y-m-d H:i:s'),
-                    'modified_at' => date('Y-m-d H:i:s'),
+                    'created_at'  => $datetime,
+                    'modified_at' => $datetime,
                     ];
 
                 Track::insert($data);
@@ -238,17 +253,17 @@ class Order {
             $data = [
                 'is_synced'  => 0,
                 'status'     => ORDER_SHIPPED,
-                'updated_at' => date('Y-m-d H:i:s'),
+                'updated_at' => $datetime,
                 ];
             static::update($order_id, $data);
 
             // 发送同步队列
             $data = [
-                'type'      => 'order',
-                'action'    => 'ship',
-                'entity_id' => $order_id,
-                'status'    => 0,
-                'created_at' => date('Y-m-d H:i:s'),
+                'type'       => 'order',
+                'action'     => 'ship',
+                'entity_id'  => $order_id,
+                'status'     => 0,
+                'created_at' => $datetime,
                 ];
             Queue::insert($data);
         }
@@ -264,14 +279,15 @@ class Order {
      * return array
      */
     public static function doShip($ship_info) {
-        $order_statistics = [];
-        $data = [];
-        foreach($ship_info as $item_id => $value) {
-            // 收集卖出的数量
-            $total = isset($order_statistics[$value['order_id']]) ? $order_statistics[$value['order_id']] : 0;
-            $order_statistics[$value['order_id']] = $total + $value['sold'];
+        $datetime = date('Y-m-d H:i:s');
 
-            if(empty($value['quantity'])) continue; // 发货数量为空直接跳过
+        $data = [];
+        $total = 0;
+        foreach($ship_info as $item_id => $value) {
+
+            $total += $value['sold'];
+            if(empty($value['quantity']) || empty($value['order_id'])) continue; // 发货数量为空直接跳过
+            $order_id = $value['order_id'];
 
             if(!empty($value['company']) && (!empty($value['tracking_no']) || !empty($value['method']))) {
                 $shiped = Track::itemCount($item_id);
@@ -281,12 +297,12 @@ class Order {
                     'item_id'     => $item_id,
                     'company'     => $value['company'],
                     'method'      => $value['method'],
-                    'order_id'    => $value['order_id'],
+                    'order_id'    => $order_id,
                     'quantity'    => $value['quantity'],
                     'tracking_no' => $value['tracking_no'],
                     'status'      => 0,
-                    'created_at'  => date('Y-m-d H:i:s'),
-                    'modified_at' => date('Y-m-d H:i:s'),
+                    'created_at'  => $datetime,
+                    'modified_at' => $datetime,
                     ];
 
             } else {
@@ -298,34 +314,31 @@ class Order {
             Track::insert($datum);
         }
 
-        // 成功发货的订单操作
-        foreach($order_statistics as $order_id => $quantity) {
-            // 更新订单状态
-            $shiped = Track::orderCount($order_id);
-            if($shiped == $quantity) {
-                $status = ORDER_SHIPPED;
-            } else {
-                $status = ORDER_PARTIALLYSHIPPED;
-            }
-
-            $data = [
-                'is_synced'  => 0,
-                'status'     => $status,
-                'updated_at' => date('Y-m-d H:i:s'),
-                ];
-
-            static::update($order_id, $data);
-
-            // 发送同步队列
-            $data = [
-                'type'      => 'order',
-                'action'    => 'ship',
-                'entity_id' => $order_id,
-                'status'    => 0,
-                'created_at' => date('Y-m-d H:i:s'),
-                ];
-            Queue::insert($data);
+        // 更新订单状态
+        $shiped = Track::orderCount($order_id);
+        if($shiped == $total) {
+            $status = ORDER_SHIPPED;
+        } else {
+            $status = ORDER_PARTIALLYSHIPPED;
         }
+
+        $data = [
+            'is_synced'  => 0,
+            'status'     => $status,
+            'updated_at' => $datetime,
+            ];
+
+        static::update($order_id, $data);
+
+        // 发送同步队列
+        $data = [
+            'type'       => 'order',
+            'action'     => 'ship',
+            'entity_id'  => $order_id,
+            'status'     => 0,
+            'created_at' => $datetime,
+            ];
+        Queue::insert($data);
 
         return ['status'=>'success'];
     }

@@ -170,6 +170,7 @@ $(function(){
                 $this.prepend('<span class="icos-refresh"></span>');
                 if(data.status == 'success') {
                     $.jGrowl('同步成功！');
+                    oTable.fnDraw();
                 } else {
                     $.jGrowl('同步失败！');
                 }

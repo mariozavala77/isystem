@@ -8,15 +8,23 @@
  * @version: $Id:Channel.php  2012年11月04日 星期日 10时10分57秒Z $
  */
 
-class Channel {
+class Channel extends Base_Model {
 
     /**
      * 获取所有销售渠道
      *
+     * @param: $fields array 字段
+     * @param: $filter array 附加条件
+     *
      * return $object
      */
-    public static function filter($fields) {
-        return DB::table('channels')->select($fields);
+    public static function filter($fields, $filter = []) {
+
+        $query = DB::table('channels')->select($fields);
+
+        static::formatFilter($query, $filter);
+
+        return $query;
     }
 
     /**
