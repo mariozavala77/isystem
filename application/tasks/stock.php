@@ -36,4 +36,3 @@ class Stock_Task extends Task {
 
     }
 }
-?>

@@ -215,8 +215,6 @@ class Product_Controller extends Base_Controller {
     // 产品详情
     public function action_info(){
         $product_id = intval(Input::get('product_id'));
-        var_dump(AgentPush::order_info(1, 79));
-        exit;
 
         if(empty($product_id)){
             return Response::json([ 'status' => 'fail', 'message' => '参数丢失']);

@@ -46,8 +46,12 @@ class Track {
         return isset($track[0]->count) ? $track[0]->count : 0;
     }
 
+    public static function update($filter, $data){
 
-
+        $query = DB::table('track');
+        foreach ($filter as $key => $value) {
+            $query->where($key, '=', $value);
+        }
+        return $query->update($data);
+    }
 }
-
-?>

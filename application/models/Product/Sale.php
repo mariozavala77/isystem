@@ -22,7 +22,7 @@ class Product_Sale {
         $query = DB::table('products_sale')->select($fields);
 
         foreach ($filter as $key => $value) {
-            $query = $query->where($key, '=', $value);
+            $query->where($key, '=', $value);
         }
 
         return $query;

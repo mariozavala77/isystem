@@ -6,11 +6,13 @@
  * @copyright: Copyright (c) 2012 UFCEC Tech All Rights Reserved.
  * @version: $Id$
  */
+class AgentAPILogException extends Exception{}
+
 class TrackAPI{
 
     public function get($com, $nu){
-        $kuaidi = ['Kuaidi'    => ['dhl', 'ups', 'usps', 'fedex', 'tnt'], 
-                    'Icha'      => ['ems', 'shunfeng'], 
+        $kuaidi = ['Kuaidi'    => ['dhl', 'ups', 'usps', 'fedex', 'tnt', 'ems', 'shunfeng'], 
+                    //'Icha'      => ['shunfeng'], 
                     'Royalmail' => ['royalmail'],
                    ];
         $interface = '';
@@ -36,6 +38,6 @@ class TrackAPI{
         $interface = 'TrackAPI_' . $interface;
 
         $api = new $interface();
-        var_dump($api->get($com, $nu));
+        return $api->get($com, $nu);
     }
 }
