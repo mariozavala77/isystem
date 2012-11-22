@@ -74,7 +74,7 @@
                     </div>
                     <div class="formRow">
                         <div class="grid3"><label>通信密钥：</label></div>
-                        <div class="grid9 glyph"><input type="text" name="secret" style="width: 30.89361702%" id="secret" readonly="readonly" value="{{ $agent->secret }}"/><span data-icon="" class="fs1 iconb" style="cursor:pointer;" title="点击更新密钥" id="bulid_secret"></span></div>
+                        <div class="grid9 glyph"><input type="text" name="secret" style="width: 30.89361702%;float: left;" id="secret" readonly="readonly" value="{{ $agent->secret }}"/><span class="icos-refresh4" style="cursor:pointer;" title="点击更新密钥" id="bulid_secret"></span></div>
                         <div class="clear"></div>
                     </div>
                     <div class="formRow textC">
@@ -88,7 +88,7 @@
 
 </div>
 <script type="text/javascript">
-$(function() {
+$(document).ready(function() {
     $('#bulid_secret').click(function(){
         $.get('/agent/secret',function(response){
             $('#secret').val(response.message);

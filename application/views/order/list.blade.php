@@ -4,7 +4,7 @@
 {{ HTML::script('js/order.js') }}
 @endsection
 @section('sidebar')
-    @include('block.sidebar')
+@include('block.sidebar')
 @endsection
 @section('content')
 <div id="content">
@@ -185,7 +185,13 @@
             <div class="formRow">
                 <div class="grid3">&nbsp;</div>
                 <div class="grid1">配送公司：</div>
-                <div class="grid2"><input name="batch_ship_company" type="text"/></div>
+                <div class="grid2">
+                        <select name="batch_ship_company" id="batch_ship_company">
+                            @foreach($logistic_company as $key=>$company)
+                                <option value="{{$key}}">{{$company}}</option>
+                            @endforeach
+                        </select>
+                </div>
                 <div class="grid1">配送方式：</div>
                 <div class="grid2"><input name="batch_ship_method" type="text"/></div>
                 <div class="clear"></div>

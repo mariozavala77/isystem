@@ -56,7 +56,7 @@ class Order {
 
         */
 
-        DB::table('orders')->where('id', '=', $order_id)->update($data);
+        return DB::table('orders')->where('id', '=', $order_id)->update($data);
     }
 
     /**

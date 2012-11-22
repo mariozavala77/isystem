@@ -59,10 +59,10 @@ class AgentAPI_Order extends AgentAPI_Base{
             'entity_id', 'name', 'email', 'total_price', 
             'currency', 'shipping_name', 'shipping_phone', 'shipping_address', 
             'shipping_city', 'shipping_state_or_region', 'shipping_country', 
-            'shipping_postcode', 'shipment_level' ,'payment_method', 'status', 
-            'purchased_at', 'created_at', 'items'
+            'shipping_postcode' ,'payment_method', 'status', 
+            'purchased_at', 'created_at', 'items', 'shipping_price'
             ];
-        $item_fields = ['entity_id', 'sku', 'quantity', 'price', 'shipping_price'];
+        $item_fields = ['entity_id', 'sku', 'quantity', 'price'];
 
         try{
             $data = self::requeryParams($fields, $params);
@@ -80,18 +80,33 @@ class AgentAPI_Order extends AgentAPI_Base{
         }
 
         unset($data['items']);
+        $shipping_price = $data['shipping_price'];
+        unset($data['shipping_price']);
         $data['ship_status'] = 0;
         $data['modified_at'] = date('Y-m-d H:i:s');
+        $agent = Agent::info($params['agent_id']);
+        $data['channel_id'] = $agent->channel_id;
 
-        $order_id = Order::insert( $data );
-        if(empty($order_id)){
-            foreach($items as $key=>$value){
-                $value['order_id'] = $order_id;
-                Item::insert($value);
+        $exists = ['entity_id' => $data['entity_id'], 'channel_id' => $data['channel_id']];
+        $order_info = Order::exists($exists);
+        if(empty($order_info)){
+            $order_id = Order::insert( $data );
+            if(!empty($order_id)){
+                foreach($items as $key=>$value){
+                    $value['order_id'] = $order_id;
+                    $value['shipping_price'] = $shipping_price;
+                    Item::insert($value);
+                }
+                return ['order_id' => $order_id];
+            }else{
+                throw new AgentAPILogException('order sql insert wrong', -32006);
             }
-            return ['order_id' => $order_id];
         }else{
-            throw new AgentAPILogException('order sql insert wrong', -32006);
+            if(Order::update( $order_info->id, $data )){
+                return ['order_id' => $order_info->id];
+            }else{
+                throw new AgentAPILogException('order sql update wrong', -32018);
+            }
         }
     }
 }
