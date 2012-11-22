@@ -87,7 +87,7 @@ class AgentAPI_Order extends AgentAPI_Base{
         $agent = Agent::info($params['agent_id']);
         $data['channel_id'] = $agent->channel_id;
 
-        $exists = ['entity_id' => $data['entity_id'], 'channel_id'] => $data['channel_id'];
+        $exists = ['entity_id' => $data['entity_id'], 'channel_id' => $data['channel_id']];
         $order_info = Order::exists($exists);
 
         if(empty($order_info)){
