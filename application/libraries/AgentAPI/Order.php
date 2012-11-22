@@ -91,7 +91,7 @@ class AgentAPI_Order extends AgentAPI_Base{
         $order_info = Order::exists($exists);
         if(empty($order_info)){
             $order_id = Order::insert( $data );
-            if(empty($order_id)){
+            if(!empty($order_id)){
                 foreach($items as $key=>$value){
                     $value['order_id'] = $order_id;
                     $value['shipping_price'] = $shipping_price;
