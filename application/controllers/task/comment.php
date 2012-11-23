@@ -32,8 +32,8 @@ class Task_Comment_Controller extends Base_Controller {
         }
 
         if(Tasks_Comment::insert($data)){
-            $fields = ['tasks_comment.uid', 'users.username', 'tasks_comment.comment',
-                   'tasks_comment.created_at', 'tasks_comment.id'];
+            $fields = ['tc.uid', 'users.username', 'tc.comment',
+                   'tc.created_at', 'tc.id'];
             $comment = Tasks_Comment::filter($fields)->get();
             $return = [ 'status' => 'success', 'message' => $comment];
         }else{

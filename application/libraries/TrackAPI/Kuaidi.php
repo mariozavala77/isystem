@@ -6,7 +6,6 @@
  * @copyright: Copyright (c) 2012 UFCEC Tech All Rights Reserved.
  * @version: $Id$
  */
-class AgentAPILogException extends Exception{}
 
 class TrackAPI_Kuaidi{
     
@@ -23,7 +22,32 @@ class TrackAPI_Kuaidi{
         $subject = self::API_URL;
         $api = str_replace($search, $replace, $subject);
         $transport = new Transport();
-        return $transport->request($api);
+        try{
+            $request = $transport->request($api);
+            if(!empty($request) || !isset($request['body'])){
+                $request = $request['body'];
+                $request = json_decode($request,TRUE);
+                if($request['status']!=1){
+                    throw new AgentAPILogException($request['message'], $request['status']);
+                }
+                return ['status' => $request['state']+1, 'tracking_info' => $request['data']];
+            }
+        }catch(AgentAPILogException $e){
+            $content = [
+                'errormsg' => $e->getMessage(),
+                'file'     => $e->getFile(),
+                'line'     => $e->getLine(),
+                'trace'    => $e->getTraceAsString(),
+                'params'   => ['company' => $com, 'tracking_no' => $nu]
+            ];
+            $data = [
+                'user_id'    => $this->_user_id,
+                'content'    => serialize($content),
+                'created_at' => date('Y-m-d H:i:s')
+            ];
+            Logs::insert($data); // 写入日志
+            return FALSE;
+        }
     }
 
     // 数据格式处理
