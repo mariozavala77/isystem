@@ -37,5 +37,6 @@ class ChannelAPI {
     public function product() {
         return $this->_api->product();
     }
+
 }
 ?>

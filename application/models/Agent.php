@@ -90,4 +90,16 @@ class Agent {
         $charid = md5(uniqid(mt_rand(), true));
         return $charid;
     }
+
+    /**
+     * 通过渠道获取代理商ID
+     *
+     * @param: $channel_id integer 渠道ID
+     *
+     * return integer
+     */
+    public static function getIdByChannelId($channel_id) {
+        return DB::table('agents')->where('channel_id', '=', $channel_id)
+                                  ->only('id');
+    }
 }

@@ -17,6 +17,13 @@ class Queue {
      * return integer
      */
     public static function insert($data) {
+        // 删除已经在队列存在的
+        DB::table('queues')->where('type', '=', $data['type'])
+                           ->where('action', '=', $data['action'])
+                           ->where('entity_id', '=', $data['entity_id'])
+                           ->where('status', '=', 0)
+                           ->delete();
+
         return DB::table('queues')->insert_get_id($data);
     }
 

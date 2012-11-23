@@ -76,6 +76,7 @@ Autoloader::map(array(
 Autoloader::directories(array(
     path('app').'models',
     path('app').'libraries',
+    path('app').'sync',
     path('app').'helpers',
 ));
 
@@ -181,7 +182,7 @@ if ( ! Request::cli() and Config::get('session.driver') !== '')
 // --------------------------------------------------------------
 // 定义产品导入文件存放目录
 // --------------------------------------------------------------
-set_path('product_import', path('storage').'product'.DS.'import'.DS.date('Ymd').DS);
+set_path('product_import', path('storage').'products'.DS.'import'.DS.date('Ymd').DS);
 
 // --------------------------------------------------------------
 // 定义产品图片存放目录
@@ -189,8 +190,18 @@ set_path('product_import', path('storage').'product'.DS.'import'.DS.date('Ymd').
 set_path('product_image', path('public').'uploads'.DS.'images'.DS.'products'.DS);
 
 // --------------------------------------------------------------
+// 定义亚马逊feed xml目录
+// --------------------------------------------------------------
+set_path('feed_xml', path('storage').'feeds'.DS);
+
+// --------------------------------------------------------------
 // 定义订单状态
 // --------------------------------------------------------------
 foreach(Config::get('application.order_status') as $key => $value) {
     if(!defined($value['define'])) define($value['define'], $key);
 }
+
+// --------------------------------------------------------------
+// 定义外部渠道
+// --------------------------------------------------------------
+Config::set('application.out_channels', Channel::out());

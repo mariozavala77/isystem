@@ -21,6 +21,20 @@ class Track {
     }
 
     /**
+     * 通过订单ID获取产品发货信息
+     *
+     * @param: $order_id integer 订单ID
+     * 
+     * return array
+     */
+    public static function items($order_id) {
+        return DB::table('track')->left_join('items', 'track.item_id', '=', 'items.id')
+                                 ->where('track.status', '=', '0')
+                                 ->where('track.order_id', '=', $order_id)
+                                 ->get(['items.entity_id', 'track.quantity', 'track.company', 'track.method', 'track.tracking_no']);
+    }
+
+    /**
      * 获取产品的已发货数量
      *
      * @param: $item_id integer 订单产品ID
@@ -45,9 +59,4 @@ class Track {
 
         return isset($track[0]->count) ? $track[0]->count : 0;
     }
-
-
-
 }
-
-?>

@@ -155,31 +155,6 @@ class Order {
     }
 
     /**
-     * 订单更新推送到渠道
-     *
-     * @param: $order_id integer 订单ID
-     * @param: $status   integer 推送状态
-     *
-     */
-    public static function push($order_id, $action) {
-
-        $info = static::info($order_id);
-        $channel = Channel::info($info->channel_id);
-        $interface = $channel->type;
-        if($interface != 'Agent') {
-            $options = unserialize($channel->accredit);
-            $api = new ChannelAPI($interface, $options);
-            
-            // 处理
-            $data = $api->order()->push($info, $action);
-        } else { // 代理商订单处理
-        
-        }
-    
-        return false;
-    }
-
-    /**
      * 获取订单所属国家
      *
      * return object
@@ -205,7 +180,7 @@ class Order {
      *
      * return array
      */
-    public static function ship($order_ids) {
+    public static function shipable($order_ids) {
         return DB::table('orders')->where('status', '=', ORDER_UNSHIPPED)
                                   ->where('is_auto', '=', '0')  // 不是FBA订单
                                   ->where_in('id', $order_ids)
@@ -215,8 +190,8 @@ class Order {
     /**
      * 批量发货处理
      *
-     * @param: $company string 快递公司 
-     * @param: $method  string 投递方式
+     * @param: $company  string 快递公司 
+     * @param: $method   string 投递方式
      * @param: $tracking array  订单跟踪信息
      *
      * return array
@@ -265,6 +240,7 @@ class Order {
                 'status'     => 0,
                 'created_at' => $datetime,
                 ];
+            static::shipParams($order_id, $data);
             Queue::insert($data);
         }
 
@@ -338,8 +314,65 @@ class Order {
             'status'     => 0,
             'created_at' => $datetime,
             ];
+
+        static::shipParams($order_id, $data);
         Queue::insert($data);
 
         return ['status'=>'success'];
     }
+
+    /**
+     * 发货
+     */
+    public static function outShip($orders) {
+        $api = new ChannelAPI($orders['type'], $orders['options']);
+        unset($orders['type'], $orders['options']);
+        $data = $api->order()->ship($orders);
+
+        $ids = []; // 队列ID
+        foreach($orders as $order) {
+            $ids[] = $order->id;
+        }
+
+        $data = ['status' => 1];
+        DB::table('queues')->where_in('id', $ids)->update($data);
+    }
+
+    /**
+     * 构造渠道发货队列参数
+     *
+     * 添加了渠道ID，用于批量发货。
+     * 添加了渠道通信API密钥
+     *
+     * @param: $order_id integer 订单ID
+     *
+     * return void
+     */
+    public static function shipParams($order_id, & $data) {
+        $order = static::info($order_id);
+        $channel = Channel::info($order->channel_id);
+
+        $ship = [
+            'order_id' => $order->entity_id,
+            'items'    => Track::items($order_id),
+            ];
+
+        $params = [
+            'class'   => $channel->type,
+            'options' => unserialize($channel->accredit),
+            'params'  => $ship,
+            ];
+
+        $data['params'] = serialize($params);
+        $data['channel_id'] = $channel->id;
+    }
+
+    /**
+     * 构造取消订单队列参数
+     *
+     */
+    public static function cancelParams() {
+    
+    }
+
 }
