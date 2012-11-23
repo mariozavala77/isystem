@@ -110,9 +110,9 @@ class Item {
      * return integer
      */
     public static function productMap($sku) {
-        $fields = [ 'products.id' ];
+        $fields = [ 'psid' ];
         $filter = [ 'sku' => $sku ];
-        $product_id = Product_Sale::filter($fields, $filter)->only('product_id');
+        $product_id = Product_Sale_Sku::filter($fields, $filter)->only('product_id');
 
         return $product_id;
     }

@@ -20,7 +20,6 @@ class Task_Order_Ship {
     private function _ship_all() {
 
         // 同步外部订单
-        /*
         foreach(Config::get('application.out_channels') as $channel_id) {
             $fields = ['id', 'entity_id', 'params'];
             $filter = ['type' => 'order' , 'action' => 'ship', 'channel_id' => $channel_id, 'status' => 0 ];
@@ -32,21 +31,14 @@ class Task_Order_Ship {
                 $queues['options'] = $params['options'];
             }
 
-            if(!empty($queues)) {
-                Order::outShip($queues);
-            }
+            if(!empty($queues)) Order::outShip($queues);
         }
-        */
 
         // 同步内部订单
         $fields = ['id', 'entity_id', 'params'];
         $filter = ['type' => 'order', 'action'=> 'ship', 'status' => 0];
         $queues = Queue::filter($fields, $filter)->get();
-        foreach($queues as $queue) {
-            print_r();
-        
-        }
-
+        if(!empty($queues)) Order::inShip($queues);
     }
 
     /**

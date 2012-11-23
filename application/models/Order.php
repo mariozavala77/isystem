@@ -322,7 +322,11 @@ class Order {
     }
 
     /**
-     * 发货
+     * 外部发货
+     *
+     * @param: $orders object 队列订单
+     *
+     * return void
      */
     public static function outShip($orders) {
         $api = new ChannelAPI($orders['type'], $orders['options']);
@@ -332,6 +336,28 @@ class Order {
         $ids = []; // 队列ID
         foreach($orders as $order) {
             $ids[] = $order->id;
+        }
+
+        $data = ['status' => 1];
+        DB::table('queues')->where_in('id', $ids)->update($data);
+    }
+
+    /**
+     * 内部发货
+     *
+     *  @param: $orders object 队列订单
+     *
+     *  return void
+     */
+    public static function inShip($orders) {
+        $ids = [];
+        foreach($orders as $order) {
+            $info = unserialize($order->params);
+            if($info['class'] == 'Agent') {
+               $agent_id = DB::table('agents')->where('channel_id', '=', $info['channel_id'])->only('id');
+               AgentPush::order_status($agent_id, $order->entity_id, ORDER_SHIPPED);
+               $ids[] = $order->id;
+            }
         }
 
         $data = ['status' => 1];
@@ -358,9 +384,10 @@ class Order {
             ];
 
         $params = [
-            'class'   => $channel->type,
-            'options' => unserialize($channel->accredit),
-            'params'  => $ship,
+            'class'      => $channel->type,
+            'channel_id' => $channel->id,
+            'options'    => unserialize($channel->accredit),
+            'params'     => $ship,
             ];
 
         $data['params'] = serialize($params);
