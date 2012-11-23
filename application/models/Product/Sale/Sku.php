@@ -46,6 +46,7 @@ class Product_Sale_Sku {
      */
     public static function update($product_sale_sku_id, $data){
         return DB::table('products_sale_sku')->where('id', '=', $product_sale_sku_id)->update($data);
+        var_dump($data);
     }
 
     /**
@@ -54,17 +55,5 @@ class Product_Sale_Sku {
      */
     public static function info($sale_id){
         return DB::table('products_sale_sku')->where('id', '=', $sale_id)->first();
-    }
-
-    public static function dobatch($data){
-
-    }
-
-    public static function batchinsert($data){
-
-    }
-
-    public static function batchupdate($data){
-        
     }
 }
