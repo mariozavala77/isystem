@@ -43,30 +43,24 @@ $(function() {
             bSearchable: false,
         },
         {
-            sTitle: "状态",
+            sTitle: "上架",
             aTargets: [6],
             bSearchable: false,
         },
         {
-            sTitle: "上架",
-            aTargets: [7],
-            bSearchable: false,
-        },
-        {
             sTitle: "操作",
-            aTargets: [8],
+            aTargets: [7],
             bSearchable: false,
             sClass: 'tableActs'
         },
         ],
         fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-            var id = aData[8];
+            var id = aData[7];
             var operation = '<a href="/product/category/edit?category_id=' + id + '" class="tablectrl_small bDefault tipS" original-title="编辑"><span class="iconb" data-icon=""></span></a>' + '<a href="javascript: void(0);" data-id="' + id + '" class="tablectrl_small bDefault tipS" original-title="删除"><span class="iconb" data-icon=""></span></a>';
-            $('td:eq(8)', nRow).html(operation);
-            $('td:eq(4)', nRow).html(aData[9]);
-            $('td:eq(5)', nRow).html(aData[10]);
-            $('td:eq(6)', nRow).html(status[aData[6]]);
-            $('td:eq(7)', nRow).html(sold[aData[7]]);
+            $('td:eq(7)', nRow).html(operation);
+            $('td:eq(4)', nRow).html(aData[8]);
+            $('td:eq(5)', nRow).html(aData[9]);
+            $('td:eq(6)', nRow).html(sold[aData[6]]);
         }
     });
 

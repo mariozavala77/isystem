@@ -16,8 +16,9 @@ class Product_Sale_Controller extends Base_Controller {
 
     // 列表
     public function action_filter() {
-        $fields = [ 'id', 'title', 'sku', 'price', 'channel_id', 'agent_id', 'status', 
+        $fields = [ 'id', 'title', 'sku', 'price', 'channel_id', 'agent_id', 
                     'sold', 'id as operate'];
+        $filter = ['parent_id' => 0];
         $products = Product_Sale::filter($fields);
         $data = Datatables::of($products)->make();
         $channels = [];
@@ -38,8 +39,8 @@ class Product_Sale_Controller extends Base_Controller {
         $channels = $channel;
 
         foreach($data['aaData'] as $key=>$value){
-            $value[9] = empty($value[4])?'暂无':$channels[$value[4]];
-            $value[10] = empty($value[5])?'暂无':$agents[$value[5]];
+            $value[8] = empty($value[4])?'暂无':$channels[$value[4]];
+            $value[9] = empty($value[5])?'暂无':$agents[$value[5]];
             $data['aaData'][$key] = $value;
         }
         return Response::json($data);

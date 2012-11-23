@@ -25,6 +25,9 @@ class Order_Task extends Task {
             case 's':
                 new Task_Order_Ship($args);
                 break;
+            case 'split':
+                new Task_Order_Split($args);
+                break;
             default:
                 $this->_help();
                 break;
@@ -39,6 +42,7 @@ class Order_Task extends Task {
         echo "\torder <命令> [参数] [订单ID...]\n";
         echo "命令:\n";
         echo "\ts/ship\t发货\n";
+        echo "\tsplit\t订单拆分\n";
     }
     
 }
