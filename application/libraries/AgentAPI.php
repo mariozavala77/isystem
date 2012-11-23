@@ -38,7 +38,7 @@ class AgentAPI{
         $this->_method = $type . '.' . $method;
         $this->_params = $params;
         $this->_id     = $id;
-        if(Sentry::check()) $this->_user_id = Sentry::user()->get('id');
+        //if(Sentry::check()) $this->_user_id = Sentry::user()->get('id');
     }
 
     /**
