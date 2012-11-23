@@ -21,7 +21,6 @@ class Channel extends Base_Model {
     public static function filter($fields, $filter = []) {
 
         $query = DB::table('channels')->select($fields);
-
         static::formatFilter($query, $filter);
 
         return $query;
@@ -34,8 +33,18 @@ class Channel extends Base_Model {
      *
      * return boolean
      */
-    public static function insert($data){
+    public static function insert($data) {
         return DB::table('channels')->insert_get_id( $data );
+    }
+
+    /**
+     * 外部渠道（非代理商渠道）
+     *
+     * return array
+     */
+    public static function out() {
+        return DB::table('channels')->where('type', '!=', 'Agent')
+                                    ->lists('id');
     }
 
     /**
@@ -45,7 +54,7 @@ class Channel extends Base_Model {
      *
      * return object
      */
-    public static function info($channel_id){
+    public static function info($channel_id) {
         return DB::table('channels')->where('id', '=', $channel_id)->first();
     }
 
@@ -69,7 +78,7 @@ class Channel extends Base_Model {
      *
      * retrun boolean
      */
-    public static function delete($channel_id){
+    public static function delete($channel_id) {
         return DB::table('channels')->where('id', '=', $channel_id)->delete();
     }
 

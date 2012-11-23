@@ -54,13 +54,6 @@ class Order_Controller extends Base_Controller {
         return Response::json($results);
     }
 
-    // test items
-    public function action_item() {
-        $channels = Channel::filter(['accredit', 'synced_at', 'type', 'id'])->get();
-        $results = Item::sync($channels);
-        print_r($results);
-    }
-
     // 订单详情
     public function action_info() {
         $order_id = Input::get('order_id');
@@ -110,7 +103,7 @@ class Order_Controller extends Base_Controller {
 
         switch ($action) {
             case 'ship':
-                $results = ['status' => 'success', 'message' => Order::ship($order_ids)];
+                $results = ['status' => 'success', 'message' => Order::shipable($order_ids)];
                 break;
             
             default:

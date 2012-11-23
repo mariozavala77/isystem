@@ -36,7 +36,7 @@ class Storage {
             $stock_info[] = [
                 'area' => $storage->area,
                 'type' => $storage->type,
-                'sellable' => $stock->sellable($product_id, $storage->id),
+                'sellable' => Stock::sellable($product_id, $storage->id),
                 ];
         }
 

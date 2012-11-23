@@ -31,7 +31,6 @@ class ChannelAPI_Amazon_Order {
      */
     public function __construct($options) {
         $options['Version'] = self::SERVER_VERSION;
-        $options['Server']  = $options['Server'] . 'Orders/' . self::SERVER_VERSION;
         $this->_options = $options;
     }
 
@@ -44,6 +43,7 @@ class ChannelAPI_Amazon_Order {
      */
     public function sync($options) {
         $options = array_merge($this->_options, $options);
+        $options['Server']  = $options['Server'] . 'Orders/' . self::SERVER_VERSION;
 
         if( !$options['LastUpdatedAt'] ) return false;
         $options['LastUpdatedAfter'] = date('c', strtotime($options['LastUpdatedAt']));
@@ -92,7 +92,7 @@ class ChannelAPI_Amazon_Order {
     /**
      * 获取订单下产品
      *
-     * @param: $options array 附近参数
+     * @param: $options array 参数
      *
      * return array
      */
@@ -120,17 +120,18 @@ class ChannelAPI_Amazon_Order {
     }
 
     /**
-     * Amazon feed
+     * order ship
      *
-     * @param: $info integer 订单ID
-     * @param: $action   string  订单操作
+     * @param: $params array 发货参数
      *
      * return void
      */
-    public function push($info, $action) {
+    public function ship($params) {
         $api = new ChannelAPI_Amazon_Feed();
-        $api->setAction($action);
-
+        $api->setParams($this->_options, $params);
+        $type = $api::ORDER_FULFILLMENT_FEED; // 这里需修改
+        $api->setFeedType($type);            //|
+        $api->perform();
     }
 
     /**

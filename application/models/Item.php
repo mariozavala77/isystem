@@ -35,7 +35,7 @@ class Item {
         foreach($items as $item) {
                 $product_id = static::productMap($item->sku); 
                 if($product_id) {
-                    $product = Poduct::info($product_id);
+                    $product = Product::info($product_id);
                     $storages = Storage::stock($product_id);
 
                     $item->name = $product->name;
