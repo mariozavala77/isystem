@@ -22,8 +22,31 @@ class Task_Order_Split{
     }
 
     private function _get_all(){
-        $fields = ['name', 'shipping_country', 'status', 
-                   'ship_status', 'purchased_at', 'currency', 'channel_id', 'id'];
+        $now = time();
+        $log = path('storage').'log'.DS.'task_order_split.lock';
+        $fields = ['orders.name', 'shipping_country', 'orders.status', 
+                   'ship_status', 'purchased_at', 'currency', 'channel_id', 'orders.id'];
+        $table = Order::filter($fields);
+        if(is_file($log)){
+            $table->where('orders.updated_at', '>', date('Y-m-d H:i:s', filemtime($log)));
+        }
+        $channel_ids = Config::get('application.split_order_channel');
+        if(count($channel_ids)==1){
+            $table->where('channel_id', '=', $channel_ids[0]);
+        }else{
+            $table->where_in('channel_id', $channel_ids);
+        }
+        $count = $table->count();
+        $page = $count/10;
+        $page = $count%10?intval($page)+1:intval($page);
+        for ($i=0; $i < $page; $i++) { 
+            $orders_info = $table->skip($i * 10)->take(10)->get();
+            foreach ($orders_info as $order_info) {
+                $this->_split($order_info);
+            }
+        }
+        // 记录时间戳
+        touch($log, $now);
     }
 
     
@@ -37,8 +60,14 @@ class Task_Order_Split{
         }else{
             $table->where_in('orders.id', $order_ids);
         }
+        $channel_ids = Config::get('application.split_order_channel');
+        if(count($channel_ids)==1){
+            $table->where('channel_id', '=', $channel_ids[0]);
+        }else{
+            $table->where_in('channel_id', $channel_ids);
+        }        
         $orders_info = $table->get();
-        foreach ($orders_info as $key => $order_info) {
+        foreach ($orders_info as $order_info) {
             $this->_split($order_info);
         }
     }
@@ -54,17 +83,24 @@ class Task_Order_Split{
                  'currency'         => $order_info->currency
                 ];
         $items = $this->_items($data['order_id']);
+        if(empty($items)){
+            return false;
+        }
         $split = [];
         foreach($items as $key=>$value){
             $data['items'] = serialize($value['items']);
             $data['total_price'] = array_sum($value['total_price']);
             $split[$key] = $data;
         }
+        Orders_Split::dobatch($split);
         
     }
 
     private function _items($order_id){
         $items_data = Item::get($order_id);
+        if(empty($items_data)){
+            return false;
+        }
         foreach ($items_data as $key=>$value){
             $sku[$value->sku] = $value->sku;
             $item[$value->sku] = $value;
@@ -72,6 +108,9 @@ class Task_Order_Split{
         $items_data = $item;
         $fields = ['agent_id', 'title', 'sku'];
         $sale_data = Product_Sale_Sku::filter($fields)->where_in('sku', $sku)->get();
+        if(empty($sale_data)){
+            return false;
+        }
         foreach($sale_data as $key=>$value){
             $item = $items_data[$value->sku];
             $data = ['sku' => $value->sku, 'shipping_price' => $item->shipping_price, 'title' => $value->title, 'quantity' => $item->quantity, 'price' => $item->price];
