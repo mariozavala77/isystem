@@ -21,16 +21,19 @@ class Order_Task extends Task {
         $args = array_slice($arguments, 1);
 
         switch ($command) {
-            case 'ship':
+            case 'ship': // 渠道发货
             case 's':
                 new Task_Order_Ship($args);
                 break;
-            case 'split':
+            case 'split': // 拆分订单 发送订单到渠道
                 new Task_Order_Split($args);
                 break;
-            case 'cancel':
+            case 'cancel': // 渠道取消订单
             case 'c':
                 new Task_Order_Cancel($args);
+                break;
+            case 'sync': // 同步订单
+                new Task_Order_Sync($args);
                 break;
             default:
                 $this->_help();
@@ -45,6 +48,7 @@ class Order_Task extends Task {
         echo '帮助 ：';
         echo "\torder <命令> [参数] [订单ID...]\n";
         echo "命令:\n";
+        echo "\tsync\t同步订单\n";
         echo "\ts/ship\t发货\n";
         echo "\tsplit\t订单拆分\n";
         echo "\tc/cancel\t订单取消\n";
