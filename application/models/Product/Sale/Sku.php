@@ -56,4 +56,15 @@ class Product_Sale_Sku {
     public static function info($sale_id){
         return DB::table('products_sale_sku')->where('id', '=', $sale_id)->first();
     }
+
+    /**
+     * 通过在售产品SKU获取产品池ID
+     *
+     * @param: $sku string 在售产品SKU
+     *
+     * return integer
+     */
+    public static function map($sku) {
+        return DB::table('products_sale_sku')->where('sku', '=', $sku)->only('product_id');
+    }
 }

@@ -33,7 +33,7 @@ class Item {
         $items = static::get($order_id);
 
         foreach($items as $item) {
-                $product_id = static::productMap($item->sku); 
+                $product_id = Product_Sale_Sku::map($item->sku); 
                 if($product_id) {
                     $product = Product::info($product_id);
                     $storages = Storage::stock($product_id);
@@ -62,7 +62,7 @@ class Item {
         foreach($items as $item) {
             $shiped = Track::itemCount($item->id);
             if($item->quantity > $shiped) {
-                $product_id = static::productMap($item->sku);
+                $product_id = Product_Sale_Sku::map($item->sku);
                 if($product_id) {
                     $product = Product::info($product_id);
                     $storages = Storage::stock($product_id);
@@ -98,23 +98,6 @@ class Item {
         }
 
         return $stock;
-    }
-
-
-
-    /**
-     * 获取产品池映射
-     *
-     * @param: $sku string 上架产品的SKU
-     *
-     * return integer
-     */
-    public static function productMap($sku) {
-        $fields = [ 'psid' ];
-        $filter = [ 'sku' => $sku ];
-        $product_id = Product_Sale_Sku::filter($fields, $filter)->only('product_id');
-
-        return $product_id;
     }
 
     /**
