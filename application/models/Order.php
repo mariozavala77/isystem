@@ -49,13 +49,6 @@ class Order {
      * return void
      */
     public static function update( $order_id, $data ) {
-
-        // 如果修改订单状态需要更新
-        /*
-           修改更新时间用于平台同步
-
-        */
-
         return DB::table('orders')->where('id', '=', $order_id)->update($data);
     }
 
@@ -375,19 +368,22 @@ class Order {
     }
 
     /**
-     * 内部发货
+     * 内部订单状态修改
      *
-     *  @param: $orders object 队列订单
+     * 包括发货 和 取消订单状态修改
      *
-     *  return void
+     * @param: $orders object  队列订单
+     * @param: $status integer 订单状态
+     *
+     * return void
      */
-    public static function inShip($orders) {
+    public static function updateAgentChannel($orders, $status) {
         $ids = [];
         foreach($orders as $order) {
             $info = unserialize($order->params);
             if($info['class'] == 'Agent') {
                $agent_id = DB::table('agents')->where('channel_id', '=', $info['channel_id'])->only('id');
-               AgentPush::order_status($agent_id, $order->entity_id, ORDER_SHIPPED);
+               AgentPush::order_status($agent_id, $order->entity_id, $status);
                $ids[] = $order->id;
             }
         }
