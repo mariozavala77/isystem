@@ -71,7 +71,12 @@ class Task_Order_Split{
         foreach($items as $key=>$value){
             $data['items'] = serialize($value['items']);
             $data['total_price'] = array_sum($value['total_price']);
-            $split[$key] = $data;
+            $split[$key] = $params = $data;
+            $params['id'] = $data['order_id'];
+            $params['order_id'] = $key 
+            unset($params['id']);
+            $api = new AgentAPI('order.save', $params);
+            $api->handle();
         }
         Orders_Split::dobatch($split);  
     }
