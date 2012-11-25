@@ -20,7 +20,7 @@
                 <input name="order_ship[{{$item->id}}][sold]" type="hidden" value="{{$item->quantity}}"/>
             </td>
             <td>{{$item->stock}}</td>
-            <td><input name="order_ship[{{$item->id}}][company]" type="text"></td>
+            <td><select name="order_ship[{{$item->id}}][company]" class="order_ship_company"><option value="ups">UPS</option><option value="dhl">DHL</option><option value="fedex">联邦快递</option></select></td>
             <td><input name="order_ship[{{$item->id}}][method]" type="text"></td>
             <td><input name="order_ship[{{$item->id}}][tracking_no]" type="text"><input name="order_ship[{{$item->id}}][order_id]" type="hidden" value="{{$item->order_id}}"></td>
         </tr>
