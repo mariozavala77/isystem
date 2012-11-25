@@ -23,25 +23,7 @@
             </ul>
         </div>
         
-        <div class="breadLinks">
-            <ul>
-                <li><a href="#" title=""><i class="icos-list"></i><span>新订单</span> <strong>(+58)</strong></a></li>
-                <li><a href="#" title=""><i class="icos-check"></i><span>新任务</span> <strong>(+12)</strong></a></li>
-                <li class="has">
-                    <a title="">
-                        <i class="icos-money3"></i>
-                        <span>快捷导航</span>
-                        <span><img src="/images/elements/control/hasddArrow.png" alt=""></span>
-                    </a>
-                    <ul>
-                        <li><a href="#" title=""><span class="icos-add"></span>New invoice</a></li>
-                        <li><a href="#" title=""><span class="icos-archive"></span>History</a></li>
-                        <li class="noBorderB"><a href="#" title=""><span class="icos-printer"></span>Print invoices</a></li>
-                    </ul>
-                </li>
-            </ul>
-             <div class="clear"></div>
-        </div>
+        @include('block.bread')
     </div>
     <!-- Breadcrumbs line ends -->
 
@@ -70,17 +52,17 @@
                     <div class="whead"><h6>编辑分类</h6><div class="clear"></div></div>
                     <div class="formRow">
                         <div class="grid3"><label>所在分类：</label></div>
-                        <div class="grid9">{{ Category::name($category->id) }}<span id="category_modify" class="ml20 bDefault buttonS">修改</span></div>
+                        <div class="grid9">{{ Category::name($category->id) }}<span id="category_modify" class="ml20 bDefault buttonS">修改</span><input type="hidden" name="parent_id" value="{{$category->parent_id}}"></div>
                         <div class="clear"></div>
                     </div>
                     <div class="formRow">
                         <div class="grid3"><label>分类名：</label></div>
-                        <div class="grid9"><input type="text" name="phone" value="{{ $category->name }}" style="width: 14.89361702%"/></div>
+                        <div class="grid9"><input type="text" name="name" value="{{ $category->name }}" style="width: 14.89361702%"/></div>
                         <div class="clear"></div>
                     </div>
                     <div class="formRow">
                         <div class="grid3"><label>排序：</label></div>
-                        <div class="grid9"><input type="text" name="email" value="{{ $category->sort }}" style="width: 14.89361702%"/></div>
+                        <div class="grid9"><input type="text" name="sort" value="{{ $category->sort }}" style="width: 14.89361702%"/></div>
                         <div class="clear"></div>
                     </div>
                     <div class="formRow textC">

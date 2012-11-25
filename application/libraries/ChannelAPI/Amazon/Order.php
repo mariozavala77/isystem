@@ -3,6 +3,7 @@
 class ChannelAPI_Amazon_Order {
 
     private $_options = null;
+    private $_url = null;
     private $_last_updated = null;  // 同步的结束时间
     private $_status = [
                         'Pending'       => 1,  // 待付款
@@ -31,6 +32,9 @@ class ChannelAPI_Amazon_Order {
      */
     public function __construct($options) {
         $options['Version'] = self::SERVER_VERSION;
+        $this->_url = $options['Server'] . 'Orders/' . self::SERVER_VERSION;
+        unset($options['Server']);
+
         $this->_options = $options;
     }
 
@@ -43,7 +47,6 @@ class ChannelAPI_Amazon_Order {
      */
     public function sync($options) {
         $options = array_merge($this->_options, $options);
-        $options['Server']  = $options['Server'] . 'Orders/' . self::SERVER_VERSION;
 
         if( !$options['LastUpdatedAt'] ) return false;
         $options['LastUpdatedAfter'] = date('c', strtotime($options['LastUpdatedAt']));
@@ -53,7 +56,7 @@ class ChannelAPI_Amazon_Order {
         $options['OrderStatus.Status.3'] = 'Shipped';
         $options['OrderStatus.Status.4'] = 'Canceled';
         $options['OrderStatus.Status.5'] = 'Unfulfillable';
-        unset($options['LastUpdatedAt'], $options['Server']);
+        unset($options['LastUpdatedAt']);
         
         $data = $this->_getOrders($options);
         $orders = [];
@@ -127,6 +130,8 @@ class ChannelAPI_Amazon_Order {
      * return void
      */
     public function ship($params) {
+        $url = parse_url($this->_url);
+        $this->_options['Server']= $url['scheme'] . '://'.$url['host']. '/';
         $api = new ChannelAPI_Amazon_Feed();
         $api->setParams($this->_options, $params);
         $type = $api::ORDER_FULFILLMENT_FEED; // 这里需修改
@@ -142,6 +147,8 @@ class ChannelAPI_Amazon_Order {
      * return void
      */
     public function cancel($params) {
+        $url = parse_url($this->_url);
+        $this->_options['Server']= $url['scheme'] . '://'.$url['host']. '/';
         $api = new ChannelAPI_Amazon_Feed();
         $api->setParams($this->_options, $params);
         $type = $api::ORDER_ACKNOWLEDGEMENT_FEED;
@@ -176,6 +183,7 @@ class ChannelAPI_Amazon_Order {
      * return array
      */
     private function _getOrders( $options ) {
+
         $params = $this->_getParam($options);
 
         $curl = new Amazon_Curl();
@@ -245,11 +253,11 @@ class ChannelAPI_Amazon_Order {
      */
     private function _getParam( $options ) {
         $amazon = new Amazon();
-        $amazon->setData($options, $this->_options['Server']);
+        $amazon->setData($options, $this->_url);
         $data = $amazon->combine();
 
         $param = [
-            'url'   => $this->_options['Server'],
+            'url'   => $this->_url,
             'query' => $data
             ];
 

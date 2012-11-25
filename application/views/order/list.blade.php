@@ -220,7 +220,7 @@
                 <div class="clear"></div>
             </div>
             <div class="formRow">
-                <div class="grid3"><a class="bDefault buttonS" action="order_ship_submit">发货</a></div>
+                <div class="grid12 textC"><a class="bDefault buttonS" action="order_ship_submit">发货</a></div>
                 <div class="clear"></div>
             </div>
         </div>

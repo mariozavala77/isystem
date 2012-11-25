@@ -280,6 +280,7 @@ class ChannelAPI_Amazon_Feed {
      * return array
      */
     private function _getParams($options) {
+        print_r($options);
         $amazon = new Amazon();
         $url = $options['Server'];
         unset($options['Server']);

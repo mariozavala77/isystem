@@ -21,6 +21,18 @@ class Category {
     }
 
     /**
+     * 产品分类更新
+     *
+     * @param: $category_id integer 类别ID
+     * @param: $data        array   数据
+     *
+     * return boolean
+     */
+    public static function update($category_id, $data) {
+        return DB::table('category')->where('id', '=', $category_id)->update($data);
+    }
+
+    /**
      * 列表
      *
      * @param: $fields array 字段
