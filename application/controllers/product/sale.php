@@ -16,31 +16,23 @@ class Product_Sale_Controller extends Base_Controller {
 
     // 列表
     public function action_filter() {
-        $fields = [ 'id', 'title', 'sku', 'price', 'channel_id', 'agent_id', 
-                    'sold', 'id as operate'];
-        $filter = ['parent_id' => 0];
+        $fields = [ 'id', 'title', 'price', 'agent_id', 
+                    'created_at', 'id as operate'];
         $products = Product_Sale::filter($fields);
         $data = Datatables::of($products)->make();
         $channels = [];
         $agents   = [];
         foreach($data['aaData'] as $key=>$value){
-            $channels[$value[4]] = $value[4];
-            $agents[$value[5]]   = $value[5];
+            $agents[$value[3]]   = $value[3];
         }
         $agents = Agent::filter(['id', 'company'])->where_in('id', $agents)->get();
         foreach($agents as $key=>$value){
             $agent[$value->id] = $value->company;
         }
         $agents = $agent;
-        $channels = Channel::filter(['id', 'name'])->where_in('id', $channels)->get();
-        foreach($channels as $key=>$value){
-            $channel[$value->id] = $value->name;
-        }
-        $channels = $channel;
 
         foreach($data['aaData'] as $key=>$value){
-            $value[8] = empty($value[4])?'暂无':$channels[$value[4]];
-            $value[9] = empty($value[5])?'暂无':$agents[$value[5]];
+            $value[6] = empty($value[3])?'暂无':$agents[$value[3]];
             $data['aaData'][$key] = $value;
         }
         return Response::json($data);
@@ -121,7 +113,10 @@ class Product_Sale_Controller extends Base_Controller {
 
     // 编辑销售信息
     public function action_edit(){
+        $sale_id = Input::get('sale_id');
 
+        $info = Product_Sale::info($sale_id);
+        var_dump($info);
     }
 
     // 更新销售

@@ -23,44 +23,32 @@ $(function() {
             aTargets: [1]
         },
         {
-            sTitle: "SKU",
+            sTitle: "价格",
             aTargets: [2],
             bSearchable: false,
         },
         {
-            sTitle: "价格",
+            sTitle: "代理商",
             aTargets: [3],
             bSearchable: false,
         },
         {
-            sTitle: "渠道",
+            sTitle: "认购时间",
             aTargets: [4],
             bSearchable: false,
         },
         {
-            sTitle: "代理商",
-            aTargets: [5],
-            bSearchable: false,
-        },
-        {
-            sTitle: "上架",
-            aTargets: [6],
-            bSearchable: false,
-        },
-        {
             sTitle: "操作",
-            aTargets: [7],
+            aTargets: [5],
             bSearchable: false,
             sClass: 'tableActs'
         },
         ],
         fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-            var id = aData[7];
-            var operation = '<a href="/product/category/edit?category_id=' + id + '" class="tablectrl_small bDefault tipS" original-title="编辑"><span class="iconb" data-icon=""></span></a>' + '<a href="javascript: void(0);" data-id="' + id + '" class="tablectrl_small bDefault tipS" original-title="删除"><span class="iconb" data-icon=""></span></a>';
-            $('td:eq(7)', nRow).html(operation);
-            $('td:eq(4)', nRow).html(aData[8]);
-            $('td:eq(5)', nRow).html(aData[9]);
-            $('td:eq(6)', nRow).html(sold[aData[6]]);
+            var id = aData[0];
+            var operation = '<a href="/product/sale/edit?sale_id=' + id + '" class="tablectrl_small bDefault tipS" original-title="编辑"><span class="iconb" data-icon=""></span></a>' + '<a href="javascript: void(0);" data-id="' + id + '" class="tablectrl_small bDefault tipS" original-title="删除"><span class="iconb" data-icon=""></span></a>';
+            $('td:eq(5)', nRow).html(operation);
+            $('td:eq(3)', nRow).html(aData[6]);
         }
     });
 

@@ -22,31 +22,12 @@ class Task_Order_Split{
     }
 
     private function _get_all(){
-        $now = time();
-        $log = path('storage').'log'.DS.'task_order_split.lock';
-        $fields = ['orders.name', 'shipping_country', 'orders.status', 
-                   'ship_status', 'purchased_at', 'currency', 'channel_id', 'orders.id'];
-        $table = Order::filter($fields);
-        if(is_file($log)){
-            $table->where('orders.updated_at', '>', date('Y-m-d H:i:s', filemtime($log)));
+        $fields = ['id', 'synced_at', 'splited_at'];
+        $filter = ['unequal' => ['type' => 'Agent']];
+        $channels = Channel::filter($fields, $filter);
+        foreach($channels as $value){
+            $this->_orders($value->id, $value->synced_at, $value->splited_at);
         }
-        $channel_ids = Config::get('application.split_order_channel');
-        if(count($channel_ids)==1){
-            $table->where('channel_id', '=', $channel_ids[0]);
-        }else{
-            $table->where_in('channel_id', $channel_ids);
-        }
-        $count = $table->count();
-        $page = $count/10;
-        $page = $count%10?intval($page)+1:intval($page);
-        for ($i=0; $i < $page; $i++) { 
-            $orders_info = $table->skip($i * 10)->take(10)->get();
-            foreach ($orders_info as $order_info) {
-                $this->_split($order_info);
-            }
-        }
-        // 记录时间戳
-        touch($log, $now);
     }
 
     
@@ -118,5 +99,25 @@ class Task_Order_Split{
             $items[$value->agent_id]['total_price'][] = $item->price*$item->quantity + $item->shipping_price;
         }
         return $items;
+    }
+
+    private function _orders($channel_id, $synced_at, $splited_at){
+        $fields = ['orders.name', 'shipping_country', 'orders.status', 
+                   'ship_status', 'purchased_at', 'currency', 'channel_id', 'orders.id'];
+        $table = Order::filter($fields)->where('orders.updated_at', '>=', $splited_at)
+                                       ->where('orders.updated_at', '<=', $synced_at)
+                                       ->where('channel_id', '=', $channel_id);
+        $count = $table;
+        $count = $count->count();
+        $page  = $count/10;
+        $page  = $count%10?intval($page)+1:intval($page);
+        for ($i = 0; $i < $page; $i++) {
+            $orders_info = $table->skip($i * 10)->take(10)->get();
+            foreach ($orders_info as $order_info) {
+                $this->_split($order_info);
+            }
+        }
+        $data = ['splited_at' => $synced_at];
+        Channel::update($channel_id, $data);
     }
 }

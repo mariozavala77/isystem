@@ -72,7 +72,7 @@ class Order {
                                     ->select( $fields );
 
         foreach($filter as $key => $value) {
-            $query = $query->where($key, '=', $value);
+            $query->where($key, '=', $value);
         }
 
         return $query->order_by('orders.id', 'DESC');

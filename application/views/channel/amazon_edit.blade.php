@@ -79,22 +79,22 @@
                     </div>
                     <div class="formRow">
                         <div class="grid3"><label>卖家编号(SellerId)：</label></div>
-                        <div class="grid9"><input type="text" name="accredit['SellerId']" style="width: 50%" required="true" value="{{$channel->accredit['SellerId']}}"/></div>
+                        <div class="grid9"><input type="text" name="accredit[SellerId]" style="width: 50%" required="true" value="{{$channel->accredit['SellerId']}}"/></div>
                         <div class="clear"></div>
                     </div>
                     <div class="formRow">
                         <div class="grid3"><label>AWS 访问密钥编号(AWSAccessKeyId)：</label></div>
-                        <div class="grid9"><input type="text" name="accredit['AWSAccessKeyId']" style="width: 50%" required="true" value="{{$channel->accredit['AWSAccessKeyId']}}"/></div>
+                        <div class="grid9"><input type="text" name="accredit[AWSAccessKeyId]" style="width: 50%" required="true" value="{{$channel->accredit['AWSAccessKeyId']}}"/></div>
                         <div class="clear"></div>
                     </div>
                     <div class="formRow">
                         <div class="grid3"><label>密钥(Key)：</label></div>
-                        <div class="grid9"><input type="text" name="accredit['Key']" style="width: 50%" required="true" value="{{$channel->accredit['Key']}}"/></div>
+                        <div class="grid9"><input type="text" name="accredit[Key]" style="width: 50%" required="true" value="{{$channel->accredit['Key']}}"/></div>
                         <div class="clear"></div>
                     </div>
                     <div class="formRow">
                         <div class="grid3"><label>商城编号(MarketplaceId.Id)：</label></div>
-                        <div class="grid9"><input type="text" name="accredit['MarketplaceId.Id.1']" style="width: 50%" required="true" value="{{$channel->accredit['MarketplaceId.Id.1']}}"/></div>
+                        <div class="grid9"><input type="text" name="accredit[MarketplaceId.Id.1]" style="width: 50%" required="true" value="{{$channel->accredit['MarketplaceId.Id.1']}}"/></div>
                         <div class="clear"></div>
                     </div>
                     <div class="formRow">
@@ -103,7 +103,7 @@
                         <div class="clear"></div>
                     </div>
                     <div class="formRow textC">
-                        <input type="hidden" name="accredit['Server']" value="https://mws.amazonservices.com/" />
+                        <input type="hidden" name="accredit[Server]" value="https://mws.amazonservices.com/" />
                         <input type="hidden" name="channel_id" value="{{ $channel->id }}">
                         <span><input type="submit" class="bBlue buttonM" value="保存" /></span>
                     </div>
