@@ -71,7 +71,7 @@ class Product_Category_Controller extends Base_Controller {
 
         Category::update($category_id, $data);
 
-        return Redirect::to('category');
+        return Redirect::to('product/category');
     }
 
     // 删除

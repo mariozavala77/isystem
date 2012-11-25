@@ -35,7 +35,6 @@ class Amazon {
         $sign .= "\n";
         $sign .= $this->_dataAsString( $this->data ); 
         $this->data['Signature'] = $this->_hash( $sign , $this->key );
-
         $this->data = $this->_dataAsString( $this->data );
 
         return $this->data; 

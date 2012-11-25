@@ -102,36 +102,19 @@ class Order {
 
                     $datum['channel_id'] = $channel->id;
 
-                    // 如果订单存在
+                    // 更新订单处理
                     if($order_info = static::exists(['entity_id' => $datum['entity_id'], 'channel_id' => $datum['channel_id'] ])) {
-                        // 如果渠道端状态有更新，覆盖数据
                         if( $datum['updated_at'] > $order_info->updated_at && $datum['status'] != $order_info->status ) {
                             foreach($datum as $key => $value) {
                                 if(empty($value)) {
                                     unset($datum[$key]);
                                 }
                             }
+                            $datum['is_synced'] = 1;
                             static::update($order_info->id, $datum);
-                        // 如果内控端状态有更新，更新渠道
-                        } else if( $datum['updated_at'] < $order_info->updated_at && $datum['status'] != $order_info->status ) { 
-                            // 同步发货和取消订单
-                            if(in_array($order_info->status, [ORDER_CANCELED, ORDER_SHIPPED, ORDER_PARTIALLYSHIPPED])) {
-                                if($order_info->status == ORDER_CANCELED) {
-                                    $action = 'cancel';
-                                } else {
-                                    $action = 'ship';
-                                }
-                                $queue = [
-                                    'type'       => 'order',
-                                    'action'     => $action,
-                                    'entity_id'  => $order_info->id,
-                                    'status'     => 0,
-                                    'created_at' => date('Y-m-d H:i:s'),
-                                    ];
-                                Queue::insert($queue);
-                            }
-                        }
-                    // 订单不存在插入订单
+                        } 
+
+                    // 新订单处理
                     } else {
                         $datum['created_at']  = date('Y-m-d H:i:s');
                         $datum['modified_at'] = date('Y-m-d H:i:s');
@@ -221,7 +204,6 @@ class Order {
             $data = [
                 'is_synced'  => 0,
                 'status'     => ORDER_SHIPPED,
-                'updated_at' => $datetime,
                 ];
             static::update($order_id, $data);
 
@@ -294,7 +276,6 @@ class Order {
         $data = [
             'is_synced'  => 0,
             'status'     => $status,
-            'updated_at' => $datetime,
             ];
 
         static::update($order_id, $data);
@@ -328,7 +309,6 @@ class Order {
         $data = [
             'is_synced' => 0,
             'status'    => ORDER_CANCELED,
-            'updated_at' => $datetime,
             ];
         static::update($order_id, $data);
     
@@ -345,7 +325,7 @@ class Order {
     }
 
     /**
-     * 外部发货
+     * 外部渠道发货
      *
      * @param: $orders object 队列订单
      *
@@ -357,6 +337,29 @@ class Order {
         $data = $api->order()->ship($orders);
 
         $ids = []; // 队列ID
+        foreach($orders as $order) {
+            $ids[] = $order->id;
+        }
+
+        if(!empty($ids)) {
+            $data = ['status' => 1];
+            DB::table('queues')->where_in('id', $ids)->update($data);
+        }
+    }
+
+    /**
+     * 外部渠道取消订单
+     *
+     * @param: $orders object 队列数据
+     *
+     * retrun 
+     */
+    public static function outCancel($orders) {
+        $api = new ChannelAPI($orders['type'], $orders['options']);
+        unset($orders['type'], $orders['options']);
+        $data = $api->order()->cancel($orders);
+
+        $ids = [];
         foreach($orders as $order) {
             $ids[] = $order->id;
         }
@@ -393,30 +396,6 @@ class Order {
             DB::table('queues')->where_in('id', $ids)->update($data);
         }
     }
-
-    /**
-     * 外部渠道取消订单那
-     *
-     * @param: $orders object 队列数据
-     *
-     * retrun 
-     */
-    public static function outCancel($orders) {
-        $api = new ChannelAPI($orders['type'], $orders['options']);
-        unset($orders['type'], $orders['options']);
-        $data = $api->order()->cancel($orders);
-
-        $ids = [];
-        foreach($orders as $order) {
-            $ids[] = $order->id;
-        }
-
-        if(!empty($ids)) {
-            $data = ['status' => 1];
-            DB::table('queues')->where_in('id', $ids)->update($data);
-        }
-    }
-
 
     /**
      * 构造渠道队列参数
