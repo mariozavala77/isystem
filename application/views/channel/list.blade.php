@@ -71,7 +71,7 @@
         <div id="channel_add_modal" style='display: none' title='渠道类别'>
             <ul class="middleNavA" style="margin: 4px 0 0;">
                 <li><a title="添加亚马逊美国渠道" href="{{ URL::base() }}/channel/add?type=Amazon"><img alt="Amazon" src="{{ URL::base() }}/images/channel/Amazon.jpg"><span></span></a></li>
-                <li><a title="添加亚马逊英国渠道" href="{{ URL::base() }}/channel/add?type=Amazon"><img alt="AmazonUK" src="{{ URL::base() }}/images/channel/AmazonUK.jpg"><span></span></a></li>
+                <li><a title="添加亚马逊英国渠道" href="{{ URL::base() }}/channel/add?type=AmazonUK"><img alt="Amazon.uk" src="{{ URL::base() }}/images/channel/AmazonUK.jpg"><span></span></a></li>
             </ul>
         </div>
     </div>
