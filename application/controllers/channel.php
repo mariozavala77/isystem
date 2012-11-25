@@ -49,7 +49,8 @@ class Channel_Controller extends Base_Controller {
             'alias'        => Input::get('alias'),
             'description'  => Input::get('description'),
             'accredit'     => serialize(Input::get('accredit')),
-            'synced_at'    => date('Y-m-d H:i:s'),
+            'synced_at'    => date('Y-m-d 00:00:00'),
+            'splited_at'    => date('Y-m-d 00:00:00'),
             'language'     => Input::get('language'),
         ];
 

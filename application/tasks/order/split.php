@@ -73,8 +73,7 @@ class Task_Order_Split{
             $data['total_price'] = array_sum($value['total_price']);
             $split[$key] = $data;
         }
-        Orders_Split::dobatch($split);
-        
+        Orders_Split::dobatch($split);  
     }
 
     private function _items($order_id){

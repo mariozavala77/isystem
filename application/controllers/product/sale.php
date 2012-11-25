@@ -20,7 +20,6 @@ class Product_Sale_Controller extends Base_Controller {
                     'created_at', 'id as operate'];
         $products = Product_Sale::filter($fields);
         $data = Datatables::of($products)->make();
-        $channels = [];
         $agents   = [];
         foreach($data['aaData'] as $key=>$value){
             $agents[$value[3]]   = $value[3];
