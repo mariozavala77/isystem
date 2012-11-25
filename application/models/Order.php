@@ -123,10 +123,10 @@ class Order {
                     }
                 }
             }
+            Channel::update($channel->id, ['synced_at' => date('Y-m-d H:i:s', strtotime($data['synced_at']))]);
         }
 
         Item::sync($channels);
-        Channel::update($channel->id, ['synced_at' => $data['synced_at']]);
         return ['status' => 'success', 'message' => ''];
     }
 
