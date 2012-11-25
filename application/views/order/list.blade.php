@@ -93,7 +93,7 @@
 
                 var source_select = '<select class="order_search" index="13"><option value>--请选择--</option>';
                 @foreach($channels as $channel)
-                    source_select += '<option value="{{$channel->id}}">{{$channel->name}}</option>';
+                    source_select += '<option value="{{$channel->name}}">{{$channel->name}}</option>';
                 @endforeach
                 source_select += '</select>';
 
@@ -226,6 +226,12 @@
         </div>
     </div>
     <!-- order ship ends-->
+
+    <!-- order cancel begens-->
+    <div id="order_cancel_dialog" title="取消订单" style="display: none">
+        <p>您确认取消此订单？</p>
+    </div>
+    <!-- order cancel ends-->
 </div>
 <!-- Content ends --> 
 @endsection

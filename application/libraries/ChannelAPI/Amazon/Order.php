@@ -135,6 +135,21 @@ class ChannelAPI_Amazon_Order {
     }
 
     /**
+     * order cancel
+     *
+     * @param: $params array 取消订单参数
+     *
+     * return void
+     */
+    public function cancel($params) {
+        $api = new ChannelAPI_Amazon_Feed();
+        $api->setParams($this->_options, $params);
+        $type = $api::ORDER_ACKNOWLEDGEMENT_FEED;
+        $api->setFeedType($type);
+        $api->perform();
+    }
+
+    /**
      * 获取订单通过nexttoken
      *
      * @param: $nexttoken string nexttoken

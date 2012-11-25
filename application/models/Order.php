@@ -49,13 +49,6 @@ class Order {
      * return void
      */
     public static function update( $order_id, $data ) {
-
-        // 如果修改订单状态需要更新
-        /*
-           修改更新时间用于平台同步
-
-        */
-
         return DB::table('orders')->where('id', '=', $order_id)->update($data);
     }
 
@@ -240,7 +233,7 @@ class Order {
                 'status'     => 0,
                 'created_at' => $datetime,
                 ];
-            static::shipParams($order_id, $data);
+            static::queueParams($order_id, $data);
             Queue::insert($data);
         }
 
@@ -315,14 +308,48 @@ class Order {
             'created_at' => $datetime,
             ];
 
-        static::shipParams($order_id, $data);
+        static::queueParams($order_id, $data);
         Queue::insert($data);
 
         return ['status'=>'success'];
     }
 
     /**
-     * 发货
+     * 订单取消
+     *
+     * @param: $order_id integer 订单ID
+     *
+     * return 
+     */
+    public static function doCancel($order_id) {
+
+        $datetime = date('Y-m-d H:i:s');
+
+        $data = [
+            'is_synced' => 0,
+            'status'    => ORDER_CANCELED,
+            'updated_at' => $datetime,
+            ];
+        static::update($order_id, $data);
+    
+        // 写到队列
+        $data = [
+            'type'       => 'order',
+            'action'     => 'cancel',
+            'entity_id'  => $order_id,
+            'status'     => 0,
+            'created_at' => $datetime,
+            ];
+        static::queueParams($order_id, $data, 'cancel');
+        Queue::insert($data);
+    }
+
+    /**
+     * 外部发货
+     *
+     * @param: $orders object 队列订单
+     *
+     * return void
      */
     public static function outShip($orders) {
         $api = new ChannelAPI($orders['type'], $orders['options']);
@@ -334,45 +361,95 @@ class Order {
             $ids[] = $order->id;
         }
 
-        $data = ['status' => 1];
-        DB::table('queues')->where_in('id', $ids)->update($data);
+        if(!empty($ids)) {
+            $data = ['status' => 1];
+            DB::table('queues')->where_in('id', $ids)->update($data);
+        }
     }
 
     /**
-     * 构造渠道发货队列参数
+     * 内部订单状态修改
      *
-     * 添加了渠道ID，用于批量发货。
-     * 添加了渠道通信API密钥
+     * 包括发货 和 取消订单状态修改
      *
-     * @param: $order_id integer 订单ID
+     * @param: $orders object  队列订单
+     * @param: $status integer 订单状态
      *
      * return void
      */
-    public static function shipParams($order_id, & $data) {
+    public static function updateAgentChannel($orders, $status) {
+        $ids = [];
+        foreach($orders as $order) {
+            $info = unserialize($order->params);
+            if($info['class'] == 'Agent') {
+               $agent_id = DB::table('agents')->where('channel_id', '=', $info['channel_id'])->only('id');
+               AgentPush::order_status($agent_id, $order->entity_id, $status);
+               $ids[] = $order->id;
+            }
+        }
+
+        if(!empty($ids)) {
+            $data = ['status' => 1];
+            DB::table('queues')->where_in('id', $ids)->update($data);
+        }
+    }
+
+    /**
+     * 外部渠道取消订单那
+     *
+     * @param: $orders object 队列数据
+     *
+     * retrun 
+     */
+    public static function outCancel($orders) {
+        $api = new ChannelAPI($orders['type'], $orders['options']);
+        unset($orders['type'], $orders['options']);
+        $data = $api->order()->cancel($orders);
+
+        $ids = [];
+        foreach($orders as $order) {
+            $ids[] = $order->id;
+        }
+
+        if(!empty($ids)) {
+            $data = ['status' => 1];
+            DB::table('queues')->where_in('id', $ids)->update($data);
+        }
+    }
+
+
+    /**
+     * 构造渠道队列参数
+     *
+     * 添加了渠道ID，用于批量操作。
+     * 添加了渠道通信API密钥
+     *
+     * @param: $order_id integer 订单ID
+     * @param: $data     array   队列数据
+     * @param: $type     string  类型 (发货或者取消订单)
+     *
+     * return void
+     */
+    public static function queueParams($order_id, & $data, $type = 'ship') {
         $order = static::info($order_id);
         $channel = Channel::info($order->channel_id);
 
-        $ship = [
-            'order_id' => $order->entity_id,
-            'items'    => Track::items($order_id),
-            ];
+        $params['order_id'] = $order->entity_id;
+
+        if($type == 'ship') {
+            $params['items'] = Track::items($order_id);
+        } elseif($type == 'cancel') {
+            $params['items'] = Item::get($order_id);
+        } 
 
         $params = [
-            'class'   => $channel->type,
-            'options' => unserialize($channel->accredit),
-            'params'  => $ship,
+            'class'      => $channel->type,
+            'channel_id' => $channel->id,
+            'options'    => unserialize($channel->accredit),
+            'params'     => $params,
             ];
 
         $data['params'] = serialize($params);
         $data['channel_id'] = $channel->id;
     }
-
-    /**
-     * 构造取消订单队列参数
-     *
-     */
-    public static function cancelParams() {
-    
-    }
-
 }

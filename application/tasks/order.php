@@ -28,6 +28,10 @@ class Order_Task extends Task {
             case 'split':
                 new Task_Order_Split($args);
                 break;
+            case 'cancel':
+            case 'c':
+                new Task_Order_Cancel($args);
+                break;
             default:
                 $this->_help();
                 break;
@@ -43,6 +47,7 @@ class Order_Task extends Task {
         echo "命令:\n";
         echo "\ts/ship\t发货\n";
         echo "\tsplit\t订单拆分\n";
+        echo "\tc/cancel\t订单取消\n";
     }
     
 }

@@ -127,4 +127,14 @@ class Order_Controller extends Base_Controller {
 
         return Response::json($result);
     }
+
+    // 取消订单处理
+    public function action_cancel() {
+        $order_id = Input::get('order_id');
+        Order::doCancel($order_id);
+        $result = ['status' => 'success'];
+
+        return Response::json($result);
+
+    }
 }
