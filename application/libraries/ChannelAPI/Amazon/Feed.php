@@ -78,12 +78,55 @@ class ChannelAPI_Amazon_Feed {
             $filename = $this->_shipXML();
             $params['content_md5'] = base64_encode(md5_file($filename, true));
             $params['filename'] = $filename;
+        } elseif($this->_options['FeedType'] == '_POST_ORDER_ACKNOWLEDGEMENT_DATA_') {
+            $filename = $this->_cancelXML();
+            $params['content_md5'] = base64_encode(md5_file($filename, true));
+            $params['filename'] = $filename;
         }
 
         if($filename) {
             $curl = new Amazon_Curl();
             $curl->submitFeed($params); // 提交这里不用检查了，同步订单会更新状态
         }
+    }
+
+    /**
+     * 取消订单XML
+     *
+     * return string 
+     */
+    private function _cancelXML() {
+        $params = $this->_params;
+        $filename = path('feed_xml') . 'cancel' . date('Ymd_H_i_s') . '.xml';
+
+        $xml = new XMLWriter();
+        $xml->openUri($filename);
+        $xml->setIndentString('    ');
+        $xml->setIndent(true);
+        $xml->startDocument('1.0', 'UTF-8');
+        $xml->startElement('AmazonEnvelope');
+        $xml->writeAttribute('xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance');
+        $xml->writeAttribute('xsi:noNamespaceSchemaLocation', 'amzn-envelope.xsd');
+        $xml->startElement('Header');
+        $xml->startElement('DocumentVersion');
+        $xml->text('1.01');
+        $xml->endElement();
+        $xml->startElement('MerchantIdentifier');
+        $xml->text($this->_options['MarketplaceId.Id.1']);
+        $xml->endElement();
+        $xml->endElement();
+        $xml->startElement('MessageType');
+        $xml->text('OrderAcknowledgement');
+        $xml->endElement();
+        $message_id = 0;
+        foreach($params as $key => $param) {
+            $order = unserialize($param->params)['params'];
+            $this->_cancelOrderXML($xml, $message_id, $order);
+        }
+        $xml->endElement();
+        $xml->endDocument();
+
+        return $filename;
     }
 
     /**
@@ -116,13 +159,12 @@ class ChannelAPI_Amazon_Feed {
         $message_id = 0;
         foreach($params as $key => $param) {
             $order = unserialize($param->params)['params'];
-            $this->shipOrderXml($xml, $message_id, $order);
+            $this->_shipOrderXml($xml, $message_id, $order);
         }
         $xml->endElement();
         $xml->endDocument();
 
         return $filename;
-    
     }
 
     /**
@@ -133,7 +175,7 @@ class ChannelAPI_Amazon_Feed {
      * @param: $order      array   单个订单数据
      *
      */
-    private function shipOrderXml(& $xml, & $message_id, $order) {
+    private function _shipOrderXml(& $xml, & $message_id, $order) {
         $company = '';
         $datetime = gmdate("Y-m-d\TH:i:s.\\0\\0\\0\\Z", time());
         $order_id = $order['order_id'];
@@ -177,6 +219,53 @@ class ChannelAPI_Amazon_Feed {
             $xml->endElement();
             $xml->endElement();        // item ends
             $company = $item->company;
+        }
+
+        $xml->endElement();
+        $xml->endElement();
+    }
+
+    /**
+     * 生成cancel order 部分
+     *
+     * @param: &$xml       object  xml
+     * @param: $message_id integer 消息ID
+     * @param: $order      array   单个订单数据
+     *
+     */
+    private function _cancelOrderXml(& $xml, & $message_id, $order) {
+        $datetime = gmdate("Y-m-d\TH:i:s.\\0\\0\\0\\Z", time());
+        $order_id = $order['order_id'];
+        $ids = [];
+        foreach($order['items'] as $key => $item) {
+            if(!in_array($order_id, $ids)) {
+                if(!empty($ids)) {
+                    $xml->endElement();
+                    $xml->endElement();
+                }
+                $ids[] = $order_id;
+                $message_id ++;
+                $xml->startElement('Message');
+                $xml->startElement('MessageID');
+                $xml->text($message_id);
+                $xml->endElement();
+                $xml->startElement('OrderAcknowledgement');
+                $xml->startElement('AmazonOrderID');
+                $xml->text($order_id);
+                $xml->endElement();
+                $xml->startElement('StatusCode');
+                $xml->text('Failure');
+                $xml->endElement();
+            }
+
+            $xml->startElement('Item'); // item begins
+            $xml->startElement('AmazonOrderItemCode');
+            $xml->text($item->entity_id);
+            $xml->endElement();
+            $xml->startElement('CancelReason');
+            $xml->text('BuyerCanceled');
+            $xml->endElement();
+            $xml->endElement();        // item ends
         }
 
         $xml->endElement();

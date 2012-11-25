@@ -45,7 +45,7 @@ $(function(){
                operation += '<a class="tablectrl_small bDefault tipS" action="order_ship" cid="'+id+'" original-title="发货"><span class="iconb" data-icon=""></span></a>';
             }
             if(aData[16] == '未发货') {
-                operation += '<a class="tablectrl_small bDefault tipS" action="order_cannel" original-title="取消"><span class="iconb" data-icon=""></span></a>';
+                operation += '<a class="tablectrl_small bDefault tipS" action="order_cannel" cid="'+id+'" original-title="取消"><span class="iconb" data-icon=""></span></a>';
             }
             operation += '<a class="tablectrl_small bDefault tipS" action="order_info" cid="'+id+'" original-title="详情"><span class="iconb" data-icon=""></span></a>';
 
@@ -321,9 +321,29 @@ $(function(){
         });
     });
 
+    // 单个订单取消对话框
+    var order_cancel_dialog = $('#order_cancel_dialog');
+    order_cancel_dialog.dialog({
+        autoOpen: false,
+        width: 400,
+        modal: true,
+        buttons: {
+            "取消": function() {
+                $(this).dialog("close");
+            },
+            "确定": function() {
+                var order_id = order_cancel_dialog.attr('data-id');
+                order_cancel(order_id);
+                $(this).dialog('close');
+            }
+        }
+    });
     // 取消
     $('a[action="order_cannel"]').live('click', function(){
-        alert(2);
+
+        var id = $(this).attr('cid');
+        order_cancel_dialog.attr('data-id', id);
+        order_cancel_dialog.dialog('open');
     });
     // 详情
     $('a[action="order_info"]').live('click', function(){
@@ -368,6 +388,30 @@ $(function(){
         });
     });
 });
+
+// 取消订单
+function order_cancel(order_id) {
+    // 提交取消订单ID
+    $.ajax({
+        url: '/order/cancel',
+        type: 'POST',
+        data: {order_id: order_id},
+        dataType: 'json',
+        success: function(data) {
+            if(data.status == 'success') {
+                $.jGrowl('取消成功！');
+                oTable.fnDraw();
+            } else if(data.status == 'fail'){
+                $.jGrowl('操作失败！');
+            } else {
+                $.jGrowl('未知错误！');
+            }
+        },
+        error: function() {
+            $.jGrowl('订单取消请求失败。');
+        }
+    });
+}
 
 // 订单详情
 function order_info(order_id, entity_id) {
