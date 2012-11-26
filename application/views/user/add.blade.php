@@ -2,11 +2,29 @@
 @section('script')
 @endsection
 @section('sidebar')
-    @include('../block.sidebar');
+    @include('../block.sidebar')
 @endsection
 @section('content')
 <!-- COntent begins -->
 <div id="content">
+    <div class="contentTop">
+        <span class="pageTitle"><span class="icon-user-2"></span>用户管理</span>
+        <div class="clear"></div>
+    </div>
+    <!-- Breadcrumbs line begins -->
+    <div class="breadLine">
+        <div class="bc">
+            <ul id="breadcrumbs" class="breadcrumbs">
+                <li><a href="{{ URL::base() }}">控制中心</a></li>
+                <li><a href="{{ URL::to('user') }}">用户管理</a></li>
+                <li class="current"><a href="{{ URL::to('user/add') }}">添加用户</a></li>
+            </ul>
+        </div>
+        
+        @include('block.bread')
+    </div>
+    <!-- Breadcrumbs line ends -->
+
     <!-- Main content bigins -->
     <div class="wrapper">
         <form action="{{ URL::base() }}/user/insert" method="POST" class="main">

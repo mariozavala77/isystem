@@ -29,13 +29,13 @@
 
     <!-- Main content begins -->
     <div class="wrapper">
-        <div>
-            <a href="{{ URL::base() }}/supplier/add" class="buttonM bDefault floatR"><span class="icon-home-5"></span><span>添加供货商</span></a>
+        <div class="mt15">
+            <a href="{{ URL::base() }}/supplier/add" class="buttonM bDefault floatR"><span class="icon-plus-3"></span><span>添加供货商</span></a>
             <div class="clear"></div>
         </div>
 
         <!--agent begins-->
-        <div class="widget" style="margin-top:5px;">
+        <div class="widget">
             <div class="whead"><h6>供货商列表</h6><div class="clear"></div></div>
             <div class="shownpars">
                 <table cellpadding="0" cellspacing="0" border="0" class="dTable" id="supplier_list_table"></table>

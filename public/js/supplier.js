@@ -29,9 +29,9 @@
                         sDom: '<"H"fl<"clear">>tr<"F"ip>',
                         oLanguage: { sUrl: '/js/plugins/tables/lang_cn.txt' },
                         aoColumnDefs: [
-                            { sTitle: "名称", aTargets: [0], sWidth: '110px'},
-                            { sTitle: "电话", aTargets: [1], sWidth: '90px'},
-                            { sTitle: "邮箱", aTargets: [2], sWidth: '80px'},
+                            { sTitle: "名称", aTargets: [0], sWidth: '150px'},
+                            { sTitle: "电话", aTargets: [1], sWidth: '100px'},
+                            { sTitle: "邮箱", aTargets: [2], sWidth: '130px'},
                             { sTitle: "地址", aTargets: [3] },
                             { sTitle: "加入时间", aTargets: [4], bSearchable: false, sWidth: '110px'},
                             { sTitle: "操作", aTargets: [5], bSearchable: false, sClass: "tableActs", sWidth: '80px' }
@@ -42,5 +42,8 @@
                                             '<a href="javascript:void(0);" data-id="' + id + '" class="tablectrl_small bDefault tipS" original-title="删除"><span class="iconb" data-icon=""></span></a>';
                             $('td:eq(5)', nRow).html(operation);
                         },
+                        fnInitComplete: function() {
+                            $('.select_action, select[name$="list_table_length"],.checkAll').uniform();
+                        }
                 });
 });

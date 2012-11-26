@@ -29,8 +29,8 @@
 
     <!-- Main content begins -->
     <div class="wrapper">
-        <div style="margin-top: 35px">
-            <a href="{{ URL::base() }}/agent/add" class="buttonM bDefault floatR"><span class="icon-home-5"></span><span>添加代理</span></a>
+        <div class="mt15">
+            <a href="{{ URL::base() }}/agent/add" class="buttonM bDefault floatR"><span class="icon-plus-3"></span><span>添加代理</span></a>
             <div class="clear"></div>
         </div>
 
@@ -66,6 +66,9 @@
                                             '<a href="javascript:void(0);" data-id="' + id + '" class="tablectrl_small bDefault tipS" original-title="删除"><span class="iconb" data-icon=""></span></a>';
                             $('td:eq(5)', nRow).html(operation);
                         },
+                        fnInitComplete: function() {
+                            $('.select_action, select[name$="list_table_length"],.checkAll').uniform();
+                        }
                 });
 
             });

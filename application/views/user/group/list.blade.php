@@ -10,7 +10,7 @@
 <!-- Content begins -->
 <div id="content">
     <div class="contentTop">
-        <span class="pageTitle"><span class="icon-users">用户组设置</span></span>
+        <span class="pageTitle"><span class="icon-users">用户组管理</span></span>
         <div class="clear"></div>
     </div>
 
@@ -20,7 +20,7 @@
             <ul id="breadcrumbs" class="breadcrumbs">
                 <li><a href="index.html">控制中心</a></li>
                 <li><a href="{{ URL::to('user') }}">用户管理</a></li>
-                <li class="current"><a href="{{ URL::to('user/group') }}">用户组设置</a></li>
+                <li class="current"><a href="{{ URL::to('user/group') }}">用户组管理</a></li>
             </ul>
         </div>
         
@@ -31,8 +31,8 @@
     <!-- Main content bigins -->
     <div class="wrapper"> 
 
-        <div class="mt30 ">
-            <a href="{{ URL::base() }}/user/group/add" class="buttonM bDefault floatR"><span class="icon-home-5"></span><span>添加用户组</span></a>
+        <div class="mt15">
+            <a href="{{ URL::base() }}/user/group/add" class="buttonM bDefault floatR"><span class="icon-plus-3"></span><span>添加用户组</span></a>
             <div class="clear"></div>
         </div>
         <!-- group begins -->

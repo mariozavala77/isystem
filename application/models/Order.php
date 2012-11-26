@@ -68,6 +68,8 @@ class Order {
             $query->where($key, '=', $value);
         }
 
+        $query->order_by('orders.status', 'ASC');
+
         return $query->order_by('orders.id', 'DESC');
     }
 

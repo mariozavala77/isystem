@@ -31,8 +31,8 @@
 
     <!-- Main content bigins -->
     <div class="wrapper">
-        <div style="margin-top: 35px">
-            <a href="javascript:void(0);" class="buttonM bDefault floatR" id="channel_add_modal_open"><span class="icon-home-5"></span><span>添加渠道</span></a>
+        <div class="mt15">
+            <a href="javascript:void(0);" class="buttonM bDefault floatR" id="channel_add_modal_open"><span class="icon-plus-3"></span><span>添加渠道</span></a>
             <div class="clear"></div>
         </div>
 

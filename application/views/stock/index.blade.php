@@ -66,6 +66,9 @@ $(function(){
             ],
         fnDrawCallback: function() {
             $('#stock_list_table').css('width', '100%');
+        },
+        fnInitComplete: function() {
+            $('.select_action, select[name$="list_table_length"],.checkAll').uniform();
         }
     
     });

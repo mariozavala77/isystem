@@ -121,7 +121,10 @@ $(function(){
         fnDrawCallback: function() {
             $('#order_list_table').css('width', '100%');
             $('#order_list_table :checkbox').not('.checkAll').uniform();
-        }
+        },
+        aoSearchCols: [
+            null,null,null,null,null,null,null,{"sSearch": '2'}, null
+        ]
         
     });
 
