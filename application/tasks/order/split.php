@@ -24,7 +24,7 @@ class Task_Order_Split{
     private function _get_all(){
         $fields = ['id', 'synced_at', 'splited_at'];
         $filter = ['unequal' => ['type' => 'Agent']];
-        $channels = Channel::filter($fields, $filter);
+        $channels = Channel::filter($fields, $filter)->get();
         foreach($channels as $value){
             $this->_orders($value->id, $value->synced_at, $value->splited_at);
         }
@@ -33,7 +33,7 @@ class Task_Order_Split{
     
     private function _get_ids($order_ids){
         $fields = ['orders.name', 'shipping_country', 'orders.status', 
-                   'ship_status', 'purchased_at', 'currency', 'channel_id', 'orders.id'];
+                   'ship_status', 'orders.purchased_at', 'currency', 'channel_id', 'orders.id'];
         $table = Order::filter($fields);
 
         if(count($order_ids)==1){
@@ -61,7 +61,8 @@ class Task_Order_Split{
                  'ship_status'      => $order_info->ship_status, 
                  'shipping_country' => $order_info->shipping_country, 
                  'name'             => $order_info->name, 
-                 'currency'         => $order_info->currency
+                 'currency'         => $order_info->currency,
+                 'purchased_at'     => $order_info->purchased_at
                 ];
         $items = $this->_items($data['order_id']);
         if(empty($items)){
@@ -71,7 +72,13 @@ class Task_Order_Split{
         foreach($items as $key=>$value){
             $data['items'] = serialize($value['items']);
             $data['total_price'] = array_sum($value['total_price']);
-            $split[$key] = $data;
+            $split[$key] = $params = $data;
+            $params['id'] = $data['order_id'];
+            $params['items'] = $value['items'];
+            $params['agent_id'] = $key;
+            unset($params['order_id']);
+            $api = new AgentAPI('order.save', $params);
+            $api->handle();
         }
         Orders_Split::dobatch($split);  
     }
@@ -102,7 +109,7 @@ class Task_Order_Split{
 
     private function _orders($channel_id, $synced_at, $splited_at){
         $fields = ['orders.name', 'shipping_country', 'orders.status', 
-                   'ship_status', 'purchased_at', 'currency', 'channel_id', 'orders.id'];
+                   'ship_status', 'orders.purchased_at', 'currency', 'channel_id', 'orders.id'];
         $table = Order::filter($fields)->where('orders.updated_at', '>=', $splited_at)
                                        ->where('orders.updated_at', '<=', $synced_at)
                                        ->where('channel_id', '=', $channel_id);

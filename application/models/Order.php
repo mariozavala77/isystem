@@ -123,7 +123,6 @@ class Order {
                     }
                 }
             }
-
             Channel::update($channel->id, ['synced_at' => $data['synced_at']]);
         }
 

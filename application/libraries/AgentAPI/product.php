@@ -128,6 +128,11 @@ class AgentAPI_Product extends AgentAPI_Base
         $info = Product::filter($fields, $filter)->get();
 
         if(empty($info)){
+            $filter['language']='cn';
+            $info = Product::filter($fields, $filter)->get();
+        }
+
+        if(empty($info)){
             throw new AgentAPIException('没有找到你需要的产品信息', -32004);
         }
 
