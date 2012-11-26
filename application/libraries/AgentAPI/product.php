@@ -85,7 +85,8 @@ class AgentAPI_Product extends AgentAPI_Base
         $agent_info = Agent::info($params['agent_id']);
         $sale_info = ['sku'        => $data['sku'], 
                       'channel_id' => $agent_info->channel_id, 
-                      'product_id' => $data['product_id'];
+                      'product_id' => $data['product_id']
+                     ];
         unset($data['sku']);
         unset($data['sold']);
         $product_sale_id = Product_Sale::getId($data['agent_id'], $data['product_id']);
