@@ -8,7 +8,7 @@
 @section('content')
 <div id="content">
     <div class="contentTop">
-        <span class="pageTitle"><span class="icon-user-2"></span>销售列表</span>
+        <span class="pageTitle"><span class="icon-box"></span>销售列表</span>
         <div class="clear"></div>
     </div>
 

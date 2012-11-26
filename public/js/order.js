@@ -42,12 +42,12 @@ $(function(){
             // 操作表格内容
             var operation = '';
             if(aData[16] == '未发货' || aData[16] == '部分发货') {
-               operation += '<a class="tablectrl_small bDefault tipS" action="order_ship" cid="'+id+'" original-title="发货"><span class="iconb" data-icon=""></span></a>';
+               operation += '<a class="tablectrl_small bDefault tipS" action="order_ship" cid="'+id+'" original-title="发货"><span class="iconb" data-icon="&#xe063"></span></a>';
             }
             if(aData[16] == '未发货') {
-                operation += '<a class="tablectrl_small bDefault tipS" action="order_cannel" cid="'+id+'" original-title="取消"><span class="iconb" data-icon=""></span></a>';
+                operation += '<a class="tablectrl_small bDefault tipS" action="order_cannel" cid="'+id+'" original-title="取消"><span class="iconb" data-icon="&#xe035"></span></a>';
             }
-            operation += '<a class="tablectrl_small bDefault tipS" action="order_info" cid="'+id+'" original-title="详情"><span class="iconb" data-icon=""></span></a>';
+            operation += '<a class="tablectrl_small bDefault tipS" action="order_info" cid="'+id+'" original-title="详情"><span class="iconb" data-icon="&#xe215"></span></a>';
 
             $(nRow).attr('id', 'oid'+id);
 
@@ -63,12 +63,12 @@ $(function(){
             $('td:eq(8)', nRow).html(operation).find('.tipS').tipsy({gravity: 's',fade: true, html:true});
         },
         fnInitComplete: function() {
-            $('.dataTables_info').css('clear', 'none').css('line-height', '34px');
+            $('.dataTables_info').css('clear', 'none');
 
             // 批量操作按钮
-            $('.tableFooter').prepend('<input class="checkAll" type="checkbox" key="order_list_table"><div class="itemActions" style="width: 250px">'+
-                                      '<label>批量操作:</label>'+
-                                      '<select name="action" class="select_action">'+
+            $('.tableFooter').prepend('<input class="checkAll" id="order_batch_check" type="checkbox" key="order_list_table" style="vertical-align:middle"><div class="itemActions" style="width: 250px">'+
+                                      '<label style="line-height: 29px">批量操作:</label>'+
+                                      '<select name="action" id="order_batch_select" class="select_action">'+
                                       '    <option value="">--请选择--</option>'+
                                       '    <option value="ship">订单发货</option>'+
                                       '</select><a class="buttonS bDefault ml10" id="actions">确定</a></div>'+
@@ -76,7 +76,11 @@ $(function(){
             // 每页记录样式修改
             $('#order_list_table_length').addClass('mb15');
             // 美化dom元素
-            $('.select_action, .checkAll').uniform();
+            $('.select_action, select[name$="list_table_length"],.checkAll').uniform();
+
+            // 批量操作样式
+            $('.itemActions').css('margin', '3px 0');
+            $('#uniform-order_batch_check').css('margin-top', '10px');
 
             // 初始化搜索div
             var search = '<div class="formRow">' +
@@ -117,7 +121,10 @@ $(function(){
         fnDrawCallback: function() {
             $('#order_list_table').css('width', '100%');
             $('#order_list_table :checkbox').not('.checkAll').uniform();
-        }
+        },
+        aoSearchCols: [
+            null,null,null,null,null,null,null,{"sSearch": '2'}, null
+        ]
         
     });
 
@@ -155,8 +162,9 @@ $(function(){
     });
 
     // 同步订单
-    $('#sync').click(function(){
+    var sync = function(){
         $this = $(this);
+        $this.unbind('click');
         $.ajax({
             url: '/order/sync',
             type: 'POST',
@@ -174,12 +182,17 @@ $(function(){
                 } else {
                     $.jGrowl('同步失败！');
                 }
+                $this.bind(sync);
             },
             error: function() {
                 $.jGrowl('同步请求失败！');
+                $this.bind(sync);
             }
         });
-    });
+    }
+
+    // 绑定同步
+    $('#sync').bind('click', sync);
 
     // 批量发货对话框
     var order_batch_ship_dialog = $('#order_batch_ship_dialog');

@@ -10,7 +10,7 @@
 <!-- Content begins -->    
 <div id="content">
     <div class="contentTop">
-        <span class="pageTitle"><span class="icon-user-2"></span>库存管理</span>
+        <span class="pageTitle"><span class="icon-layers"></span>库存管理</span>
         
         <div class="clear"></div>
     </div>
@@ -66,6 +66,9 @@ $(function(){
             ],
         fnDrawCallback: function() {
             $('#stock_list_table').css('width', '100%');
+        },
+        fnInitComplete: function() {
+            $('.select_action, select[name$="list_table_length"],.checkAll').uniform();
         }
     
     });

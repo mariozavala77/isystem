@@ -68,6 +68,8 @@ class Order {
             $query->where($key, '=', $value);
         }
 
+        $query->order_by('orders.status', 'ASC');
+
         return $query->order_by('orders.id', 'DESC');
     }
 
@@ -123,7 +125,7 @@ class Order {
                     }
                 }
             }
-            Channel::update($channel->id, ['synced_at' => date('Y-m-d H:i:s', strtotime($data['synced_at']))]);
+            Channel::update($channel->id, ['synced_at' => $data['synced_at']]);
         }
 
         Item::sync($channels);

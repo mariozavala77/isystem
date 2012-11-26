@@ -1688,6 +1688,8 @@ table thead td span { background: url(../images/tables/sort.png) no-repeat 0; di
 table thead td.headerSortUp span { background: url(../images/tables/sortUp.png) no-repeat 0; }
 table thead td.headerSortDown span { background: url(../images/tables/sortDown.png) no-repeat 0; }
 
+.checkAll thead tr th:first-child { width: 40px; padding: 0; vertical-align: middle; margin: 0;text-}
+.checkAll thead tr th:first-child .checker, .checkAll tbody tr td:first-child .radio { margin: 0 auto; float: none; }
 .checkAll tbody tr td:first-child { width: 40px; padding: 0; vertical-align: middle; margin: 0;}
 .checkAll tbody tr td:first-child .checker, .checkAll tbody tr td:first-child .radio { margin: 0 auto; float: none; }
 
@@ -1834,7 +1836,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f6f6f6', end
 
 /* ===== Table toolbar ===== */
 
-.tToolbar { height: 36px; border-bottom: 1px solid #cdcdcd; 
+.tToolbar { height: 30px; border-bottom: 1px solid #cdcdcd; 
 background: #F8F8F8;
 background: -moz-linear-gradient(top, #F8F8F8 0%, #EFEFEF 100%);
 background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #F8F8F8), color-stop(100%, #EFEFEF));
@@ -1845,7 +1847,7 @@ background: linear-gradient(top, #F8F8F8 0%, #EFEFEF 100%);
 filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f8f8f8', endColorstr='#efefef',GradientType=0 );
 }
 .tToolbar li { display: block; float: left; border-right: 1px solid #c3c3c3; }
-.tToolbar li a { padding: 7px 12px; display: block; color: #808080; font-size: 11px; box-shadow: 1px 0 0 #fcfcfc inset, -1px 0 0 #fcfcfc inset; -webkit-box-shadow: 1px 0 0 #fcfcfc inset, -1px 0 0 #fcfcfc inset; -moz-box-shadow: 1px 0 0 #fcfcfc inset, -1px 0 0 #fcfcfc inset; }   
+.tToolbar li a { padding: 4px 10px; display: block; color: #808080; font-size: 11px; box-shadow: 1px 0 0 #fcfcfc inset, -1px 0 0 #fcfcfc inset; -webkit-box-shadow: 1px 0 0 #fcfcfc inset, -1px 0 0 #fcfcfc inset; -moz-box-shadow: 1px 0 0 #fcfcfc inset, -1px 0 0 #fcfcfc inset; }   
 .tToolbar li:last-child { box-shadow: 1px 0 0 #fcfcfc; -webkit-box-shadow: 1px 0 0 #fcfcfc; -moz-box-shadow: 1px 0 0 #fcfcfc; }
 .tToolbar li a:hover {
 background: #f8f8f8;
@@ -2336,7 +2338,7 @@ table .dropdown-menu.pull-right { right: auto; left: 0; }
 .fullscreen {
     width: 100%;
     position: absolute;
-    top: 14px;
+    top: 34px;
     left: 0;
     z-index: 1000;
 }

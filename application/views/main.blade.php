@@ -269,7 +269,7 @@ function orders_chart() {
 </script>   
 <div id="content">
     <div class="contentTop">
-        <span class="pageTitle"><span class="icon-user-2"></span>控制中心</span>
+        <span class="pageTitle"><span class="icon-screen"></span>控制中心</span>
         
         <div class="clear"></div>
     </div>

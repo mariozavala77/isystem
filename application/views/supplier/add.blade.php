@@ -8,7 +8,7 @@
 <!-- COntent begins -->
 <div id="content">
     <div class="contentTop">
-        <span class="pageTitle"><span class="icon-user-2"></span>添加供货</span>
+        <span class="pageTitle"><span class="icon-plus-3"></span>添加供货商</span>
         <div class="clear"></div>
     </div>
     <!-- Breadcrumbs line begins -->
@@ -17,29 +17,11 @@
             <ul id="breadcrumbs" class="breadcrumbs">
                 <li><a href="{{ URL::base() }}">控制中心</a></li>
                 <li><a href="{{ URL::base() }}/supplier" title="">供货管理</a></li>
-                <li class="current"><a href="{{ URL::base() }}/supplier/add" title="">添加代理</a></li>
+                <li class="current"><a href="{{ URL::base() }}/supplier/add" title="">添加供货商</a></li>
             </ul>
         </div>
         
-        <div class="breadLinks">
-            <ul>
-                <li><a href="#" title=""><i class="icos-list"></i><span>新订单</span> <strong>(+58)</strong></a></li>
-                <li><a href="#" title=""><i class="icos-check"></i><span>新任务</span> <strong>(+12)</strong></a></li>
-                <li class="has">
-                    <a title="">
-                        <i class="icos-money3"></i>
-                        <span>快捷导航</span>
-                        <span><img src="/images/elements/control/hasddArrow.png" alt=""></span>
-                    </a>
-                    <ul>
-                        <li><a href="#" title=""><span class="icos-add"></span>New invoice</a></li>
-                        <li><a href="#" title=""><span class="icos-archive"></span>History</a></li>
-                        <li class="noBorderB"><a href="#" title=""><span class="icos-printer"></span>Print invoices</a></li>
-                    </ul>
-                </li>
-            </ul>
-             <div class="clear"></div>
-        </div>
+        @include('block.bread')
     </div>
     <!-- Breadcrumbs line ends -->
 

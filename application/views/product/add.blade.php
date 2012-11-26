@@ -14,7 +14,7 @@
 <!-- COntent begins -->
 <div id="content">
     <div class="contentTop">
-        <span class="pageTitle"><span class="icon-user-2"></span>添加产品</span>
+        <span class="pageTitle"><span class="icon-plus-2"></span>添加产品</span>
         <div class="clear"></div>
     </div>
 

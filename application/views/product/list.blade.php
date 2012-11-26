@@ -8,7 +8,7 @@
 @section('content')
 <div id="content">
     <div class="contentTop">
-        <span class="pageTitle"><span class="icon-user-2"></span>产品管理</span>
+        <span class="pageTitle"><span class="icon-box"></span>产品管理</span>
         <div class="clear"></div>
     </div>
 
@@ -30,8 +30,8 @@
     <div class="wrapper">
 
         <div class="mt15">
-            <a href="{{ URL::to('product/import') }}" class="buttonM bDefault floatR ml10"><span class="icon-home-5"></span><span>导入产品</span></a>
-            <a href="{{ URL::to('product/add') }}" class="buttonM bDefault floatR ml10"><span class="icon-home-5"></span><span>添加产品</span></a>
+            <a href="{{ URL::to('product/import') }}" class="buttonM bDefault floatR ml10"><span class="icon-add"></span><span>导入产品</span></a>
+            <a href="{{ URL::to('product/add') }}" class="buttonM bDefault floatR ml10"><span class="icon-plus-2"></span><span>添加产品</span></a>
             <div class="clear"></div>
         </div>
         <!-- products list begins -->

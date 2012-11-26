@@ -16,13 +16,13 @@ class Product_Sale_Controller extends Base_Controller {
 
     // 列表
     public function action_filter() {
-        $fields = [ 'id', 'title', 'price', 'agent_id', 
+        $fields = [ 'title', 'price', 'agent_id', 
                     'created_at', 'id as operate'];
         $products = Product_Sale::filter($fields);
         $data = Datatables::of($products)->make();
         $agents   = [];
         foreach($data['aaData'] as $key=>$value){
-            $agents[$value[3]]   = $value[3];
+            $agents[$value[2]]   = $value[2];
         }
         $agents = Agent::filter(['id', 'company'])->where_in('id', $agents)->get();
         foreach($agents as $key=>$value){
@@ -31,7 +31,7 @@ class Product_Sale_Controller extends Base_Controller {
         $agents = $agent;
 
         foreach($data['aaData'] as $key=>$value){
-            $value[6] = empty($value[3])?'暂无':$agents[$value[3]];
+            $value[5] = empty($value[2])?'暂无':$agents[$value[2]];
             $data['aaData'][$key] = $value;
         }
         return Response::json($data);

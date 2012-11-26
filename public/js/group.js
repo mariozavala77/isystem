@@ -20,6 +20,9 @@ $(function() {
             var operation = '<a href="/user/group/edit?group_id=' + id + '" class="tablectrl_small bDefault tipS" original-title="编辑"><span class="iconb" data-icon=""></span></a>' + 
                             '<a href="javascript:void(0);" data-id="' + id + '" class="tablectrl_small bDefault tipS" original-title="删除"><span class="iconb" data-icon=""></span></a>';
             $('td:eq(1)', nRow).html(operation);
+        },
+        fnInitComplete: function() {
+            $('.select_action, select[name$="list_table_length"],.checkAll').uniform();
         }
     });
     

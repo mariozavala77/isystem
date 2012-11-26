@@ -9,7 +9,7 @@
 @section('content')
 <div id="content">
     <div class="contentTop">
-        <span class="pageTitle"><span class="icon-user-2"></span>订单处理</span>
+        <span class="pageTitle"><span class="icon-share-3"></span>订单处理</span>
         <div class="clear"></div>
     </div>
 
@@ -45,7 +45,7 @@
                     <a href="javascript:void(0);" ckey="olist_search" class="tOptions tipS" title="搜索"><img src="{{ URL::base() }}/images/icons/search" alt=""/></a>
                     <a href="javascript:void(0);" ckey="olist_options" class="tOptions tipS" title="设置"><img src="{{ URL::base() }}/images/icons/options" alt=""/></a>
                 </div>
-                <table cellpadding="0" cellspacing="0" border="0" class="dTable" id="order_list_table"></table>
+                <table cellpadding="0" cellspacing="0" border="0" class="dTable checkAll" id="order_list_table"></table>
             </div>
         </div>
         <script type="text/javascript">

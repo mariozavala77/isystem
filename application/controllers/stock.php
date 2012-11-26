@@ -20,6 +20,22 @@ class Stock_Controller extends Base_Controller {
         $stock = Stock::filter($fields);
         $data = Datatables::of($stock)->make();
 
+        foreach($data['aaData'] as $key => $datum) {
+            // 仓库信息
+            $storage = Storage::info($datum[1]);
+            $data['aaData'][$key][1] = $storage->area . '[' . $storage->type. ']';
+
+            // 产品信息
+            if($datum[0]) {
+                $product = Product::info($datum[0]);
+                $product_name = $product->name;
+            } else {
+                $product_name = '<span class="red">未关联产品池</span>';
+            }
+            
+            $data['aaData'][$key][0] = $product_name;
+        }
+
         return Response::json($data);
     }
 
