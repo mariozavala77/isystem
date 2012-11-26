@@ -10,7 +10,7 @@
 <!-- Content begins -->    
 <div id="content">
     <div class="contentTop">
-        <span class="pageTitle"><span class="icon-user-2"></span>代理管理</span>
+        <span class="pageTitle"><span class="icon-box-remove"></span>代理管理</span>
         
         <div class="clear"></div>
     </div>

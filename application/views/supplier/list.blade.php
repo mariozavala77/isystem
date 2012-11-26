@@ -10,7 +10,7 @@
 <!-- Content begins -->    
 <div id="content">
     <div class="contentTop">
-        <span class="pageTitle"><span class="icon-user-2"></span>供货商管理</span>
+        <span class="pageTitle"><span class="icon-box-add"></span>供货商管理</span>
         
         <div class="clear"></div>
     </div>

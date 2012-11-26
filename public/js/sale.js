@@ -13,33 +13,30 @@ $(function() {
         oLanguage: {
             sUrl: '/js/plugins/tables/lang_cn.txt'
         },
-        aoColumnDefs: [{
-            sTitle: "全选",
-            aTargets: [0],
-            bSearchable: false,
-        },
+        aoColumnDefs: [
         {
             sTitle: "标题",
-            aTargets: [1]
+            aTargets: [0],
+            sWidth: '60%',
         },
         {
             sTitle: "价格",
-            aTargets: [2],
+            aTargets: [1],
             bSearchable: false,
         },
         {
             sTitle: "代理商",
-            aTargets: [3],
+            aTargets: [2],
             bSearchable: false,
         },
         {
             sTitle: "认购时间",
-            aTargets: [4],
+            aTargets: [3],
             bSearchable: false,
         },
         {
             sTitle: "操作",
-            aTargets: [5],
+            aTargets: [4],
             bSearchable: false,
             sClass: 'tableActs'
         },
@@ -47,8 +44,8 @@ $(function() {
         fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
             var id = aData[0];
             var operation = '<a href="/product/sale/edit?sale_id=' + id + '" class="tablectrl_small bDefault tipS" original-title="编辑"><span class="iconb" data-icon=""></span></a>' + '<a href="javascript: void(0);" data-id="' + id + '" class="tablectrl_small bDefault tipS" original-title="删除"><span class="iconb" data-icon=""></span></a>';
-            $('td:eq(5)', nRow).html(operation);
-            $('td:eq(3)', nRow).html(aData[6]);
+            $('td:eq(4)', nRow).html(operation);
+            $('td:eq(2)', nRow).html(aData[5]);
         }
     });
 
