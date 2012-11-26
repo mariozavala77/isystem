@@ -74,7 +74,7 @@ class AgentAPI_Product extends AgentAPI_Base
     public static function sale($params){
         $fields = [
             'product_id', 'agent_id', 'language', 'price', 
-            'title', 'keywords', 'short_description', 'description'
+            'title', 'keywords', 'short_description', 'sku', 'sold','description'
         ];
 
         try{
@@ -82,13 +82,25 @@ class AgentAPI_Product extends AgentAPI_Base
         }catch(Exception $e){
             throw new AgentAPIException($e->getMessage(), -32004);
         }
-
+        $agent_info = Agent::info($params['agent_id']);
+        $sale_info = ['sold' => $data['sold'], 'sku' => $data['sku']];
+        if($sale_info['sold']==1 && $sale_info['sold']==2){
+            $sale_info['sold_at'] = date('Y-m-d H:i:s');
+        }
+        unset($data['sku']);
+        unset($data['sold']);
         $product_sale_id = Product_Sale::getId($data['agent_id'], $data['product_id']);
-
+        $data['validation'] = json_encode($data);
         if($product_sale_id){
-            $data['status']=0;
+            $data['validation'] = json_encode($data);
             $requslt = Product_Sale::update($product_sale_id, $data);
             if($requslt){
+                $sale_id = Product_Sale_Sku::existence($psid, $agent_info->channel_id);
+                if(empty($sale_id)){
+                    Product_Sale_Sku::insert($sale_info);
+                }else{
+                    Product_Sale_Sku::update($sale_id, $sale_info);
+                }
                 // 发送任务tasks
                 return ['product_id'=>$data['product_id']];
             }else{
@@ -98,6 +110,12 @@ class AgentAPI_Product extends AgentAPI_Base
             $data['created_at'] = date('Y-m-d H:i:s');
             $requset = Product_Sale::insert($data);
             if($requset){
+                $sale_id = Product_Sale_Sku::existence($requset, $agent_info->channel_id);
+                if(empty($sale_id)){
+                    Product_Sale_Sku::insert($sale_info);
+                }else{
+                    Product_Sale_Sku::update($sale_id, $sale_info);
+                }
                 // 发送任务插入tasks
                 return ['product_id'=>$data['product_id']];
             }else{

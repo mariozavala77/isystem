@@ -46,7 +46,6 @@ class Product_Sale_Sku {
      */
     public static function update($product_sale_sku_id, $data){
         return DB::table('products_sale_sku')->where('id', '=', $product_sale_sku_id)->update($data);
-        var_dump($data);
     }
 
     /**
@@ -66,5 +65,11 @@ class Product_Sale_Sku {
      */
     public static function map($sku) {
         return DB::table('products_sale_sku')->where('sku', '=', $sku)->only('product_id');
+    }
+
+    public static function existence($psid, $channel_id){
+        return DB::table('products_sale_sku')->where('psid', '=', $psid)
+                                             ->where('channel_id', '=', $channel_id)
+                                             ->only('id');
     }
 }
