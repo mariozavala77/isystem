@@ -29,6 +29,9 @@
             <li>
                 <a href="{{ URL::base() }}/supplier" title="" class="active"><img src="{{ URL::base() }}/images/icons/mainnav/ui.png" alt="供货管理" /><span>供货管理</span></a>
             </li>
+            <li>
+                <a href="{{ URL::base() }}/statistics" title="" class="active"><img src="{{ URL::base() }}/images/icons/mainnav/statistics.png" alt="数据统计" /><span>数据统计</span></a>
+            </li>
             <li class="sideBarDrop">
                 <a href="javascript:void(0);" title="" class="active"><img src="{{ URL::base() }}/images/icons/mainnav/forms.png" alt="系统设置" /><span>系统设置</span></a>
                 <ul class='leftUser'>

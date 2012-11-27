@@ -1,7 +1,5 @@
 @layout('layout.base')
 @section('script')
-    {{ HTML::script('js/plugins/tables/jquery.dataTable.js') }}
-    {{ HTML::script('js/stock.js') }}
 @endsection
 @section('sidebar')
     @include('block.sidebar')
@@ -44,35 +42,43 @@
     <!--Main content ends-->
 
 <script type="text/javascript">
-$(function(){
-    sTable = $('#stock_list_table').dataTable({
-        bSort: false,
-        bProcessing: true,
-        bFilter: true,
-        bServerSide: true,
-        bJQueryUI: false,
-        sPaginationType: 'full_numbers',
-        sAjaxSource: '{{ URL::base() }}/stock/filter',
-        sDom: '<"H"fl<"clear">>tr<"F"ip>',
-        oLanguage: { sUrl: '/js/plugins/tables/lang_cn.txt' },
-        aoColumnDefs: [
-                { sTitle: "名称", aTargets: [0] },
-                { sTitle: "仓库", aTargets: [1] },
-                { sTitle: "编码", aTargets: [2] },
-                { sTitle: "可销售", aTargets: [3] },
-                { sTitle: "不可销售", aTargets: [4] },
-                { sTitle: "加入时间",aTargets: [5], bSearchable: false },
-                { sTitle: "操作", aTargets: [6], bSearchable: false, sClass: "tableActs", sWidth: '80px' }
-            ],
-        fnDrawCallback: function() {
-            $('#stock_list_table').css('width', '100%');
-        },
-        fnInitComplete: function() {
-            $('.select_action, select[name$="list_table_length"],.checkAll').uniform();
-        }
-    
+    $(function(){
+        sTable = $('#stock_list_table').dataTable({
+            bSort: false,
+            bProcessing: true,
+            bFilter: true,
+            bServerSide: true,
+            bJQueryUI: false,
+            sPaginationType: 'full_numbers',
+            sAjaxSource: '{{ URL::base() }}/stock/filter',
+            sDom: '<"H"fl<"clear">>tr<"F"ip>',
+            oLanguage: { sUrl: '/js/plugins/tables/lang_cn.txt' },
+            aoColumnDefs: [
+                    { sTitle: "名称", aTargets: [0] },
+                    { sTitle: "仓库", aTargets: [1], sWidth: '80px' },
+                    { sTitle: "编码", aTargets: [2], sWidth: '100px' },
+                    { sTitle: "可销售", aTargets: [3], sWidth: '90px' },
+                    { sTitle: "不可销售", aTargets: [4], sWidth: '90px' },
+                    { sTitle: "加入时间",aTargets: [5], bSearchable: false, sWidth: '120px' },
+                    { sTitle: "操作", aTargets: [6], bSearchable: false, sClass: "tableActs", sWidth: '80px' }
+                ],
+            fnRowCallback: function(nRow, aData, iDisplayIndexFull, iDisplayIndexFull) {
+                var id = aData[6];
+
+                // 操作
+                var operation =  '<a class="tablectrl_small bDefault tipS" action="order_ship" cid="'+id+'" original-title="发货"><span class="iconb" data-icon="&#xe063"></span></a>';
+                    operation += '<a class="tablectrl_small bDefault tipS" action="order_ship" cid="'+id+'" original-title="发货"><span class="iconb" data-icon="&#xe063"></span></a>';
+                $('td:eq(6)', nRow).html(operation);
+            },
+            fnDrawCallback: function() {
+                $('#stock_list_table').css('width', '100%');
+            },
+            fnInitComplete: function() {
+                $('.select_action, select[name$="list_table_length"],.checkAll').uniform();
+            }
+        
+        });
     });
-});
 
 </script>
     
