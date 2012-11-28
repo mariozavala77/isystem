@@ -3,7 +3,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <title>FBN</title>
+    <title>UFC</title>
     <!--[if IE]> {{ HTML::style('css/ie.css') }} <![endif]-->
     {{ HTML::style('css/styles.css') }}
     {{ HTML::script('js/files/jquery.min.js') }}
@@ -27,10 +27,12 @@
     <!-- Top line begins -->
     <div id="top">
         <div class="wrapper">
-            <a href="{{ URL::base() }}" title="FBN SYSTEM" class="logo"><img src="{{ URL::base() }}/images/logo.png" alt=""></a>
-
+            <a href="{{ URL::base() }}" title="UFC SYSTEM" class="logo"><img src="{{ URL::base() }}/images/logo.png" alt=""></a>
             <!-- Right top nav -->
             <div class="topNav">
+              @if( Sentry::check() )
+              <span style="float: left; margin: 10px 10px 0 0; line-height: 28px; color: #ccc">欢迎您！{{ Sentry::user()->get('username');}}，您现在身份是管理员</span>
+              @endif
               <ul class="userNav">
                 @if( Sentry::check() )
                 <li><a href="{{ URL::to('account/logout') }}" title="登出" class="logout"></a></li>

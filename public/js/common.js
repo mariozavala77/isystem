@@ -55,21 +55,21 @@ $(function(){
     // tab 选项
 	$.fn.contentTabs = function(){ 
 	
-		$(this).find(".tab_content").hide(); //Hide all content
-		$(this).find("ul.tabs li:first").addClass("activeTab").show(); //Activate first tab
-		$(this).find(".tab_content:first").show(); //Show first tab content
+		$(this).find(".tab_content").hide();
+		$(this).find("ul.tabs li:first").addClass("activeTab").show();
+		$(this).find(".tab_content:first").show();
 	
 		$("ul.tabs li").click(function() {
-			$(this).parent().parent().find("ul.tabs li").removeClass("activeTab"); //Remove any "active" class
-			$(this).addClass("activeTab"); //Add "active" class to selected tab
-			$(this).parent().parent().find(".tab_content").hide(); //Hide all tab content
-			var activeTab = $(this).find("a").attr("href"); //Find the rel attribute value to identify the active tab + content
-			$(activeTab).show(); //Fade in the active content
+			$(this).parent().parent().find("ul.tabs li").removeClass("activeTab");
+			$(this).addClass("activeTab");
+			$(this).parent().parent().find(".tab_content").hide();
+			var activeTab = $(this).find("a").attr("href");
+			$(activeTab).show();
 			return false;
 		});
 	
 	};
-	$("div[class^='widget']").contentTabs(); //Run function on any div with class name of "Content Tabs"
+	$("div[class^='widget']").contentTabs();
 
     // 下拉菜单 
     $('.dropdown-toggle').dropdown();
@@ -83,6 +83,14 @@ $(function(){
 		if (! $clicked.parents().hasClass("has"))
 		$('.breadLinks ul li').children("ul").slideUp(150);
 	});
+
+    // 获取title
+    var title = 'UFC';
+    $('#breadcrumbs').find('a').each(function(){
+        title += ' - ' + $(this).text();
+    });
+    $('title').text(title);
+
 
     /***************************************************************************
      *
