@@ -16,7 +16,7 @@ var tasks_handle = 0;
 var task_mod ='{{$task->type}}';
 </script>
 <div id="content">
-	<div class="contentTop">
+    <div class="contentTop">
         <span class="pageTitle"><span class="icon-user-2"></span>控制中心</span>
         <div class="clear"></div>
     </div>
@@ -28,25 +28,8 @@ var task_mod ='{{$task->type}}';
             </ul>
         </div>
         
-        <div class="breadLinks">
-            <ul>
-                <li><a title="" href="#"><i class="icos-list"></i><span>新订单</span> <strong>(+58)</strong></a></li>
-                <li><a title="" href="#"><i class="icos-check"></i><span>新任务</span> <strong>(+12)</strong></a></li>
-                <li class="has">
-                    <a title="">
-                        <i class="icos-money3"></i>
-                        <span>快捷导航</span>
-                        <span><img alt="" src="/images/elements/control/hasddArrow.png"></span>
-                    </a>
-                    <ul>
-                        <li><a title="" href="#"><span class="icos-add"></span>New invoice</a></li>
-                        <li><a title="" href="#"><span class="icos-archive"></span>History</a></li>
-                        <li class="noBorderB"><a title="" href="#"><span class="icos-printer"></span>Print invoices</a></li>
-                    </ul>
-                </li>
-            </ul>
-             <div class="clear"></div>
-        </div>
+        @include('block.bread')
+
     </div>
     <div class="wrapper">
         <div class="fluid">

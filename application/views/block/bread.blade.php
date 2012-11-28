@@ -8,10 +8,11 @@
                         <span>快捷导航</span>
                         <span><img src="/images/elements/control/hasddArrow.png" alt=""></span>
                     </a>
-                    <ul>
-                        <li><a href="#" title=""><span class="icos-add"></span>New invoice</a></li>
-                        <li><a href="#" title=""><span class="icos-archive"></span>History</a></li>
-                        <li class="noBorderB"><a href="#" title=""><span class="icos-printer"></span>Print invoices</a></li>
+                    <ul style="width: 108px">
+                        <li><a href="/order" title=""><span class="icon-share-3"></span>订单处理</a></li>
+                        <li><a href="/task" title=""><span class="icon-pin"></span>任务处理</a></li>
+                        <li><a href="/product/import" title=""><span class="icon-add"></span>产品导入</a></li>
+                        <li class="noBorderB"><a href="/stock" title=""><span class="icon-layers"></span>查看库存</a></li>
                     </ul>
                 </li>
             </ul>

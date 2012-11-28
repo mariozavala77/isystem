@@ -74,6 +74,15 @@ $(function(){
     // 下拉菜单 
     $('.dropdown-toggle').dropdown();
 
+    // 快捷导航下拉
+	$('.breadLinks ul li').click(function () {
+		$(this).children("ul").slideToggle(150);
+	});
+	$(document).bind('click', function(e) {
+		var $clicked = $(e.target);
+		if (! $clicked.parents().hasClass("has"))
+		$('.breadLinks ul li').children("ul").slideUp(150);
+	});
 
     /***************************************************************************
      *
