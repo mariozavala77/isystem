@@ -12,72 +12,68 @@ var slibe;
 var order_data=[];
     var sales_region_Data = [{
                 country: "USA",
-                visits: 3025,
+                visits: Math.round(Math.random() * 600)+3025,
                 color: "#FF0F00"
             }, {
-                country: "China",
-                visits: 1882,
-                color: "#FF6600"
-            }, {
                 country: "Japan",
-                visits: 1809,
+                visits: Math.round(Math.random() * 600)+1809,
                 color: "#FF9E01"
             }, {
                 country: "Germany",
-                visits: 1322,
+                visits: Math.round(Math.random() * 600)+1322,
                 color: "#FCD202"
             }, {
                 country: "UK",
-                visits: 1122,
+                visits: Math.round(Math.random() * 600)+1122,
                 color: "#F8FF01"
             }, {
                 country: "France",
-                visits: 1114,
+                visits: Math.round(Math.random() * 600)+1114,
                 color: "#B0DE09"
             }, {
                 country: "India",
-                visits: 984,
+                visits: Math.round(Math.random() * 600)+984,
                 color: "#04D215"
             }, {
                 country: "Spain",
-                visits: 711,
+                visits: Math.round(Math.random() * 600)+711,
                 color: "#0D8ECF"
             }, {
                 country: "Netherlands",
-                visits: 665,
+                visits: Math.round(Math.random() * 600)+665,
                 color: "#0D52D1"
             }, {
                 country: "Russia",
-                visits: 580,
+                visits: Math.round(Math.random() * 600)+580,
                 color: "#2A0CD0"
             }, {
                 country: "South Korea",
-                visits: 443,
+                visits: Math.round(Math.random() * 600)+443,
                 color: "#8A0CCF"
             }, {
                 country: "Canada",
-                visits: 441,
+                visits: Math.round(Math.random() * 600)+441,
                 color: "#CD0D74"
             }];
             var product_class_statistics_Data = [{
                 year: '电风扇',
-                income: 3000,
+                income: Math.round(Math.random() * 600)+3000,
                 color: "#FF0F00"
             }, {
                 year: '手机',
-                income: 3020,
+                income: Math.round(Math.random() * 600)+3020,
                 color: "#FF6600"
             }, {
                 year: '对讲机',
-                income: 3400,
+                income: Math.round(Math.random() * 600)+3400,
                 color: "#FF9E01"
             }, {
                 year: 'IPhone 4 / 4S',
-                income: 3900,
+                income: Math.round(Math.random() * 600)+3900,
                 color: "#FCD202"
             }, {
                 year: '三星I9300',
-                income: 4000,
+                income: Math.round(Math.random() * 600)+4000,
                 color: "#0D52D1"
             }];
             AmCharts.ready(function () {
@@ -141,7 +137,6 @@ function product_class_statistics(chartData){
                 // value
                 var valueAxis = new AmCharts.ValueAxis();
                 valueAxis.axisColor = "#DADADA";
-                //valueAxis.title = "销售分类统计";
                 valueAxis.gridAlpha = 0.1;
                 chart.addValueAxis(valueAxis);
 
@@ -162,17 +157,9 @@ function product_class_statistics(chartData){
 
 function orders_chart() {
     slibe = new AmCharts.AmSerialChart();
-    slibe.pathToImages = "/js/plugins/amcharts/images/";
-    slibe.zoomOutButton = {
-        backgroundColor: '#000000',
-        backgroundAlpha: 0.15
-    };
     slibe.dataProvider = order_data;
     slibe.categoryField = "date";
-
-    // listen for "dataUpdated" event (fired when chart is rendered) and call zoomChart method when it happens
-    slibe.addListener("dataUpdated", zoomChart);
-
+    slibe.balloon.color = "#000000";
     // AXES
     // category
     var categoryAxis = slibe.categoryAxis;
@@ -181,6 +168,12 @@ function orders_chart() {
     categoryAxis.dashLength = 1;
     categoryAxis.gridAlpha = 0.15;
     categoryAxis.axisColor = "#DADADA";
+    categoryAxis.fillAlpha = 1;
+    categoryAxis.fillColor = "#FAFAFA";
+    categoryAxis.gridAlpha = 0;
+    categoryAxis.axisAlpha = 0;
+    categoryAxis.gridPosition = "start";
+    categoryAxis.position = "bottom";
 
     // value                
     var valueAxis = new AmCharts.ValueAxis();
@@ -194,7 +187,7 @@ function orders_chart() {
     graph.title = "当日订单累计金额";
     graph.valueField = "order";
     graph.balloonText = "当日订单累计金额[[value]]";
-    graph.hideBulletsCount = 20;
+    graph.hideBulletsCount = 40;
     graph.lineAlpha = 1;
     graph.bullet = "round";
     slibe.addGraph(graph);
@@ -228,28 +221,25 @@ function orders_chart() {
     chartCursor.cursorPosition = "mouse";
     slibe.addChartCursor(chartCursor);
 
-    // SCROLLBAR
-    var chartScrollbar = new AmCharts.ChartScrollbar();
-    chartScrollbar.graph = graph;
-    chartScrollbar.scrollbarHeight = 40;
-    chartScrollbar.color = "#FFFFFF";
-    chartScrollbar.autoGridCount = true;
-    slibe.addChartScrollbar(chartScrollbar);
+    
+    var legend = new AmCharts.AmLegend();
+                legend.markerType = "circle";
+                slibe.addLegend(legend);
     slibe.write("orders");
 }
  // generate some random data, quite different range
             function generateChartData() {
                 var firstDate = new Date();
-                firstDate.setDate(firstDate.getDate() - 500);
+                var now = firstDate.getDate();
+                firstDate.setDate(1);
 
-                for (var i = 0; i < 500; i++) {
+                for (var i = 0; i < now; i++) {
                     var newDate = new Date(firstDate);
                     newDate.setDate(newDate.getDate() + i);
-
-                    var order = Math.round(Math.random() * 50) + 50;
-                    var pay = Math.round(Math.random() * 10) + 50;
+                    var order = Math.round(Math.random() * 1000) + 150;
+                    var pay = Math.round(Math.random() * 600) + 50;
                     var refund = Math.round(Math.random()*1);
-                    var warehousing = Math.round(Math.random()*10)+20;
+                    var warehousing = Math.round(Math.random()*90)+20;
 
                     order_data.push({
                         date: newDate,

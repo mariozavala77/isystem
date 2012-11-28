@@ -108,8 +108,9 @@ var task_mod ='{{$task->type}}';
             <div class="grid6">
                 <ul class="middleNavA">
                     <li><a title="创建新任务" href="javascript:void(0);" id="bulidtask" class="tipS"><img alt="创建新任务" src="/images/icons/color/order-149.png"><span>创建新任务</span></a></li>
-                    <li><a title="订单发货" href="javascript:void(0);" class="tipS"><img alt="" src="/images/icons/color/issue.png"><span>订单发货</span></a></li>
-                    <li><a title="订单同步" href="javascript:void(0);" class="tipS"><img alt="" src="/images/icons/color/issue.png"><span>订单同步</span></a></li>
+                    <li><a title="订单发货" href="javascript:void(0);" class="tipS" id="order_ship" onclick="order_ship()"><img alt="" src="/images/icons/color/issue.png"><span>订单发货</span></a></li>
+                    <li><a title="订单同步" href="javascript:void(0);" class="tipS" id="sync"><img alt="" src="/images/icons/color/issue.png"><span>订单同步</span></a></li>
+                    <li><a title="取消订单" href="javascript:void(0);" class="tipS" id="order_cannel"><img alt="" src="/images/icons/color/issue.png"><span>取消订单</span></a></li>
                 </ul>
             </div>
         </div>
@@ -194,12 +195,7 @@ var task_mod ='{{$task->type}}';
                 <ul class="messagesTwo" id="msg_lists">
                     <li class="by_user">
                         <div class="messageArea" style="margin:0px">
-                            <div class="infoRow">
-                                <span class="name"><strong>system</strong> says:</span>
-                                <span class="time">now</span>
-                                <div class="clear"></div>
-                            </div>
-                            <img alt="lodding" style="float: left" src="/images/elements/loaders/1.gif">
+                            尚无备注
                         </div>
                         <div class="clear"></div>
                     </li>
@@ -265,21 +261,34 @@ var task_mod ='{{$task->type}}';
 <div id="task_finish" style="display:none" title="提示">
     <p>你确认标记此任务已完成?</p>
 </div>
-    <!-- order batch operation begins -->
-    <div id="order_batch_ship_dialog" title="订单发货" style="display: none">
-        <form action="{{ URL::to('order/ship') }}" method="POST">
-            <div class="widget fluid" style="margin-top: 0px">
-                <div class="formRow ">
-                    <div class="grid3">&nbsp;</div>
-                    <div class="grid1">配送公司：</div>
-                    <div class="grid2"><input name="ship_company" type="text"/></div>
-                    <div class="grid1">配送方式：</div>
-                    <div class="grid2"><input name="ship_method" type="text"/></div>
-                    <div class="clear"></div>
-                </div>
+    <div id="order_ship_dialog" title="订单发货" style="display: none">
+        <div class="widget fluid" style="margin-top: 0px">
+            <div class="formRow">
+                <div class="grid1">订单ID：</div>
+                <div class="grid2"><span field="entity_id"></span></div>
+                <div class="grid1">购买人：</div>
+                <div class="grid2"><span field="name"></span></div>
+                <div class="grid1">国家：</div>
+                <div class="grid2"><span field="country"></span></div>
+                <div class="grid1">来源：</div>
+                <div class="grid2"><span field="channel"></span></div>
+                <div class="clear"></div>
             </div>
-            <div class="textC mt10"><input type="submit" class="buttonS bBlue" value="发货" /></div>
-        </form>
+            <div class="formRow nopadding">
+                <div class="grid12" field="items_ship"></div>
+                <div class="clear"></div>
+            </div>
+            <div class="formRow">
+                <div class="grid12 textC"><a class="bDefault buttonS" action="order_ship_submit">发货</a></div>
+                <div class="clear"></div>
+            </div>
+        </div>
     </div>
-    <!-- order batch operation ends -->
+    <div id="order_cancel_dialog" title="取消订单" style="display: none">
+        <p>您确认取消此订单？</p>
+    </div>
+    <div id="sync_dialog" title="loading" style="display:none">
+        <p>订单同步中，请耐心等待</p>
+        <p><img alt="loading" src="/images/elements/loaders/7.gif"></p>
+    </div>
 @endsection

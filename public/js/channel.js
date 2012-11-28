@@ -31,6 +31,9 @@ $(function(){
             }
             $('td:eq(4)', nRow).html(text);
         },
+        fnDrawCallback: function() {
+            $('.tableActs .tipS').tipsy({gravity: 's',fade: true, html:true});
+        }
     });
     $('#channel_add_modal').dialog({
         autoOpen: false,

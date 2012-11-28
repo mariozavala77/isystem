@@ -52,6 +52,7 @@ Route::group(array('before' => 'auth'), function() {
     Route::controller('user.permission');
     Route::controller('user');
     Route::controller('channel');
+    Route::controller('statistics');
 
 });
 
