@@ -232,7 +232,4 @@ return array(
 
     // 物流快递
     'logistic_company' => ['ups' => 'UPS', 'dhl' => 'DHL', 'fedex' => '联邦快递'],
-
-    // 需要拆分订单的渠道
-    'split_order_channel' => [1],
 );

@@ -6,155 +6,312 @@
 @include('block.sidebar')
 @endsection
 @section('content')
-<!-- Content begins --> 
-<script type="text/javascript">
+<!-- Content begins -->  
+<div id="content">
+    <div class="contentTop">
+        <span class="pageTitle"><span class="icon-user-2"></span>控制中心</span>
+        
+        <div class="clear"></div>
+    </div>
+
+    <!-- Breadcrumbs line begins -->
+    <div class="breadLine">
+        <div class="bc">
+            <ul id="breadcrumbs" class="breadcrumbs">
+                <li><a href="{{ URL::base() }}">控制中心</a></li>
+                <li class="current"><a href="{{ URL::base()}}/channel" title="渠道管理">渠道管理</a></li>
+            </ul>
+        </div>
+
+        @include('block.bread')
+        
+    </div>
+    <!-- Breadcrumbs line ends -->
+
+
+    <div class="wrapper">
+        <div class="fluid">
+            <!-- Invoice widget -->
+            <div class="widget grid3">
+                <div class="whead">
+                <h6>订单金额</h6>
+                <div class="clear"></div>
+                </div>
+                <div class="body" style="padding:0;">
+                    <ul class="wInvoice" style="border:0;margin:0;">
+                        <li style="width:100%"><h4 class="green">$63,456</h4><span>订单总额</span></li>
+                    </ul>
+                </div>
+            </div>
+            <!-- Invoice widget -->
+            <div class="widget grid3">
+                <div class="whead">
+                <h6>任务</h6>
+                <div class="clear"></div>
+                </div>
+                <div class="body" style="padding:0;">
+                    <ul class="wInvoice" style="border:0;margin:0;">
+                        <li style="width:50%"><h4 class="green">63,456</h4><span>已处理</span></li>
+                        <li style="width:50%"><h4 class="red">16,542</h4><span>未处理</span></li>
+                    </ul>
+                </div>
+            </div>
+            <!-- Invoice widget -->
+            <div class="widget grid3">
+                <div class="whead">
+                <h6>产品信息</h6>
+                <div class="clear"></div>
+                </div>
+                <div class="body" style="padding:0;">
+                    <ul class="wInvoice" style="border:0;margin:0;">
+                        <li style="width:50%"><h4 class="green">63,456</h4><span>产品池</span></li>
+                        <li style="width:50%"><h4 class="red">16,542</h4><span>在售商品</span></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="widget grid3">
+                <div class="whead">
+                <h6>供销关系</h6>
+                <div class="titleOpt">
+                  <a href="#" data-toggle="dropdown" class="dropdown-toggle"><span class="iconb" data-icon="&#xe04d;"></span><span class="clear"></span></a>
+                  <ul class="dropdown-menu pull-right">
+                    <li><a href="{{ URL::base()}}/agent/add" class=""><span class="icon-plus"></span>添加代理商</a></li>
+                        <li><a href="{{ URL::base()}}/supplier/add" class=""><span class="icon-plus"></span>添加供应商</a></li>
+                  </ul>
+                </div>
+                <div class="clear"></div>
+                </div>
+                <div class="body" style="padding:0;">
+                    <ul class="wInvoice" style="border:0;margin:0;">
+                        <li style="width:50%"><h4 class="green">63,456</h4><span>供应商</span></li>
+                        <li style="width:50%"><h4 class="red">16,542</h4><span>代理商</span></li>
+                    </ul>
+                </div>
+            </div>                                                            
+        </div>
+        <!-- Invoice widget -->
+        <div class="widget">
+            <div class="whead">
+            <h6>订单</h6>
+            <div class="clear"></div>
+            </div>
+            <div class="body" style="padding:0;">
+                <ul class="wInvoice" style="border:0;margin:0;">
+                    <li style="width:16.5%"><h4 class="green">63,456</h4><span>总数</span></li>
+                    <li style="width:16.5%"><h4 class="red">16,542</h4><span>待付款</span></li>
+                    <li style="width:16.5%"><h4 class="red">16,542</h4><span>未发货</span></li>
+                    <li style="width:16.5%"><h4 class="red">16,542</h4><span>部分发货</span></li>
+                    <li style="width:16.5%"><h4 class="red">16,542</h4><span>已取消</span></li>
+                    <li style="width:16.5%"><h4 class="red">16,542</h4><span>无法处理</span></li>
+                </ul>
+            </div>
+        </div>
+        <div class="widget">
+            <!--产品每日动态 包括 下单量，支付量，退款量，出库量 货物的金额-->
+            <div class="whead"><h6>销售动态（最近两周）</h6><div class="clear"></div></div>
+            <div class="chart" id="orders"></div>
+        </div>                
+    </div>
+</div>
+<!-- Content ends -->
+<script type="text/javascript" charset="utf-8" async defer>
 var slibe;
 var order_data=[];
-    var sales_region_Data = [{
-                country: "USA",
-                visits: Math.round(Math.random() * 600)+3025,
-                color: "#FF0F00"
-            }, {
-                country: "Japan",
-                visits: Math.round(Math.random() * 600)+1809,
-                color: "#FF9E01"
-            }, {
-                country: "Germany",
-                visits: Math.round(Math.random() * 600)+1322,
-                color: "#FCD202"
-            }, {
-                country: "UK",
-                visits: Math.round(Math.random() * 600)+1122,
-                color: "#F8FF01"
-            }, {
-                country: "France",
-                visits: Math.round(Math.random() * 600)+1114,
-                color: "#B0DE09"
-            }, {
-                country: "India",
-                visits: Math.round(Math.random() * 600)+984,
-                color: "#04D215"
-            }, {
-                country: "Spain",
-                visits: Math.round(Math.random() * 600)+711,
-                color: "#0D8ECF"
-            }, {
-                country: "Netherlands",
-                visits: Math.round(Math.random() * 600)+665,
-                color: "#0D52D1"
-            }, {
-                country: "Russia",
-                visits: Math.round(Math.random() * 600)+580,
-                color: "#2A0CD0"
-            }, {
-                country: "South Korea",
-                visits: Math.round(Math.random() * 600)+443,
-                color: "#8A0CCF"
-            }, {
-                country: "Canada",
-                visits: Math.round(Math.random() * 600)+441,
-                color: "#CD0D74"
-            }];
-            var product_class_statistics_Data = [{
-                year: '电风扇',
-                income: Math.round(Math.random() * 600)+3000,
-                color: "#FF0F00"
-            }, {
-                year: '手机',
-                income: Math.round(Math.random() * 600)+3020,
-                color: "#FF6600"
-            }, {
-                year: '对讲机',
-                income: Math.round(Math.random() * 600)+3400,
-                color: "#FF9E01"
-            }, {
-                year: 'IPhone 4 / 4S',
-                income: Math.round(Math.random() * 600)+3900,
-                color: "#FCD202"
-            }, {
-                year: '三星I9300',
-                income: Math.round(Math.random() * 600)+4000,
-                color: "#0D52D1"
-            }];
-            AmCharts.ready(function () {
-                sales_region(sales_region_Data);
-                product_class_statistics(product_class_statistics_Data);
-                generateChartData();
-                orders_chart();
-            });
-function sales_region(chartData){
-                var chart = new AmCharts.AmSerialChart();
-                chart.dataProvider = chartData;
-                chart.categoryField = "country";
-                chart.startDuration = 1;
+$('.dropdown-toggle').dropdown();
+function date (format, timestamp) {
+  var that = this,
+    jsdate, f, formatChr = /\\?([a-z])/gi,
+    formatChrCb,
+    _pad = function (n, c) {
+      if ((n = n + '').length < c) {
+        return new Array((++c) - n.length).join('0') + n;
+      }
+      return n;
+    },
+    txt_words = ["Sun", "Mon", "Tues", "Wednes", "Thurs", "Fri", "Satur", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  formatChrCb = function (t, s) {
+    return f[t] ? f[t]() : s;
+  };
+  f = {
+    // Day
+    d: function () { // Day of month w/leading 0; 01..31
+      return _pad(f.j(), 2);
+    },
+    D: function () { // Shorthand day name; Mon...Sun
+      return f.l().slice(0, 3);
+    },
+    j: function () { // Day of month; 1..31
+      return jsdate.getDate();
+    },
+    l: function () { // Full day name; Monday...Sunday
+      return txt_words[f.w()] + 'day';
+    },
+    N: function () { // ISO-8601 day of week; 1[Mon]..7[Sun]
+      return f.w() || 7;
+    },
+    S: function () { // Ordinal suffix for day of month; st, nd, rd, th
+      var j = f.j();
+      return j < 4 | j > 20 && ['st', 'nd', 'rd'][j%10 - 1] || 'th';
+    },
+    w: function () { // Day of week; 0[Sun]..6[Sat]
+      return jsdate.getDay();
+    },
+    z: function () { // Day of year; 0..365
+      var a = new Date(f.Y(), f.n() - 1, f.j()),
+        b = new Date(f.Y(), 0, 1);
+      return Math.round((a - b) / 864e5) + 1;
+    },
 
-                // AXES
-                // category
-                var categoryAxis = chart.categoryAxis;
-                categoryAxis.labelRotation = 45; // this line makes category values to be rotated
-                categoryAxis.gridAlpha = 0;
-                categoryAxis.fillAlpha = 1;
-                categoryAxis.fillColor = "#FAFAFA";
-                categoryAxis.gridPosition = "start";
+    // Week
+    W: function () { // ISO-8601 week number
+      var a = new Date(f.Y(), f.n() - 1, f.j() - f.N() + 3),
+        b = new Date(a.getFullYear(), 0, 4);
+      return _pad(1 + Math.round((a - b) / 864e5 / 7), 2);
+    },
 
-                // value
-                var valueAxis = new AmCharts.ValueAxis();
-                valueAxis.dashLength = 5;
-                //valueAxis.title = "销售区域状况"
-                valueAxis.axisAlpha = 0;
-                chart.addValueAxis(valueAxis);
+    // Month
+    F: function () { // Full month name; January...December
+      return txt_words[6 + f.n()];
+    },
+    m: function () { // Month w/leading 0; 01...12
+      return _pad(f.n(), 2);
+    },
+    M: function () { // Shorthand month name; Jan...Dec
+      return f.F().slice(0, 3);
+    },
+    n: function () { // Month; 1...12
+      return jsdate.getMonth() + 1;
+    },
+    t: function () { // Days in month; 28...31
+      return (new Date(f.Y(), f.n(), 0)).getDate();
+    },
 
-                // GRAPH
-                var graph = new AmCharts.AmGraph();
-                graph.valueField = "visits";
-                graph.colorField = "color";
-                graph.balloonText = "[[category]]: [[value]]";
-                graph.type = "column";
-                graph.lineAlpha = 0;
-                graph.fillAlphas = 1;
-                chart.addGraph(graph);
-                // WRITE
-                chart.write("sales_region");
+    // Year
+    L: function () { // Is leap year?; 0 or 1
+      var j = f.Y();
+      return j%4==0 & j%100!=0 | j%400==0;
+    },
+    o: function () { // ISO-8601 year
+      var n = f.n(),
+        W = f.W(),
+        Y = f.Y();
+      return Y + (n === 12 && W < 9 ? 1 : n === 1 && W > 9 ? -1 : 0);
+    },
+    Y: function () { // Full year; e.g. 1980...2010
+      return jsdate.getFullYear();
+    },
+    y: function () { // Last two digits of year; 00...99
+      return (f.Y() + "").slice(-2);
+    },
+
+    // Time
+    a: function () { // am or pm
+      return jsdate.getHours() > 11 ? "pm" : "am";
+    },
+    A: function () { // AM or PM
+      return f.a().toUpperCase();
+    },
+    B: function () { // Swatch Internet time; 000..999
+      var H = jsdate.getUTCHours() * 36e2,
+        // Hours
+        i = jsdate.getUTCMinutes() * 60,
+        // Minutes
+        s = jsdate.getUTCSeconds(); // Seconds
+      return _pad(Math.floor((H + i + s + 36e2) / 86.4) % 1e3, 3);
+    },
+    g: function () { // 12-Hours; 1..12
+      return f.G() % 12 || 12;
+    },
+    G: function () { // 24-Hours; 0..23
+      return jsdate.getHours();
+    },
+    h: function () { // 12-Hours w/leading 0; 01..12
+      return _pad(f.g(), 2);
+    },
+    H: function () { // 24-Hours w/leading 0; 00..23
+      return _pad(f.G(), 2);
+    },
+    i: function () { // Minutes w/leading 0; 00..59
+      return _pad(jsdate.getMinutes(), 2);
+    },
+    s: function () { // Seconds w/leading 0; 00..59
+      return _pad(jsdate.getSeconds(), 2);
+    },
+    u: function () { // Microseconds; 000000-999000
+      return _pad(jsdate.getMilliseconds() * 1000, 6);
+    },
+
+    // Timezone
+    e: function () {
+      throw 'Not supported (see source code of date() for timezone on how to add support)';
+    },
+    I: function () { 
+      var a = new Date(f.Y(), 0),
+        // Jan 1
+        c = Date.UTC(f.Y(), 0),
+        // Jan 1 UTC
+        b = new Date(f.Y(), 6),
+        // Jul 1
+        d = Date.UTC(f.Y(), 6); // Jul 1 UTC
+      return 0 + ((a - c) !== (b - d));
+    },
+    O: function () { // Difference to GMT in hour format; e.g. +0200
+      var tzo = jsdate.getTimezoneOffset(),
+        a = Math.abs(tzo);
+      return (tzo > 0 ? "-" : "+") + _pad(Math.floor(a / 60) * 100 + a % 60, 4);
+    },
+    P: function () { // Difference to GMT w/colon; e.g. +02:00
+      var O = f.O();
+      return (O.substr(0, 3) + ":" + O.substr(3, 2));
+    },
+    T: function () {
+      return 'UTC';
+    },
+    Z: function () { // Timezone offset in seconds (-43200...50400)
+      return -jsdate.getTimezoneOffset() * 60;
+    },
+
+    // Full Date/Time
+    c: function () { // ISO-8601 date.
+      return 'Y-m-d\\TH:i:sP'.replace(formatChr, formatChrCb);
+    },
+    r: function () { // RFC 2822
+      return 'D, d M Y H:i:s O'.replace(formatChr, formatChrCb);
+    },
+    U: function () { // Seconds since UNIX epoch
+      return jsdate / 1000 | 0;
+    }
+  };
+  this.date = function (format, timestamp) {
+    that = this;
+    jsdate = (timestamp == null ? new Date() : // Not provided
+      (timestamp instanceof Date) ? new Date(timestamp) : // JS Date()
+      new Date(timestamp * 1000) // UNIX timestamp (auto-convert to int)
+    );
+    return format.replace(formatChr, formatChrCb);
+  };
+  return this.date(format, timestamp);
 }
-function product_class_statistics(chartData){
-    // PIE CHART
-               var chart = new AmCharts.AmSerialChart();
-                chart.dataProvider = chartData;
-                chart.categoryField = "year";
-                // this single line makes the chart a bar chart, 
-                // try to set it to false - your bars will turn to columns                
-                chart.rotate = true;
 
-                // AXES
-                // Category
-                var categoryAxis = chart.categoryAxis;
-                categoryAxis.gridPosition = "start";
-                categoryAxis.axisColor = "#DADADA";
-                categoryAxis.fillAlpha = 1;
-                categoryAxis.gridAlpha = 0;
-                categoryAxis.fillColor = "#FAFAFA";
-
-                // value
-                var valueAxis = new AmCharts.ValueAxis();
-                valueAxis.axisColor = "#DADADA";
-                valueAxis.gridAlpha = 0.1;
-                chart.addValueAxis(valueAxis);
-
-                // GRAPH
-                var graph = new AmCharts.AmGraph();
-                graph.title = "Income";
-                graph.valueField = "income";
-                graph.colorField = "color";
-                graph.type = "column";
-                graph.balloonText = "Income in [[category]]:[[value]]";
-                graph.lineAlpha = 0;
-                graph.fillAlphas = 1;
-                chart.addGraph(graph);
-
-                // WRITE                                 
-                chart.write("product_class_statistics");
+function generateChartData() {
+    var firstDate = new Date();
+    firstDate.setDate(firstDate.getDate()-14);
+    for (var i = 0; i < 15; i++) {
+        var newDate = new Date(firstDate);
+        newDate.setDate(newDate.getDate() + i);
+        var order = Math.round(Math.random() * 1000) + 150;
+        var pay = Math.round(Math.random() * 600) + 50;
+        var refund = Math.round(Math.random()*1);
+        var warehousing = Math.round(Math.random()*90)+20;
+        order_data.push({
+            date: date('Y-m-d', newDate),
+            order: order,
+            pay: pay,
+            refund:refund,
+            warehousing:warehousing
+        });
+    }
 }
-
 function orders_chart() {
     slibe = new AmCharts.AmSerialChart();
     slibe.dataProvider = order_data;
@@ -163,8 +320,6 @@ function orders_chart() {
     // AXES
     // category
     var categoryAxis = slibe.categoryAxis;
-    categoryAxis.parseDates = true; // as our data is date-based, we set parseDates to true
-    categoryAxis.minPeriod = "DD"; // our data is daily, so we set minPeriod to DD
     categoryAxis.dashLength = 1;
     categoryAxis.gridAlpha = 0.15;
     categoryAxis.axisColor = "#DADADA";
@@ -221,83 +376,14 @@ function orders_chart() {
     chartCursor.cursorPosition = "mouse";
     slibe.addChartCursor(chartCursor);
 
-    
     var legend = new AmCharts.AmLegend();
                 legend.markerType = "circle";
                 slibe.addLegend(legend);
     slibe.write("orders");
 }
- // generate some random data, quite different range
-            function generateChartData() {
-                var firstDate = new Date();
-                var now = firstDate.getDate();
-                firstDate.setDate(1);
-
-                for (var i = 0; i < now; i++) {
-                    var newDate = new Date(firstDate);
-                    newDate.setDate(newDate.getDate() + i);
-                    var order = Math.round(Math.random() * 1000) + 150;
-                    var pay = Math.round(Math.random() * 600) + 50;
-                    var refund = Math.round(Math.random()*1);
-                    var warehousing = Math.round(Math.random()*90)+20;
-
-                    order_data.push({
-                        date: newDate,
-                        order: order,
-                        pay: pay,
-                        refund:refund,
-                        warehousing:warehousing
-                    });
-                }
-            }
-
-            // this method is called when chart is first inited as we listen for "dataUpdated" event
-            function zoomChart() {
-                // different zoom methods can be used - zoomToIndexes, zoomToDates, zoomToCategoryValues
-                slibe.zoomToIndexes(0, 30);
-            }
+AmCharts.ready(function () {
+    generateChartData();
+    orders_chart();
+});    
 </script>   
-<div id="content">
-    <div class="contentTop">
-        <span class="pageTitle"><span class="icon-screen"></span>控制中心</span>
-        
-        <div class="clear"></div>
-    </div>
-
-    <!-- Breadcrumbs line begins -->
-    <div class="breadLine">
-        <div class="bc">
-            <ul id="breadcrumbs" class="breadcrumbs">
-                <li class="current"><a href="{{ URL::base() }}">控制中心</a></li>
-            </ul>
-        </div>
-        
-        @include('block.bread')
-    </div>
-    <!-- Breadcrumbs line ends -->
-
-
-    <div class="wrapper">
-        <div class="fluid">
-            <!-- Donut -->
-            <div class="widget grid4 chartWrapper">
-                <div class="whead"><h6>产品类别统计</h6><div class="clear"></div></div>
-                <div class="chart" id="product_class_statistics"></div>
-            </div>
-            <!-- Auto updating chart -->
-            <div class="widget grid8 chartWrapper">
-                <div class="whead"><h6>销售区域状况</h6><div class="clear"></div></div>
-                <div id="sales_region" class="chart"></div>
-            </div>
-            <div class="clear"></div>
-        </div>
-        <div class="widget">
-                <!--产品每日动态 包括 下单量，支付量，退款量，出库量 货物的金额-->
-                <div class="whead"><h6>销售动态</h6><div class="clear"></div></div>
-                <div class="chart" id="orders"></div>
-        </div>
-    </div>
-    
-</div>
-<!-- Content ends -->    
 @endsection

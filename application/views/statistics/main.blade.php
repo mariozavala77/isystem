@@ -268,11 +268,13 @@ $(function() {
     <div class="breadLine">
         <div class="bc">
             <ul id="breadcrumbs" class="breadcrumbs">
-                <li class="current"><a href="{{ URL::base().'/statistics' }}">数据统计</a></li>
+                <li><a href="{{ URL::base() }}">控制中心</a></li>
+                <li class="current"><a href="{{ URL::base()}}/channel" title="渠道管理">渠道管理</a></li>
             </ul>
         </div>
-        
+
         @include('block.bread')
+        
     </div>
     <!-- Breadcrumbs line ends -->
 
