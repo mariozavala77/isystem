@@ -66,8 +66,7 @@
                 var id = aData[6];
 
                 // 操作
-                var operation =  '<a class="tablectrl_small bDefault tipS" action="order_ship" cid="'+id+'" original-title="发货"><span class="iconb" data-icon="&#xe063"></span></a>';
-                    operation += '<a class="tablectrl_small bDefault tipS" action="order_ship" cid="'+id+'" original-title="发货"><span class="iconb" data-icon="&#xe063"></span></a>';
+                var operation =  '<a class="tablectrl_small bDefault tipS" action="order_ship" cid="'+id+'" original-title="调仓"><span class="iconb" data-icon="&#xe063"></span></a>';
                 $('td:eq(6)', nRow).html(operation);
             },
             fnDrawCallback: function() {
