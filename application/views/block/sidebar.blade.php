@@ -17,9 +17,9 @@
             <li>
                 <a href="{{ URL::base() }}/order" title="" mark="order"><img src="{{ URL::base() }}/images/icons/mainnav/tables.png" alt="订单处理" /><span>订单处理</span></a>
             </li>
-            <li>
+            <!--li>
                 <a href="{{ URL::base() }}/task" title="" mark="task"><img src="{{ URL::base() }}/images/icons/mainnav/tables.png" alt="任务管理" /><span>任务处理</span></a>
-            </li>
+            </li-->
             <li>
                 <a href="{{ URL::base() }}/stock" title="" mark="stock"><img src="{{ URL::base() }}/images/icons/mainnav/tables.png" alt="库存信息" /><span>库存管理</span></a>
             </li>
