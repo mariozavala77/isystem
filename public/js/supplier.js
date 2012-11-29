@@ -78,6 +78,9 @@ $(function() {
                 fade: true,
                 html: true
             });
+        },
+        fnInitComplete: function() {
+            $('.dataTables_length select').uniform();
         }
     });
 });
