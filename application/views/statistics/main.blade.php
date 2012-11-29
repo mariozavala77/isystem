@@ -9,77 +9,78 @@
 <!-- Content begins --> 
 <script type="text/javascript">
 var slibe;
-var order_data=[];
+var order_data=[
+    {date:'11-01',order:4321,pay:3786,refund:1,warehousing:5434},
+    {date:'11-02',order:3423,pay:3128,refund:1,warehousing:4324},
+    {date:'11-03',order:4324,pay:4126,refund:1,warehousing:5354},
+    {date:'11-04',order:3455,pay:3126,refund:1,warehousing:4232},
+    {date:'11-05',order:5432,pay:5234,refund:1,warehousing:3493},
+    {date:'11-06',order:4324,pay:4127,refund:1,warehousing:6453},
+    {date:'11-07',order:6545,pay:6454,refund:1,warehousing:5456},
+    {date:'11-08',order:3213,pay:3121,refund:1,warehousing:6753},
+    {date:'11-09',order:4353,pay:4324,refund:1,warehousing:4353},
+    {date:'11-10',order:5643,pay:5324,refund:1,warehousing:5467},
+    {date:'11-11',order:4323,pay:3787,refund:1,warehousing:5765},
+    {date:'11-12',order:4532,pay:4234,refund:1,warehousing:4543},
+    {date:'11-13',order:4398,pay:3789,refund:1,warehousing:4645},
+    {date:'11-14',order:4324,pay:3545,refund:1,warehousing:4547},
+    {date:'11-15',order:3233,pay:2335,refund:1,warehousing:3543},
+    {date:'11-16',order:3243,pay:2344,refund:0,warehousing:4522},
+    {date:'11-17',order:4565,pay:3454,refund:1,warehousing:2434},
+    {date:'11-18',order:4323,pay:3234,refund:1,warehousing:4631},
+    {date:'11-19',order:6543,pay:5472,refund:1,warehousing:6432},
+    {date:'11-20',order:3893,pay:3214,refund:1,warehousing:3453},
+    {date:'11-21',order:4675,pay:4332,refund:1,warehousing:4532},
+    {date:'11-22',order:6784,pay:4554,refund:1,warehousing:5433},
+    {date:'11-23',order:7432,pay:5734,refund:1,warehousing:6314},
+    {date:'11-24',order:8904,pay:8452,refund:1,warehousing:7454},
+    {date:'11-25',order:9435,pay:8563,refund:1,warehousing:6543},
+    {date:'11-26',order:8954,pay:8324,refund:1,warehousing:9234},
+    {date:'11-27',order:9932,pay:9534,refund:1,warehousing:11325},
+    {date:'11-28',order:11245,pay:10879,refund:1,warehousing:12657},
+    {date:'11-29',order:4321,pay:3678,refund:1,warehousing:4532},
+];
     var sales_region_Data = [{
-                country: "USA",
-                visits: Math.round(Math.random() * 600)+3025,
+                country: "US",
+                visits: Math.round(Math.random() * 600)+2132,
                 color: "#FF0F00"
             }, {
-                country: "Japan",
-                visits: Math.round(Math.random() * 600)+1809,
-                color: "#FF9E01"
-            }, {
-                country: "Germany",
-                visits: Math.round(Math.random() * 600)+1322,
-                color: "#FCD202"
-            }, {
-                country: "UK",
-                visits: Math.round(Math.random() * 600)+1122,
+                country: "GB",
+                visits: Math.round(Math.random() * 600)+1822,
                 color: "#F8FF01"
-            }, {
-                country: "France",
-                visits: Math.round(Math.random() * 600)+1114,
-                color: "#B0DE09"
-            }, {
-                country: "India",
-                visits: Math.round(Math.random() * 600)+984,
-                color: "#04D215"
-            }, {
-                country: "Spain",
-                visits: Math.round(Math.random() * 600)+711,
-                color: "#0D8ECF"
-            }, {
-                country: "Netherlands",
-                visits: Math.round(Math.random() * 600)+665,
-                color: "#0D52D1"
-            }, {
-                country: "Russia",
-                visits: Math.round(Math.random() * 600)+580,
-                color: "#2A0CD0"
-            }, {
-                country: "South Korea",
-                visits: Math.round(Math.random() * 600)+443,
-                color: "#8A0CCF"
-            }, {
-                country: "Canada",
-                visits: Math.round(Math.random() * 600)+441,
+            },{
+                country: "CA",
+                visits: Math.round(Math.random() * 600)+674,
                 color: "#CD0D74"
+            },{
+                country: "NO",
+                visits: Math.round(Math.random() * 600)+89,
+                color: "#0D52D1"
             }];
             var product_class_statistics_Data = [{
-                year: '电风扇',
+                year: '充电器',
                 income: Math.round(Math.random() * 600)+3000,
                 color: "#FF0F00"
             }, {
-                year: '手机',
+                year: '移动电源',
                 income: Math.round(Math.random() * 600)+3020,
                 color: "#FF6600"
             }, {
-                year: '对讲机',
+                year: '平板电脑',
                 income: Math.round(Math.random() * 600)+3400,
                 color: "#FF9E01"
             }, {
-                year: 'IPhone 4 / 4S',
-                income: Math.round(Math.random() * 600)+3900,
+                year: '手机壳',
+                income: Math.round(Math.random() * 600)+4500,
                 color: "#FCD202"
             }, {
-                year: '三星I9300',
+                year: '平板电脑外套',
                 income: Math.round(Math.random() * 600)+4000,
                 color: "#0D52D1"
             }];
             AmCharts.ready(function () {
                 sales_region(sales_region_Data);
                 product_class_statistics(product_class_statistics_Data);
-                generateChartData();
                 orders_chart();
             });
 function sales_region(chartData){
@@ -163,8 +164,6 @@ function orders_chart() {
     // AXES
     // category
     var categoryAxis = slibe.categoryAxis;
-    categoryAxis.parseDates = true; // as our data is date-based, we set parseDates to true
-    categoryAxis.minPeriod = "DD"; // our data is daily, so we set minPeriod to DD
     categoryAxis.dashLength = 1;
     categoryAxis.gridAlpha = 0.15;
     categoryAxis.axisColor = "#DADADA";
@@ -226,29 +225,6 @@ function orders_chart() {
                 slibe.addLegend(legend);
     slibe.write("orders");
 }
- // generate some random data, quite different range
-            function generateChartData() {
-                var firstDate = new Date();
-                var now = firstDate.getDate();
-                firstDate.setDate(1);
-
-                for (var i = 0; i < now; i++) {
-                    var newDate = new Date(firstDate);
-                    newDate.setDate(newDate.getDate() + i);
-                    var order = Math.round(Math.random() * 1000) + 150;
-                    var pay = Math.round(Math.random() * 600) + 50;
-                    var refund = Math.round(Math.random()*1);
-                    var warehousing = Math.round(Math.random()*90)+20;
-
-                    order_data.push({
-                        date: newDate,
-                        order: order,
-                        pay: pay,
-                        refund:refund,
-                        warehousing:warehousing
-                    });
-                }
-            }
 $(function() {
     $('#fromDate, #toDate').datepicker({
         changeMonth: false,
@@ -296,7 +272,7 @@ $(function() {
         <div class="widget">
                 <!--产品每日动态 包括 下单量，支付量，退款量，出库量 货物的金额-->
                 <div class="whead"><h6>销售动态</h6><div class="clear"></div></div>
-                <div class="formRow">
+                <!--<div class="formRow">
                         <div class="grid3"><label>Dates range:</label></div>
                         <div class="grid9">
                             <ul class="datesRange">
@@ -305,7 +281,7 @@ $(function() {
                                 <li><input type="text" id="toDate" name="to" placeholder="To" title="结束时间"/></li>
                             </ul>
                         </div><div class="clear"></div>
-                    </div>
+                    </div>-->
                 <div class="chart" id="orders"></div>
         </div>
     </div>
