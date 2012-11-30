@@ -65,7 +65,7 @@ return array(
         /**
          * How long the cookie should last. (seconds)
          */
-        'expire' => 20160, // 2 weeks - minutes
+        'expire' => time() + 20160, // 2 weeks - minutes
     ),
 
     /**

@@ -17,14 +17,20 @@ class Stock {
      *
      * return object
      */
-    public static function filter( $fields, $filter = [] ) {
-        $table = DB::table('stock')->left_join('storage', 'stock.storage_id', '=', 'storage.id');
-        if($filter){
+    public static function filter($fields, $filter = [])
+    {
+        $query = DB::table('stock')->left_join('storage', 'stock.storage_id', '=', 'storage.id')
+                                   ->left_join('products_extensions as pe', 'stock.product_id', '=', 'pe.product_id')
+                                   ->select($fields);
+        if($filter) {
             foreach ($filter as $key => $value) {
-                $table->where($key, '=', $value);
+                $query->where($key, '=', $value);
             }
         }
-        return $table->select($fields);
+
+        $query->where('pe.language', '=', 'cn');
+
+        return $query;
     }
 
     /**

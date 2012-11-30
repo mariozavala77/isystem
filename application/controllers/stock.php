@@ -11,12 +11,15 @@ class Stock_Controller extends Base_Controller {
 
     // 库存列表
     public function action_index() {
-        return View::make('stock.index');
+        $fields = ['id', 'area', 'type'];
+        $storages = Storage::filter($fields)->get();
+
+        return View::make('stock.index')->with('storages', $storages);
     }
 
     // 列表
     public function action_filter() {
-        $fields = [ 'product_id', 'storage_id', 'code', 'sellable', 'unsellable', 'created_at', 'stock.id' ];
+        $fields = [ 'pe.name', 'storage_id', 'code', 'sellable', 'unsellable', 'stock.created_at', 'stock.id' ];
         $stock = Stock::filter($fields);
         $data = Datatables::of($stock)->make();
 
@@ -25,20 +28,12 @@ class Stock_Controller extends Base_Controller {
             $storage = Storage::info($datum[1]);
             $data['aaData'][$key][1] = $storage->area . '[' . $storage->type. ']';
 
-            // 产品信息
-            if($datum[0]) {
-                $product = Product::info($datum[0]);
-                $product_name = $product->name;
-            } else {
-                $product_name = '<span class="red">未关联产品池</span>';
-            }
-            
-            $data['aaData'][$key][0] = $product_name;
+            if(!$data['aaData'][$key][0])
+                $data['aaData'][$key][0] = '<span class="red">未关联产品池</span>';
         }
 
         return Response::json($data);
     }
-
 
 }
 

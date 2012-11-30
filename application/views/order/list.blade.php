@@ -63,6 +63,8 @@
                     
                         if(value != '') {
                             oTable.fnSetFilter(index, value);
+                        } else {
+                            oTable.fnSetFilter(index, '');
                         }
                     });
 
