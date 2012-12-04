@@ -7,7 +7,8 @@
  * @copyright: Copyright (c) 2012 UFCEC Tech All Rights Reserved.
  * @version: $Id:Stock.php  2012年11月10日 星期六 01时53分28秒Z $
  */
-class Stock {
+class Stock extends Base_Model
+{
 
     /**
      * 列表
@@ -22,12 +23,7 @@ class Stock {
         $query = DB::table('stock')->left_join('storage', 'stock.storage_id', '=', 'storage.id')
                                    ->left_join('products_extensions as pe', 'stock.product_id', '=', 'pe.product_id')
                                    ->select($fields);
-        if($filter) {
-            foreach ($filter as $key => $value) {
-                $query->where($key, '=', $value);
-            }
-        }
-
+        static::formatFilter($query, $filter);
         $query->where('pe.language', '=', 'cn');
 
         return $query;
@@ -41,7 +37,8 @@ class Stock {
      *
      * return integer
      */
-    public static function sellable($product_id, $storage_id) {
+    public static function sellable($product_id, $storage_id) 
+    {
         return DB::table('stock')->where('product_id', '=', $product_id)
                                  ->where('storage_id', '=', $storage_id)
                                  ->only('sellable');
@@ -54,7 +51,8 @@ class Stock {
      *
      * return void
      */
-    public static function sync($storage_id) {
+    public static function sync($storage_id) 
+    {
         $storage = Storage::info($storage_id);
         if($storage->channel_id) {
             $channel = Channel::info($storage->channel_id);
@@ -88,7 +86,8 @@ class Stock {
      *
      * return integer 库存表ID
      */
-    public static function exists($storage_id, $code) {
+    public static function exists($storage_id, $code) 
+    {
         return DB::table('stock')->where('storage_id', '=', $storage_id)
                                  ->where('code', '=', $code)
                                  ->only('id');
@@ -101,8 +100,9 @@ class Stock {
      *
      * return boolean
      */
-    public static function insert($data) {
-        return DB::table('stock')->insert($data);
+    public static function insert($data) 
+    {
+        return DB::table('stock')->insert_get_id($data);
     }
 
     /**
@@ -113,12 +113,78 @@ class Stock {
      *
      * return boolean
      */
-    public static function update($stock_id, $data) {
-        return DB::table('stock')->where('stock_id', '=', $stock)
+    public static function update($stock_id, $data) 
+    {
+        return DB::table('stock')->where('id', '=', $stock_id)
                                  ->update($data);
     }
 
+    /**
+     * 获取库存信息
+     *
+     * @param: $stock_id integer 记录ID
+     *
+     * return object
+     */
+    public static function info($stock_id)
+    {
+        return DB::table('stock')->where('id', '=', $stock_id)
+                                 ->first();
+    }
 
+    /**
+     * 调仓
+     *
+     * @param: $stock_id    integer 记录ID
+     * @param: $storage_id  integer 目标仓库ID
+     * @param: $quantity    integer 数量
+     * @param: $to_stock_id integer 目标仓库记录ID
+     * 
+     * return array
+     */
+    public static function adjust($stock_id, $storage_id, $quantity, $to_stock_id)
+    {
+        $datetime = date('Y-m-d H:i:s');
+        $from_stock = Stock::info($stock_id);
+        if(!$to_stock_id) {
+
+            $data = [
+                'product_id'  => $from_stock->product_id,
+                'storage_id'  => $storage_id,
+                'created_at'  => $datetime,
+                'modified_at' => $datetime,
+                ];
+            $to_stock_id = Stock::insert($data);
+        }
+
+        // 转仓数据
+        $data = [
+            'product_id'      => $from_stock->product_id,
+            'from_stock_id'   => $stock_id,
+            'to_stock_id'     => $to_stock_id,
+            'from_storage_id' => $from_stock->storage_id,
+            'to_storage_id'   => $storage_id,
+            'quantity'        => $quantity,
+            'created_at'      => $datetime,
+            ];
+
+        $status = false;
+        if(Stock_Adjust::insert($data)) {
+            $data = [
+                'sellable'    => $from_stock->sellable - $quantity,
+                'modified_at' => $datetime,
+                ];
+            if(Stock::update($stock_id, $data)) $status = true;
+        }
+
+        if($status) {
+            $result = ['status' => 'success', 'message' => '调节成功！'];
+        } else {
+            $result = ['status' => 'fail', 'message' => '调节失败！'];
+        }
+
+        return $result;
+    }
 
 
 }

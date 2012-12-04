@@ -1,5 +1,6 @@
 @layout('layout.base')
 @section('script')
+{{ HTML::script('js/stock.js') }}
 @endsection
 @section('sidebar')
     @include('block.sidebar')
@@ -44,122 +45,62 @@
             </div>
         </div>
         <!--stock ends-->
+
+        <script type="text/javascript">
+            function initSearch() {
+                initsearch = true;
+
+                var storage_select = '<select class="stock_search" index="1"><option value>--请选择--</option>';
+                @foreach($storages as $storage)
+                    storage_select += '<option value="{{$storage->id}}">{{$storage->area}}[{{$storage->type}}]</option>';
+                @endforeach
+                storage_select += '</select>';
+
+                $('#filter_stock_name').html('<input class="stock_search" type="text" index="0"/>');
+                $('#filter_stock_code').html('<input class="stock_search" type="text" index="2"/>');
+                $('#filter_stock_storage').html(storage_select);
+
+                $(".stock_search").uniform();
+            }
+        </script>
     </div>
     <!--Main content ends-->
 
-<script type="text/javascript">
-    initsearch = false;
-    $(function(){
-        sTable = $('#stock_list_table').dataTable({
-            bSort: false,
-            bProcessing: true,
-            bFilter: true,
-            bServerSide: true,
-            bJQueryUI: false,
-            sPaginationType: 'full_numbers',
-            sAjaxSource: '{{ URL::base() }}/stock/filter',
-            sDom: '<"H"<"#slist_options"l<"clear">><"#slist_search"<"clear">>>tr<"F"ip>',
-            oLanguage: { sUrl: '/js/plugins/tables/lang_cn.txt' },
-            aoColumnDefs: [
-                    { sTitle: "名称", aTargets: [0] },
-                    { sTitle: "仓库", aTargets: [1], sWidth: '80px' },
-                    { sTitle: "编码", aTargets: [2], sWidth: '100px' },
-                    { sTitle: "可销售", aTargets: [3], sWidth: '90px' },
-                    { sTitle: "不可销售", aTargets: [4], sWidth: '90px' },
-                    { sTitle: "加入时间",aTargets: [5], bSearchable: false, sWidth: '120px' },
-                    { sTitle: "操作", aTargets: [6], bSearchable: false, sClass: "tableActs", sWidth: '80px' }
-                ],
-            fnRowCallback: function(nRow, aData, iDisplayIndexFull, iDisplayIndexFull) {
-                var id = aData[6];
+    <!-- stock modify dialog begins -->
+    <div id="stock_modify_dialog" title="库存调整" style="display: none">
+        <div class="widget fluid">
+            <div class="formRow" style="border-bottom: none">
+                <div class="grid2 textR"><span>可销售：</span></div>
+                <div class="grid4"><input type="text" name="sellable" /></div>
+                <div class="grid2 textR"><span>不销售：</span></div>
+                <div class="grid4"><input type="text" name="unsellable" /></div>
+                <div class="clear"></div>
+            </div>
+        </div>
+    </div>
+    <!-- stock modify dialog ends-->
 
-                // 操作
-                var operation =  '<a class="tablectrl_small bDefault tipS" action="order_ship" cid="'+id+'" original-title="入库"><span class="iconb" data-icon="&#xe14a"></span></a>';
-                    operation += '<a class="tablectrl_small bDefault tipS" action="order_ship" cid="'+id+'" original-title="调仓"><span class="iconb" data-icon="&#xe063"></span></a>';
+    <!-- stock adjust dialog begins-->
+    <div id="stock_adjust_dialog" title="调仓" style="display: none">
+        <div class="widget fluid">
+            <div class="formRow" style="border-bottom: none" id="adjust">
+                <div class="grid2 textR">目标仓库：</div>
+                <div class="grid5">
+                    <select name="storage">
+                        <option value>--请选择--</option>
+                        @foreach($storages as $storage)
+                        <option value="{{$storage->id}}">{{$storage->area}}[{{$storage->type}}]</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="grid2 textR">数量：</div>
+                <div class="grid3"><input type="text" name="quantity" /></div>
+                <div class="clear"></div>
+            </div>
+        </div>
+    </div>
+    <!-- stock modify dialog ends-->
 
-                // 操作提示
-                $('td:eq(6)', nRow).html(operation).find('.tipS').tipsy({gravity: 's',fade: true, html:true});
-            },
-            fnDrawCallback: function() {
-                $('#stock_list_table').css('width', '100%');
-            },
-            fnInitComplete: function() {
-
-                // 初始化搜索
-                var search = '<div class="formRow" style="border-bottom: none">' +
-                             '  <div class="grid1 textR">' +
-                             '      <span>名称：</span>' +
-                             '  </div>' +
-                             '  <div id="filter_stock_name" class="grid2"></div>' +
-                             '  <div class="grid1 textR">' +
-                             '      <span>编码：</span>' +
-                             '  </div>' +
-                             '  <div id="filter_stock_code" class="grid2"></div>' +
-                             '  <div class="grid1 textR">' +
-                             '      <span>仓库：</span>' +
-                             '  </div>' +
-                             '  <div id="filter_stock_storage" class="grid2"></div>' +
-                             '  <div class="grid2">' +
-                             '      <span class="buttonS bBlue" id="stock_search">搜索</span>' +
-                             '      <span class="buttonS bDefault" id="stock_search_reset">重置</span>' +
-                             '  </div>' +
-                             '  <div class="clear"></div>' +
-                             '</div>';
-
-                $('#slist_search').html(search);
-
-                $('#stock_list_table_length').addClass('mb15');
-                $('.select_action, select[name$="list_table_length"], .checkAll').uniform();
-            }
-        
-        });
-
-        // 搜索选项卡初始化搜索
-        $('a[ckey="slist_search"]').click(function() {
-            if(!initsearch) initSearch();
-        });
-
-        // 搜索
-        $('#stock_search').live('click', function() {
-        
-            $('.stock_search').each(function() {
-                var value = $(this).val();
-                var index = $(this).attr('index');
-
-                if(value != '') {
-                    sTable.fnSetFilter(index, value);
-                } else {
-                    sTable.fnSetFilter(index, '');
-                }
-            });
-
-            sTable.fnDraw();
-        });
-
-        // 重置搜索
-        $('#stock_search_reset').live('click', function() {
-            sTable.fnFilterClear();
-        });
-
-    });
-
-    function initSearch() {
-        initsearch = true;
-
-        var storage_select = '<select class="stock_search" index="1"><option value>--请选择--</option>';
-        @foreach($storages as $storage)
-            storage_select += '<option value="{{$storage->id}}">{{$storage->area}}[{{$storage->type}}]</option>';
-        @endforeach
-        storage_select += '</select>';
-
-        $('#filter_stock_name').html('<input class="stock_search" type="text" index="0"/>');
-        $('#filter_stock_code').html('<input class="stock_search" type="text" index="2"/>');
-        $('#filter_stock_storage').html(storage_select);
-
-        $(".stock_search").uniform();
-    }
-
-</script>
-    
 </div>
 <!-- Content ends -->    
 @endsection
