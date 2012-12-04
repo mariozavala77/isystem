@@ -245,7 +245,7 @@ class Product_Sale_Controller extends Base_Controller {
             return Response::json(['status' => 'fail', 'message' => '信息不完整']);
         }
 
-        $sale_info = Product_Sale::info($sale_id);
+        $sale_info = Product_Sale_Sku::info($sale_id);
 
         if(empty($sale_info)){
             return Response::json(['status' => 'fail', 'message' => '没有找到销售产品的记录']);
@@ -259,5 +259,30 @@ class Product_Sale_Controller extends Base_Controller {
         $sale_info->agent = Agent::info($sale_info->agent_id);
 
         return Response::json(['status' => 'success', 'message' => $sale_info]);
+    }
+
+    // 产品映射
+    public function action_mapping(){
+        $product_id = Input::get('product_id');
+        $sku = Input::get('sku');
+        $task_id = Input::get('task_id');
+        if(Product_Sale::mapping($sku, $product_id)){
+            if( ! empty($task_id)){
+                $data = ['handle'      => 1, 
+                         'modified_at' => date('Y-m-d H:i:s')
+                        ];
+                Tasks::update($task_id, $data);
+                $data = ['uid'        => $this->user_id,
+                         'comment'    => '产品已经映射',
+                         'taskid'     => $task_id,
+                         'created_at' => time()
+                        ];
+                Tasks_Comment::insert($data);
+            }
+            $result = ['status' => 'success', 'message' => 'ok'];
+        }else{
+            $result = ['status' => 'fail', 'message' => 'wrong'];
+        }
+        return Response::json($result);
     }
 }

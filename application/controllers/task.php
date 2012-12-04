@@ -16,7 +16,7 @@ class Task_Controller extends Base_Controller {
 
     // 列表
     public function action_filter() {
-        $fields = ['tasks.type', 'users.username as form', 'tasks.content', 'tasks.level', 'tasks.created_at', 'tasks.id'];
+        $fields = ['users.username as form', 'tasks.content', 'tasks.level', 'tasks.created_at', 'tasks.id'];
         $filter = ['to_uid' => $this->user_id, 'parent_id' => 0];
         $tasks  = Tasks::filter($fields, $filter);
         $data   = Datatables::of($tasks)->make();
@@ -40,9 +40,9 @@ class Task_Controller extends Base_Controller {
         }
         $fields = ['id', 'username'];
         $users = User::filter($fields)->get();
-
+        $level = Config::get('application.order_shipment_level');
+        $task->level = $level[($task->level%3)];
         $view = 'task.' . $task->type . '_info';
-
         return View::make($view)->with('task' ,$task)
                                 ->with('users', $users)
                                 ->with('user_id', $this->user_id)

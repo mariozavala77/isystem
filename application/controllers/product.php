@@ -249,4 +249,18 @@ class Product_Controller extends Base_Controller {
                                              ->with('product_id', $product_id);
         }
     }
+
+    public function action_search(){
+        $keyword = Input::get('keyword');
+        $fields = ['product_id','name'];
+        $result = Product_Extension::filter($fields);
+        $result = $result->where('name', 'LIKE', $keyword . '%')->take(10)->get();
+        
+        if(!empty($result)){
+            $result = ['status' => 'success', 'message' => $result];
+        }else{
+            $result = ['status' => 'fail', 'message' => '没有匹配的产品'];
+        }
+        return Response::json($result);
+    }
 }

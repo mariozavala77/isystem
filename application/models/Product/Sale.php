@@ -72,5 +72,17 @@ class Product_Sale {
     public static function info($sale_id){
         return DB::table('products_sale')->where('id', '=', $sale_id)->first();
     }
-    
+
+    public static function mapping($sku, $product_id){
+
+        $sale_id = Product_Sale_Sku::filter('psid', ['sku' => $sku])->lists('psid');
+        
+        $data = ['product_id' => $product_id];
+
+        $sale_result = DB::table('products_sale')->where_in('id', $sale_id)
+                                                 ->update($data);
+        $sku_result  = DB::table('products_sale_sku')->where('sku', '=', $sku)
+                                                     ->update($data);
+        return $sku_result && $sale_result;
+    }
 }

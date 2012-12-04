@@ -46,6 +46,25 @@ class Product_Extension {
     public static function delete($product_id) {
         return DB::table('products_extensions')->where('product_id', '=', $product_id)->delete();
     }
+
+    /**
+     * 产品附属列表
+     *
+     * @param: $fields array  显示字段
+     * @param: $filter array  过滤
+     *
+     * return object
+     */
+    public static function filter( $fields, $filter = [] ) {
+
+        $query = DB::table('products_extensions')->select($fields);
+
+        foreach($filter as $key => $value) {
+            $query = $query->where($key, '=', $value);
+        }
+
+        return $query->order_by('product_id', 'DESC');
+    }
     
 }
 

@@ -1,4 +1,5 @@
-$(function() {
+var datainfo;
+$(document).ready(function() {
 get_task_message();
 get_entity_info();
     $('#sendMessage').click(function(){
@@ -13,8 +14,6 @@ get_entity_info();
     $('#agent_off').click(function(){
         alert('产品下架');
     });
-    // 绑定同步
-    $('#sync').bind('click', sync);
     $('input[name="info_status"]').change(function(){
         if($(this).val()==2){
             $('#examine_content_form').show();
@@ -56,20 +55,6 @@ get_entity_info();
             },
             "取消": function () {
                 $(this).dialog("close");
-            }
-        }
-    });
-    $('#order_cancel_dialog').dialog({
-        autoOpen: false,
-        width: 400,
-        modal: true,
-        buttons: {
-            "取消": function() {
-                $(this).dialog("close");
-            },
-            "确定": function() {
-                order_cancel(entity_id);
-                $(this).dialog('close');
             }
         }
     });
@@ -120,20 +105,6 @@ get_entity_info();
                 $(this).dialog("close");
             }
         }
-    });
-    $('#order_ship_dialog').dialog({
-        autoOpen: false,
-        width: "90%",
-        modal: true,
-    });
-    $('#sync_dialog').dialog({
-        autoOpen: false,
-        resizable:false,
-        modal: true,
-        closeOnEscape: false
-    });
-    $('#order_cannel').live('click', function(){
-        $('#order_cancel_dialog').dialog('open');
     });
 });
 /**
@@ -248,16 +219,27 @@ function empty (mixed_var) {
  * @entity_id: nowtime   integer entity_id
  */
 function get_product_info(entity_id){
-    $.post('/product/info',{product_id:entity_id},function(response){
-        if(response.status=='fail'){
-            $.jGrowl(response.message);
-        }else{
-            $('#info').html(bulid_product_html(response.message));
-            $(".lightbox").fancybox({
-                'padding': 2
-            });
-        }
-    },'json');
+    var local_key = 'product_info_'+entity_id;
+    var data = localStorage.getItem(local_key);
+    if(data){
+        $('#info').html(data);
+        $(".lightbox").fancybox({
+            'padding': 2
+        });
+    }else{
+        $.post('/product/info',{product_id:entity_id},function(response){
+            if(response.status=='fail'){
+                $.jGrowl(response.message);
+            }else{
+                data = bulid_product_html(response.message);
+                localStorage.setItem(local_key, data);
+                $('#info').html(data);
+                $(".lightbox").fancybox({
+                    'padding': 2
+                });
+            }
+        },'json');
+    }
 }
 
 /**
@@ -290,12 +272,12 @@ function bulid_product_html(data){
     html.push('<tr><td>关键词：</td><td colspan="3">'+data.keywords+'</td><td>重量：</td><td>'+data.weight+'</td></tr>');
     html.push('<tr><td>短描述：</td><td colspan="3">'+data.short_description+'</td><td>尺寸：</td><td>'+data.size+'</td></tr>');
     if(!empty(data.images)){
-        html.push('<tr><td colspan="6" align="center">商品图库</td></tr><tr><td colspan="6" align="center"><ul class="gallery nopadding">');
+        html.push('<tr><td colspan="6" align="center">商品图库</td></tr><tr><td colspan="6" align="center" style="padding-left:0px;"><ul class="gallery nopadding">');
         var imgs = data.images;
         var imgln = imgs.length;
         for (var i = 0; i < imgln; i++) {
             var img = imgs[i];
-            html.push('<li><a href="'+img.url+'" title="'+img.image+'" class="lightbox" rel="group"><img src="'+img.url+'" alt="'+img.image+'" width="80" hight="80"></a></li>');
+            html.push('<li style="float:left;margin-left:11px;"><a href="'+img.url+'" title="'+img.image+'" class="lightbox" rel="group"><img src="'+img.url+'" alt="'+img.image+'" width="80" hight="80"></a></li>');
         }
         html.push('</ul></td></tr>');
     }
@@ -385,13 +367,22 @@ function get_entity_info(){
 }
 
 function get_product_sale_info(){
-    $.post('/product/sale/info',{sale_id:entity_id},function(response){
-        if(response.status=='fail'){
-            $.jGrowl(response.message);
-            return false;
-        }
-        $('#info').html(bulid_product_sale_info(response.message));
-    },'json');
+    var local_key = 'product_sale_info_'+entity_id;
+    datainfo = localStorage.getItem(local_key);
+    if(datainfo){
+        alert(localStorage.getItem('haha'));
+        $('#info').html(bulid_product_sale_info(datainfo));
+    }else{
+        $.post('/product/sale/info',{sale_id:entity_id},function(response){
+            if(response.status=='fail'){
+                $.jGrowl(response.message);
+                return false;
+            }
+            datainfo = response.message;
+            //localStorage.setItem(local_key, '\''+datainfo+'\'');
+            $('#info').html(bulid_product_sale_info(datainfo));
+        },'json');
+    }
 }
 
 
@@ -478,79 +469,3 @@ function agent_off(){
         }
     },'json');
 }
-
-function get_order_info(){
-    $.post('/order/info', {order_id: entity_id},function(response){
-        for(i in response){
-            $('#order_info_dialog table tbody tr td[field="'+i+'"]').html(response[i]);
-        }
-    },'json');
-}
-
-function order_ship() {
-        var order_id = entity_id;
-        $.ajax({
-            url: '/order/info',
-            type: 'POST',
-            data: {order_id: entity_id},
-            dataType: 'json',
-            success: function(data) {
-                for(i in data) {
-                    $('#order_ship_dialog').find('[field="'+i+'"]').html(data[i]);
-                }
-                $('.order_ship_company').uniform();
-                $('#order_ship_dialog').dialog('open');
-            },
-            error: function() {
-                $.jGrowl('获取发货详情失败！');
-            }
-        });
-}
-function order_cancel(order_id) {
-    // 提交取消订单ID
-    $.ajax({
-        url: '/order/cancel',
-        type: 'POST',
-        data: {order_id: order_id},
-        dataType: 'json',
-        success: function(data) {
-            if(data.status == 'success') {
-                $.jGrowl('取消成功！');
-                //oTable.fnDraw();
-            } else if(data.status == 'fail'){
-                $.jGrowl('操作失败！');
-            } else {
-                $.jGrowl('未知错误！');
-            }
-        },
-        error: function() {
-            $.jGrowl('订单取消请求失败。');
-        }
-    });
-}
-    // 同步订单
-    var sync = function(){
-        $('#sync').unbind('click');
-        $.ajax({
-            url: '/order/sync',
-            type: 'POST',
-            data: 'json',
-            beforeSend: function() {
-                $('#sync_dialog').dialog('open');
-            },
-            success: function(data) {
-                $('#sync_dialog').dialog('close');
-                if(data.status == 'success') {
-                    $.jGrowl('同步成功！');
-                    //oTable.fnDraw();
-                } else {
-                    $.jGrowl('同步失败！');
-                }
-                $this.bind(sync);
-            },
-            error: function() {
-                $.jGrowl('同步请求失败！');
-                $this.bind(sync);
-            }
-        });
-    }

@@ -53,7 +53,10 @@ class Product_Sale_Sku {
      *
      */
     public static function info($sale_id){
-        return DB::table('products_sale_sku')->where('id', '=', $sale_id)->first();
+        return DB::table('products_sale_sku as psku')->left_join('products_sale as ps', 'ps.id', '=', 'psku.psid')
+                                                     ->where('psku.id', '=', $sale_id)
+
+                                                     ->first();
     }
 
     /**

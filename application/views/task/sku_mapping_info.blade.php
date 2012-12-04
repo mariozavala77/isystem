@@ -2,7 +2,7 @@
 @section('script')
 {{ HTML::script('js/plugins/ui/jquery.fancybox.js') }}
 {{ HTML::script('js/taskinfo.js') }}
-{{ HTML::script('js/task_order.js') }}
+{{ HTML::script('js/task_sku_mapping.js') }}
 @endsection
 @section('sidebar')
 @include('../block.sidebar')
@@ -14,7 +14,7 @@ var task_id = '{{$task->id}}';
 var nowtime = '{{$nowtime}}';
 var entity_id = '{{$task->entity_id}}';
 var tasks_handle = 0;
-var task_mod ='{{$task->type}}';
+var task_mod ='product_sale';
 </script>
 <div id="content">
     <div class="contentTop">
@@ -28,13 +28,15 @@ var task_mod ='{{$task->type}}';
                 <li class="current"><a href="{{ URL::to('task/info?task_id='.$task->id) }}">任务详细</a></li>
             </ul>
         </div>
-        
-        @include('block.bread')
 
+        @include('block.bread')
+        
     </div>
     <div class="wrapper">
-        <div class="fluid">
-            <div class="grid6 widget">
+    <!--任务详细-->
+    <div class="fluid">
+    <div class="grid6">
+        <div class="widget">
             <div class="whead">
                 <h6>任务详细信息</h6>  
                 <div class="clear"></div>
@@ -76,90 +78,30 @@ var task_mod ='{{$task->type}}';
                                 @endif
                         </td>
                     </tr>
-                    <tr><td colspan="6" align="center">任务详情</td></tr>
-                    <tr><td colspan="6" align="center">{{$task->content}}</td></tr>
+                    <tr><td align="center">任务详情：</td><td colspan="5" align="center">{{$task->content}}</td></tr>
                     </tbody></table>
             </div>
-            </div>
-            <div class="grid6">
-                <ul class="middleNavA">
-                    <li><a title="创建新任务" href="javascript:void(0);" id="bulidtask" class="tipS"><img alt="创建新任务" src="/images/icons/color/order-149.png"><span>创建新任务</span></a></li>
-                    <li><a title="订单发货" href="javascript:void(0);" class="tipS" id="order_ship" onclick="order_ship()"><img alt="" src="/images/icons/color/issue.png"><span>订单发货</span></a></li>
-                    <li><a title="订单同步" href="javascript:void(0);" class="tipS" id="sync"><img alt="" src="/images/icons/color/issue.png"><span>订单同步</span></a></li>
-                    <li><a title="取消订单" href="javascript:void(0);" class="tipS" id="order_cannel"><img alt="" src="/images/icons/color/issue.png"><span>取消订单</span></a></li>
-                </ul>
-            </div>
         </div>
+        @if (empty($task->handle))
         <div class="divider"><span></span></div>
-        <!-- order info dialog begins -->
-    <div id="order_info_dialog">
-        <div class="widget">
-            <ul class="tbar tabs" style="border-bottom: 0px">
-                <li><a href="#tab_info">详细信息</a></li>
-                <li><a href="#tab_ship">物流信息</a></li>
-            </ul>
-            <div class="tab_container">
-            <div id="tab_info" class="tab_content nopadding">
-            <table cellpadding="0" cellspacing="0" border="0" class="dTable dataTable" >
-                <tbody>
-                  <tr>
-                    <td>ID:</td>
-                    <td field="entity_id"></td>
-                    <td>金额:</td>
-                    <td field="total_price"></td>
-                    <td>配送紧急程度:</td>
-                    <td colspan="3"field="shipment_level"></td>
-                  </tr>
-                  </tr>
-                  <tr>
-                    <td>订单状态:</td>
-                    <td field="status"></td>
-                    <td>处理状态:</td>
-                    <td field="broken"></td>
-                    <td>同步状态:</td>
-                    <td field="is_sync"></td>
-                    <td>是否是AFN订单:</td>
-                    <td field="auto"></td>
-                  </tr>
-                  <tr>
-                    <td>购买人:</td>
-                    <td field="name"></td>
-                    <td>购买时间:</td>
-                    <td field="purchased_at"></td>
-                    <td>购买渠道:</td>
-                    <td field="channel"></td>
-                    <td>支付方式:</td>
-                    <td field="payment_method"></td>
-                  </tr>
-                  <tr>
-                    <td>配送地址：</td>
-                    <td colspan="7" field="shipping"></td>
-                  </tr>
-                  <tr>
-                    <td>产品信息：</td>
-                    <td colspan="7" field="products"></td>
-                  </tr>
-                  <tr>
-                    <td>生成时间：</td>
-                    <td field="created_at"></td>
-                    <td>更新时间：</td>
-                    <td field="updated_at"></td>
-                    <td>修改时间：</td>
-                    <td colspan="3" field="modified_at"></td>
-                  </tr>
-                </tbody>
-            </table>
+        <div id="sku_mapping" class="widget fluid">
+            <div class="whead">
+                <h6>任务操作</h6>  
+                <div class="clear"></div>
             </div>
-            <div id="tab_ship" class="tab_content nopadding">
-                <table>
-                </table>
-            </div>
+            <div class="formRow">
+                <div class="grid2 textR"><label style="float: right;">产品搜索：</label></div>
+                <div class="grid8 textR" style="position: relative;"><input type="text" id="search_product" title="填入你需要搜索的产品"/>
+                    <div style="position: absolute; border: 1px solid #D7D7D7; padding: 5px; background: #fff; min-width:97%;max-height: 240px;overflow-x: hidden;overflow-y: auto; display:none; z-index: 1000" class="textL" id="search_product_reslut"></div>
+                </div>
+                <div class="grid2 textL"><input type="submit" value="产品绑定" class="buttonM bGreen formSubmit" id="mapping"></div>
+                <div class="clear"></div>
             </div>
         </div>
-    </div>
-    <!-- order info dialog ends -->
-    <div class="divider"><span></span></div>
-            <div class="widget">
+        @endif
+        <div class="divider"><span></span></div>
+        <!--任务操作-->
+        <div class="widget">
                 <div class="whead">
                     <h6>任务备注</h6>
                     <div class="on_off">
@@ -170,10 +112,6 @@ var task_mod ='{{$task->type}}';
 
                 <ul class="messagesTwo" id="msg_lists">
                     <li class="by_user">
-                        <div class="messageArea" style="margin:0px">
-                            尚无备注
-                        </div>
-                        <div class="clear"></div>
                     </li>
                 </ul>
             </div>
@@ -183,6 +121,21 @@ var task_mod ='{{$task->type}}';
                     <input type="submit" value="发送留言" class="buttonS bLightBlue" name="sendMessage" id="sendMessage">
                 </div>
             </div>
+    </div>
+    <!--订单详细 或者 产品详细-->
+        <div class="widget grid6">
+            <div class="whead">
+                        <h6>附加信息</h6>
+                        <div class="on_off">
+                            <a href="javascript:void(0);" title="点击刷新附加信息"><span class="icon-reload-CW"></span></a>  
+                        </div>
+            <div class="clear"></div>
+            </div>
+            <div id="info" class="justTable">
+            </div>
+        </div>
+    </div>
+</div>
 <!-- delete confirm begins-->
 <div id="task_finish_confirm" style="display:none" title="提示">
 <p><label>备注：</label>
@@ -237,34 +190,25 @@ var task_mod ='{{$task->type}}';
 <div id="task_finish" style="display:none" title="提示">
     <p>你确认标记此任务已完成?</p>
 </div>
-<div id="order_ship_dialog" title="订单发货" style="display: none">
-    <div class="widget fluid" style="margin-top: 0px">
-        <div class="formRow">
-            <div class="grid1">订单ID：</div>
-            <div class="grid2"><span field="entity_id"></span></div>
-            <div class="grid1">购买人：</div>
-            <div class="grid2"><span field="name"></span></div>
-            <div class="grid1">国家：</div>
-            <div class="grid2"><span field="country"></span></div>
-            <div class="grid1">来源：</div>
-            <div class="grid2"><span field="channel"></span></div>
-            <div class="clear"></div>
-        </div>
-        <div class="formRow nopadding">
-            <div class="grid12" field="items_ship"></div>
-            <div class="clear"></div>
-        </div>
-        <div class="formRow">
-            <div class="grid12 textC"><a class="bDefault buttonS" action="order_ship_submit">发货</a></div>
-            <div class="clear"></div>
-        </div>
+<!--代理商详细-->
+<div id="agent_info" style="display:none" title="代理商信息">
+</div>
+<div id="agent_info_examine" style="display:none" title="销售产品审核">
+    <div class="formRow">
+            <div class="grid12">
+                <input type="radio" id="info_pass" name="info_status" value="1" checked="checked"/><label for="info_pass"  class="mr20">通过</label>
+                <input type="radio" id="info_not_pass" name="info_status" value="2" /><label for="info_not_pass"  class="mr20">不通过</label>
+            </div>
+        <div class="clear"></div>
     </div>
+    <div class="formRow" style="display:none" id="examine_content_form">
+        <label>原因：</label>
+        <textarea name="content" id="examine_content" class="validate[required]"></textarea>
+    </div>    
 </div>
-<div id="order_cancel_dialog" title="取消订单" style="display: none">
-    <p>您确认取消此订单？</p>
-</div>
-<div id="sync_dialog" title="loading" style="display:none">
-    <p>订单同步中，请耐心等待</p>
-    <p><img alt="loading" src="/images/elements/loaders/7.gif"></p>
-</div>
+<style>
+#search_product_reslut .highlighted{
+    background-color: #3875d7; color: #fff;
+}
+</style>
 @endsection

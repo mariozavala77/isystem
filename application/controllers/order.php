@@ -121,8 +121,22 @@ class Order_Controller extends Base_Controller {
         if(isset($input['ship_order_ids']) && !empty($input['ship_order_ids'])) {
             $tracking = array_combine($input['ship_order_ids'], $input['ship_tracking_nos']);
             $result = Order::doBatchShip($input['ship_company'], $input['ship_method'], $tracking);
-        } else if(isset($input['order_ship'])) {
+        } else if(isset($input['order_ship'])) {            
             $result = Order::doShip($input['order_ship']);
+            if($result['status']=='success'){
+                if( ! empty($input['task_id'])){
+                    $data = ['handle'      => 1, 
+                             'modified_at' => date('Y-m-d H:i:s')
+                            ];
+                    Tasks::update($task_id, $data);
+                    $data = ['uid'        => $this->user_id,
+                             'comment'    => '订单发货',
+                             'taskid'     => $task_id,
+                             'created_at' => time()
+                            ];
+                    Tasks_Comment::insert($data);
+                }                
+            }
         }
 
         return Response::json($result);

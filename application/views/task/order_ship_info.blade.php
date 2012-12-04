@@ -14,7 +14,7 @@ var task_id = '{{$task->id}}';
 var nowtime = '{{$nowtime}}';
 var entity_id = '{{$task->entity_id}}';
 var tasks_handle = 0;
-var task_mod ='{{$task->type}}';
+var task_mod ='order';
 </script>
 <div id="content">
     <div class="contentTop">
@@ -83,10 +83,7 @@ var task_mod ='{{$task->type}}';
             </div>
             <div class="grid6">
                 <ul class="middleNavA">
-                    <li><a title="创建新任务" href="javascript:void(0);" id="bulidtask" class="tipS"><img alt="创建新任务" src="/images/icons/color/order-149.png"><span>创建新任务</span></a></li>
                     <li><a title="订单发货" href="javascript:void(0);" class="tipS" id="order_ship" onclick="order_ship()"><img alt="" src="/images/icons/color/issue.png"><span>订单发货</span></a></li>
-                    <li><a title="订单同步" href="javascript:void(0);" class="tipS" id="sync"><img alt="" src="/images/icons/color/issue.png"><span>订单同步</span></a></li>
-                    <li><a title="取消订单" href="javascript:void(0);" class="tipS" id="order_cannel"><img alt="" src="/images/icons/color/issue.png"><span>取消订单</span></a></li>
                 </ul>
             </div>
         </div>
@@ -237,6 +234,7 @@ var task_mod ='{{$task->type}}';
 <div id="task_finish" style="display:none" title="提示">
     <p>你确认标记此任务已完成?</p>
 </div>
+@if (empty($task->handle))
 <div id="order_ship_dialog" title="订单发货" style="display: none">
     <div class="widget fluid" style="margin-top: 0px">
         <div class="formRow">
@@ -267,4 +265,5 @@ var task_mod ='{{$task->type}}';
     <p>订单同步中，请耐心等待</p>
     <p><img alt="loading" src="/images/elements/loaders/7.gif"></p>
 </div>
+@endif
 @endsection
