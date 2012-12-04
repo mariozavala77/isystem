@@ -109,7 +109,7 @@ $(function(){
                          '  <div id="filter_order_source" class="grid2"></div>' +
                          '  <div class="clear"></div>' +
                          '</div>' +
-                         '<div class="formRow" style="border-bottom: 0">' + 
+                         '<div class="formRow" style="border-bottom: none">' + 
                          '  <div class="grid12 textC">' +
                          '      <a class="buttonS bDefault" id="order_search_reset">重置</a>' +
                          '      <a class="buttonS bDefault" id="order_search">搜索</a>' +
@@ -353,8 +353,7 @@ $(function(){
         }
     });
     // 取消
-    $('a[action="order_cannel"]').live('click', function(){
-
+    $('a[action="order_cannel"]').live('click', function() {
         var id = $(this).attr('cid');
         order_cancel_dialog.attr('data-id', id);
         order_cancel_dialog.dialog('open');

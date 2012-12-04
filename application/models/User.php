@@ -7,7 +7,8 @@
  * @copyright: Copyright (c) 2012 EIMO Tech All Rights Reserved.
  * @version: $Id:User.php  2012年10月25日 星期四 14时16分22秒Z $
  */
-class User {
+class User 
+{
 
     /**
      * 用户登录
@@ -18,9 +19,10 @@ class User {
      *
      * return boolean
      */
-    public static function login( $username, $password, $remember ) {
-        try{
-            return Sentry::login( $username, $password, $remember);
+    public static function login($username, $password, $remember)
+    {
+        try {
+            return Sentry::login($username, $password, $remember);
         } catch (Sentry\SentryException $e) {
             return false;
         }

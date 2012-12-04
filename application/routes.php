@@ -130,5 +130,11 @@ Route::filter('csrf', function()
 
 Route::filter('auth', function()
 {
-    if (!Sentry::check()) return Redirect::to('account/login');
+    if(Request::ajax() && !Sentry::check()) {
+        $result = ['status' => 'fail', 'message' => '登录超时请重新登录！'];
+        return Response::json($result);
+        exit;
+    } else {
+        if (!Sentry::check()) return Redirect::to('account/login');
+    }
 });

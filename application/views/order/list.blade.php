@@ -63,6 +63,8 @@
                     
                         if(value != '') {
                             oTable.fnSetFilter(index, value);
+                        } else {
+                            oTable.fnSetFilter(index, '');
                         }
                     });
 
@@ -81,7 +83,7 @@
 
                 var country_select = '<select class="order_search" index="10"><option value>--请选择--</option>';
                 @foreach($countries as $country)
-                    country_select += '<option value="{{$country}}">{{$country}}';
+                    country_select += '<option value="{{$country}}">{{$country}}</option>';
                 @endforeach
                 country_select +='</select>';
 
