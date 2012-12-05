@@ -147,7 +147,6 @@ class Stock extends Base_Model
         $datetime = date('Y-m-d H:i:s');
         $from_stock = Stock::info($stock_id);
         if(!$to_stock_id) {
-
             $data = [
                 'product_id'  => $from_stock->product_id,
                 'storage_id'  => $storage_id,

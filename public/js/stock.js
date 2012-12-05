@@ -5,6 +5,7 @@ $(function(){
         bProcessing: true,
         bFilter: true,
         bServerSide: true,
+        bStateSave: true,
         bJQueryUI: false,
         sPaginationType: 'full_numbers',
         sAjaxSource: '/stock/filter',
@@ -26,8 +27,9 @@ $(function(){
             var id = aData[6];
 
             // 操作
-            var operation =  '<a class="tablectrl_small bDefault tipS" action="stock_modify" stock_id="'+id+'" original-title="入库"><span class="iconb" data-icon="&#xe14a"></span></a>';
-                operation += '<a class="tablectrl_small bDefault tipS" action="stock_adjust" stock_id="'+id+'" original-title="调仓"><span class="iconb" data-icon="&#xe063"></span></a>';
+            var operation =  '<a class="tablectrl_small bDefault tipS" action="stock_modify" stock_id="'+id+'" original-title="调整"><span class="iconb" data-icon="&#xe057"></span></a>';
+                operation += '<a class="tablectrl_small bDefault tipS" action="stock_adjust" stock_id="'+id+'" original-title="调仓"><span class="iconb" data-icon="&#xe09c"></span></a>';
+                operation += '<a class="tablectrl_small bDefault tipS" action="stock_entry_dialog" stock_id="'+id+'" original-title="入库"><span class="iconb" data-icon="&#xe02f"></span></a>';
 
             $('td:eq(0)', nRow).html('<span field="title'+id+'">' + title + '</span>');
             $('td:eq(1)', nRow).attr('field', 'storage'+id);
@@ -60,7 +62,6 @@ $(function(){
                          '  </div>' +
                          '  <div class="clear"></div>' +
                          '</div>';
-
             $('#slist_search').html(search);
 
             $('#stock_list_table_length').addClass('mb15');
@@ -159,7 +160,6 @@ $(function(){
                                         span_unsellable.text(unsellable);
                                     });
                                 }
-
                             }
                         } else {
                             $.jGrowl('未知错误！');
@@ -174,19 +174,21 @@ $(function(){
         }
     });
 
+    // 调整
     $('a[action="stock_modify"]').live('click', function() {
         var id = $(this).attr('stock_id');
         stock_modify_dialog.attr('stock_id', id);
         stock_modify_dialog.dialog('open');
     });
 
-    // 调仓
+    // 调仓对话框
     var stock_adjust_dialog = $('#stock_adjust_dialog');
     stock_adjust_dialog.dialog({
         autoOpen: false,
         width: '40%',
         modal: true,
-        open: function() {
+        open: function()
+        {
             var stock_id = stock_adjust_dialog.attr('stock_id');
             var title = $('span[field="title'+stock_id+'"]').text();
             var storage = $('td[field="storage'+stock_id+'"]').text();
@@ -216,10 +218,12 @@ $(function(){
                 var storage_id = $('select[name="storage"]').val();
                 var quantity =  $('input[name="quantity"]').val();
                 var to_stock_id = $('input[name="stock_id"]:checked').val();
-                if(to_stock_id == '') to_stock_id = $('input[name="to_stock_id"]').val();
+                if(typeof(to_stock_id) == 'undefined') {
+                    to_stock_id = $('input[name="to_stock_id"]').val();
+                }
                 // console.log(stock_id + ' - ' + storage_id + ' - ' + adjust);
                 $.ajax({
-                    url: '/stock/adjust',
+                    url: '/stock/adjust/do_adjust',
                     type: 'POST',
                     data: {stock_id:stock_id, storage_id:storage_id, quantity:quantity, to_stock_id:to_stock_id},
                     dataType: 'json',
@@ -248,6 +252,7 @@ $(function(){
         }
     });
 
+    // 调仓
     $('a[action="stock_adjust"]').live('click', function() {
         var id = $(this).attr('stock_id');
         stock_adjust_dialog.attr('stock_id', id);
@@ -256,7 +261,7 @@ $(function(){
         stock_adjust_dialog.dialog('open');
     });
 
-    // 调仓仓库库存
+    // 获取仓库库存信息
     $('select[name="storage"]').live('change', function() 
     {
         var storage_id = $(this).val();
@@ -295,4 +300,164 @@ $(function(){
         });
     });
 
+    // 入库弹出层
+    var stock_entry_dialog = $('#stock_entry_dialog');
+    stock_entry_dialog.dialog({
+        autoOpen: false,
+        width: '40%',
+        modal: true,
+        open: function() {
+            var stock_id = stock_entry_dialog.attr('stock_id');
+            initEntry(stock_id);
+        },
+        close: function()
+        {
+            sTable.fnDraw();
+        },
+        buttons: {
+            "取消": function() 
+            {
+                $(this).dialog('close');
+            }
+        }
+    });
+    
+    // 入库
+    $('a[action="stock_entry_dialog"]').live('click', function()
+    {
+        var stock_id = $(this).attr('stock_id');
+        stock_entry_dialog.attr('stock_id', stock_id);
+        stock_entry_dialog.dialog('open');
+    });
+
+    // data table api  重新设置提交数据
+    $.fn.dataTableExt.oApi.fnSetServerParams = function(oSettings, fn)
+    {
+        oSettings.fnServerParams = fn;
+    }
+
+    // 调仓入库列表初始化
+    eTable = $('#entry_list_table').dataTable({
+        bSort: false,
+        bFilter: false,
+        bServerSide: true,
+        sServerMethod: 'POST',
+        bJQueryUI: false,
+        sAjaxSource: '/stock/adjust/entry',
+        sDom: 't',
+        oLanguage: { sUrl: '/js/plugins/tables/lang_cn.txt'},
+        aoColumnDefs: [
+            {aTargets: [0], sTitle: '产品去向', sClass: 'noBorderB'},
+            {aTargets: [1], bVisible: false},
+            {aTargets: [2], sTitle: '数量', sClass: 'noBorderB textC', sWidth: '60'},
+            {aTargets: [3], sTitle: '时间', sClass: 'noBorderB textC', sWidth: '150'},
+            {aTargets: [4], sTitle: '操作', sClass: 'tableActs noBorderB', sWidth: '80'},
+            {aTargets: [5], bVisible: false},
+        ],
+        fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull)
+        {
+            var id = aData[4];
+            var to_stock_id = aData[5];
+
+            var to = aData[0] + '[' + aData[1] + ']';
+                to += '<span class="icon-arrow-right-2" style="margin-left: 10px; color: #97AF32"></span>';
+                to += $('td[field="storage'+to_stock_id+'"]').text();
+            
+            var operation = '<a class="tablectrl_small bDefault tipS" action="adjust_entry" original-title="入库" adjust_id="'+id+'"><span class="iconb" data-icon="&#xe02f"></span></a>' +
+                            '<a class="tablectrl_small bDefault tipS" action="adjust_cancel"  original-title="取消" adjust_id="'+id+'"><span class="iconb" data-icon="&#xe035"></span></a>';
+                          
+            $('td:eq(0)', nRow).html(to);
+            $('td:eq(3)', nRow).html(operation).find('.tipS').tipsy({gravity: 's',fade: true, html:true});
+        },
+        fnServerParams: function(aoData)
+        {
+            oSettings = this.fnSettings();
+            stock_id = oSettings._iStockId;
+            if(typeof(stock_id) != 'undefined')
+                aoData.push({name: 'stock_id', value: stock_id});
+        }
+    });
+
+
+    // 确认入库操作
+    $('a[action="adjust_entry"]').live('click', function()
+    {
+        var $this = $(this);
+        var adjust_id = $this.attr('adjust_id');
+        $.ajax({
+            url: '/stock/adjust/do_entry',
+            type: 'POST',
+            data: {adjust_id: adjust_id},
+            dataType: 'json',
+            success: function(data) 
+            {
+                if(typeof(data.message) != 'undefined') {
+                    $.jGrowl(data.message);
+                    if(data.status == 'success') {
+                        $this.parent().parent().fadeOut(300, function(){
+                            var tbody = $('#entry_list_table > tbody');
+                            if(tbody.find('tr:visible').length < 1) {
+                                tbody.html('<tr><td colspan="4" class="dataTables_empty">亲，没有了哦！</td></tr>');
+                                $('.tipsy').remove();
+                            }
+                        });
+                    }
+                } else {
+                    $.jGrowl('未知错误！');
+                }
+            },
+            error: function()
+            {
+                $.jGrowl('请求失败！');
+            }
+        });
+    });
+
+    // 取消入库操作
+    $('a[action="adjust_cancel"]').live('click', function()
+    {
+        var $this = $(this);
+        var adjust_id = $this.attr('adjust_id');
+        $.ajax({
+            url: '/stock/adjust/do_cancel',
+            type: 'POSt',
+            data: {adjust_id: adjust_id},
+            dataType: 'json',
+            success: function(data)
+            {
+                if(typeof(data.message) != 'undefined') {
+                    $.jGrowl(data.message);
+                    if(data.status == 'success') {
+                        $this.parent().parent().fadeOut(300, function() {
+                            var tbody = $('#entry_list_table > tbody');
+                            if(tbody.find('tr:visible').length < 1) {
+                                tbody.html('<tr><td colspan="4" class="dataTables_empty">亲，没有了哦！</td></tr>');
+                                $('.tipsy').remove();
+                            }
+                        });
+                        
+                    }
+                } else {
+                    $.jGrowl('未知错误！');
+                }
+            },
+            error: function()
+            {
+                $.jGrowl('请求失败！');
+            }
+        });
+    });
+
+
+
 });
+
+// 调仓入库列表
+function initEntry(stock_id)
+{
+    var oSettings = eTable.fnSettings();
+    oSettings._iStockId = stock_id;
+    eTable.fnDraw();
+}
+
+
