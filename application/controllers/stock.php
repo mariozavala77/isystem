@@ -16,7 +16,7 @@ class Stock_Controller extends Base_Controller
         $fields = ['id', 'area', 'type'];
         $storages = Storage::filter($fields)->get();
 
-        return View::make('stock.index')->with('storages', $storages);
+        return View::make('stock.list')->with('storages', $storages);
     }
 
     // 列表

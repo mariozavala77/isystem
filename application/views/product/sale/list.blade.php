@@ -35,6 +35,13 @@
             </div>
         </div>
     </div>
+
+    <!-- product sell dialog begins-->
+    <div id="product_sell_dialog" title="渠道上架" style="display: none;">
+        <ul class="sChannel"></ul>
+    </div>
+    <!-- product sell dialog ends-->
+
     <!-- delete confirm begins-->
     <div id="sale_delete_confirm" style="display:none" title="提示">
         <p>你确定下架此产品？</p>

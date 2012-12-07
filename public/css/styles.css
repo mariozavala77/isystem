@@ -1500,9 +1500,13 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f8f8f8', end
 /* ===== Invoice widget  ===== */
 
 .wInvoice { background: #efefef; border-radius: 3px; -webkit-border-radius: 3px; -moz-border-radius: 3px; margin-bottom: 15px; border: 1px solid #DDD; }
-.wInvoice li { width: 33%; display: inline-block; text-align: center; border-left: 1px dotted #ddd; padding: 12px 0 8px 0; margin-left: -2px; }
+.wInvoice li { width: 33%; display: inline-block; text-align: center; border-left: 1px dotted #ddd; padding: 12px 0 8px 0; margin-left: -2px }
 .wInvoice li:first-child { border-left: none; }
 .wInvoice li span { font-size: 11px; }
+.sChannel { border-radius: 3px; -webkit-border-radius: 3px; -moz-border-radius: 3px; border: 1px solid #DDD; }
+.sChannel li { position: relative; width: 190px; display: inline-block; text-align: center; border-right: 1px dotted #ddd; border-bottom: 1px dotted #ddd; padding: 16px 0 16px 0; cursor: pointer; }
+.sChannel li:hover { background: #fcfce2; }
+.sChannel li em.done { width: 12px; height: 12px; top: 5px; right: 5px; position: absolute; background: url(../images/elements/other/fileSuccess.png) no-repeat; }
 .invButtons { margin-top: 10px; text-align: center; }
 .invButtons .bFirst { float: left; }
 .invButtons .bLast { float: right; }

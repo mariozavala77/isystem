@@ -10,14 +10,16 @@
 class Channel_Controller extends Base_Controller {
 
     // 渠道默认页
-    public function action_index(){
+    public function action_index()
+    {
         $types = Config::get('application.channel_type');
 
         return View::make('channel.list')->with('channel_type', $types);
     }
 
     // 渠道列表
-    public function action_filter(){
+    public function action_filter()
+    {
         $fields = ['type', 'name', 'alias', 'description', 'status', 'id'];
         $channel = Channel::filter($fields);
         $data = Datatables::of($channel)->make();
@@ -26,7 +28,8 @@ class Channel_Controller extends Base_Controller {
     }
 
     // 渠道添加
-    public function action_add(){
+    public function action_add()
+    {
         $type = Input::get('type'); // 获取分类
         $types = Config::get('application.channel_type'); // 获取允许的渠道分类
 
@@ -42,7 +45,8 @@ class Channel_Controller extends Base_Controller {
     }
 
     // 插入渠道信息
-    public function action_insert(){
+    public function action_insert()
+    {
         $data = [
             'type'         => Input::get('type'),
             'name'         => Input::get('name'),
@@ -50,7 +54,7 @@ class Channel_Controller extends Base_Controller {
             'description'  => Input::get('description'),
             'accredit'     => serialize(Input::get('accredit')),
             'synced_at'    => date('Y-m-d 00:00:00'),
-            'splited_at'    => date('Y-m-d 00:00:00'),
+            'splited_at'   => date('Y-m-d 00:00:00'),
             'language'     => Input::get('language'),
         ];
 
@@ -66,7 +70,8 @@ class Channel_Controller extends Base_Controller {
     }
 
     // 渠道编辑
-    public function action_edit(){
+    public function action_edit()
+    {
 
         $channel_id = Input::get('channel_id');
         $channel = Channel::info($channel_id);
@@ -79,7 +84,8 @@ class Channel_Controller extends Base_Controller {
     }
 
     // 更新渠道信息
-    public function action_update(){
+    public function action_update()
+    {
         $channel_id = Input::get('channel_id');
 
         $data = [
@@ -96,7 +102,8 @@ class Channel_Controller extends Base_Controller {
     }
 
     // 删除渠道
-    public function action_delete(){
+    public function action_delete()
+    {
         $channel_id = Input::get('channel_id');
 
         $channel_id = intval($channel_id);
@@ -114,5 +121,14 @@ class Channel_Controller extends Base_Controller {
         }
 
         return Response::json($return);
+    }
+
+    // 上架渠道
+    public function action_sell()
+    {
+        $sale_id = Input::get('sale_id');
+        $result = Channel::sell($sale_id);
+
+        return Response::json($result);
     }
 }

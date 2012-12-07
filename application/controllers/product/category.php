@@ -11,7 +11,7 @@ class Product_Category_Controller extends Base_Controller {
 
     // 分类列表
     public function action_index() {
-        return View::make('product.category.index');
+        return View::make('product.category.list');
     }
 
     // 类别

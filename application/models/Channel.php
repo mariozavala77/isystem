@@ -8,7 +8,8 @@
  * @version: $Id:Channel.php  2012年11月04日 星期日 10时10分57秒Z $
  */
 
-class Channel extends Base_Model {
+class Channel extends Base_Model
+{
 
     /**
      * 获取所有销售渠道
@@ -18,7 +19,8 @@ class Channel extends Base_Model {
      *
      * return $object
      */
-    public static function filter($fields, $filter = []) {
+    public static function filter($fields, $filter = [])
+    {
 
         $query = DB::table('channels')->select($fields);
         static::formatFilter($query, $filter);
@@ -33,7 +35,8 @@ class Channel extends Base_Model {
      *
      * return boolean
      */
-    public static function insert($data) {
+    public static function insert($data)
+    {
         return DB::table('channels')->insert_get_id( $data );
     }
 
@@ -42,9 +45,17 @@ class Channel extends Base_Model {
      *
      * return array
      */
-    public static function out() {
-        return DB::table('channels')->where('type', '!=', 'Agent')
-                                    ->lists('id');
+    public static function out()
+    {
+        $out = Cache::get('app.out_channels');
+        if(empty($out)) {
+            $out = DB::table('channels')->where('type', '!=', 'Agent')
+                                        ->lists('id');
+
+            Cache::put('app.out_channels',$out, 3600);
+        }
+
+        return $out;
     }
 
     /**
@@ -54,7 +65,8 @@ class Channel extends Base_Model {
      *
      * return object
      */
-    public static function info($channel_id) {
+    public static function info($channel_id)
+    {
         return DB::table('channels')->where('id', '=', $channel_id)->first();
     }
 
@@ -66,7 +78,8 @@ class Channel extends Base_Model {
      *
      * return boolean
      */
-    public static function update($channel_id, $data) {
+    public static function update($channel_id, $data)
+    {
         if(isset($data['accredit'])) $data['accredit'] = serialize($data['accredit']);
         return DB::table('channels')->where('id', '=', $channel_id)->update($data);
     }
@@ -78,8 +91,35 @@ class Channel extends Base_Model {
      *
      * retrun boolean
      */
-    public static function delete($channel_id) {
+    public static function delete($channel_id)
+    {
         return DB::table('channels')->where('id', '=', $channel_id)->delete();
+    }
+
+    /**
+     * 可上架销售渠道列表
+     * 
+     * @param: $sale_id integer 销售产品ID
+     *
+     * return object
+     */
+    public static function sell($sale_id)
+    {
+        $out_channel_ids = static::out();
+        $sale  = Product_Sale::info($sale_id);
+        $agent = Agent::info($sale->agent_id);
+        $product_id = $sale->product_id;
+
+        $channel_ids = array_merge($out_channel_ids, [$agent->channel_id]);
+
+        $channels = [];
+        foreach($channel_ids as $channel_id) {
+            $channel = static::info($channel_id);
+            $channel->on_sale = Product_Sale_Sku::onSale($product_id, $channel_id);
+            $channels[] = $channel;
+        }
+
+        return $channels;
     }
 
 }
