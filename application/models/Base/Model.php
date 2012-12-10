@@ -24,7 +24,7 @@ class Base_Model {
     public static function formatFilter(&$query, $filter = []) {
         foreach($filter as $key => $value) {
             if(!in_array($key, self::$_actions)) {
-                $query = $query->where($key, '=', $value);
+                $query->where($key, '=', $value);
             } else {
                 $action = 'filter'.ucfirst($key);
                 $query = static::$action($query, $value);

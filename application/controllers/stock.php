@@ -16,7 +16,7 @@ class Stock_Controller extends Base_Controller
         $fields = ['id', 'area', 'type'];
         $storages = Storage::filter($fields)->get();
 
-        return View::make('stock.index')->with('storages', $storages);
+        return View::make('stock.list')->with('storages', $storages);
     }
 
     // 列表
@@ -55,22 +55,6 @@ class Stock_Controller extends Base_Controller
         } else {
             $result = ['status' => 'fail', 'message' => '修改失败!'];
         }
-
-        return Response::json($result);
-    }
-
-    // 调仓
-    public function action_adjust()
-    {
-        $input = Input::all();
-        
-        $stock_id   = $input['stock_id'];
-        $storage_id = $input['storage_id'];
-        $quantity   = $input['quantity'];
-
-        $to_stock_id = (isset($input['to_stock_id'])) ? $input['to_stock_id'] : 0;
-
-        $result = Stock::adjust($stock_id, $storage_id, $quantity, $to_stock_id);
 
         return Response::json($result);
     }

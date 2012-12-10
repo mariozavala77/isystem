@@ -101,6 +101,12 @@
     </div>
     <!-- stock modify dialog ends-->
 
+    <!-- stock entry dialog begins-->
+    <div id="stock_entry_dialog" title="入库" style="display: none; padding: 0">
+        <table cellpadding="0" cellspacing="0" width="100%" class="tDefault mytasks" id="entry_list_table"></table>
+    </div>
+    <!-- stock entry dialog ends-->
+
 </div>
 <!-- Content ends -->    
 @endsection

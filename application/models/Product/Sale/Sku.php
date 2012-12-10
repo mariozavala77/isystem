@@ -6,8 +6,8 @@
  * @copyright: Copyright (c) 2012 UFCEC Tech All Rights Reserved.
  * @version: $Id$
  */
-class Product_Sale_Sku {
-
+class Product_Sale_Sku 
+{
 
     /**
      * 销售列表
@@ -17,7 +17,8 @@ class Product_Sale_Sku {
      *
      * return object
      */
-    public static function filter($fields, $filter = []) {
+    public static function filter($fields, $filter = [])
+    {
         $query = DB::table('products_sale_sku as psku')->left_join('products_sale as ps', 'ps.id', '=', 'psku.psid')
                                                        ->select($fields);
 
@@ -30,33 +31,52 @@ class Product_Sale_Sku {
 
     /**
      * 插入数据
+     *
      * @param: $data array 插入的数据
+     *
      * return boolean
      */
-    public static function insert($data){
+    public static function insert($data)
+    {
         return DB::table('products_sale_sku')->insert_get_id( $data );
     }
 
     /**
      * 更新数据
      *
-     * @param: $product_sale_sku_id intgrean 代理商认购商品上架的id
-     * @param: $data                array    更新的数据
+     * @param: $sale_sku_id integer 代理商认购商品上架的id
+     * @param: $data        array   更新的数据
      * return boolen
      */
-    public static function update($product_sale_sku_id, $data){
-        return DB::table('products_sale_sku')->where('id', '=', $product_sale_sku_id)->update($data);
+    public static function update($sale_sku_id, $data)
+    {
+        return DB::table('products_sale_sku')->where('id', '=', $sale_sku_id)->update($data);
     }
 
     /**
      * 在售商品详细信息
      *
      */
-    public static function info($sale_id){
+    public static function info($sale_id)
+    {
         return DB::table('products_sale_sku as psku')->left_join('products_sale as ps', 'ps.id', '=', 'psku.psid')
                                                      ->where('psku.id', '=', $sale_id)
-
                                                      ->first();
+    }
+
+    /**
+     * 是否上架在售
+     *
+     * @param: $product_id integer 产品ID
+     * @param: $channel_id integer 渠道ID
+     *
+     * return integer
+     */
+    public static function onSale($product_id, $channel_id)
+    {
+        return DB::table('products_sale_sku')->where('product_id', '=', $product_id)
+                                             ->where('channel_id', '=', $channel_id)
+                                             ->only('id');
     }
 
     /**

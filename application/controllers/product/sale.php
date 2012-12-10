@@ -11,7 +11,7 @@ class Product_Sale_Controller extends Base_Controller {
 
     // 销售列表
     public function action_index() {
-        return View::make('product.sale.index');
+        return View::make('product.sale.list');
     }
 
     // 列表
@@ -40,7 +40,7 @@ class Product_Sale_Controller extends Base_Controller {
     // 审核信息
     public function action_check(){
         $sale_id = Input::get('sale_id');
-        $status = Input::get('status');
+        $status  = Input::get('status');
         $task_id = Input::get('task_id');
         $msg = Input::get('msg');
         $msg = ($status==1?'产品信息通过审核。':'产品信息没有通过审核。').$msg;
