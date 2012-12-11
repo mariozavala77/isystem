@@ -73,8 +73,10 @@ $(function(){
                                       '    <option value="ship">订单发货</option>'+
                                       '</select><a class="buttonS bDefault ml10" id="actions">确定</a></div>'+
                                       '</div>');
+
             // 每页记录样式修改
-            $('#order_list_table_length').addClass('mb15');
+            $('#order_list_table_length').css('margin-bottom', '8px');
+
             // 美化dom元素
             $('.select_action, select[name$="list_table_length"],.checkAll').uniform();
 

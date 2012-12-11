@@ -37,7 +37,7 @@ class Product_Sale {
      */
     public static function insert($data)
     {
-        return DB::table('products_sale')->insert_get_id( $data );
+        return DB::table('products_sale')->insert_get_id($data);
     }
 
     /**
@@ -86,7 +86,7 @@ class Product_Sale {
     public static function mapping($sku, $product_id)
     {
 
-        $sale_id = Product_Sale_Sku::filter('psid', ['sku' => $sku])->lists('psid');
+        $sale_id = Product_Sale_Sku::filter('sale_id', ['sku' => $sku])->lists('sale_id');
         
         $data = ['product_id' => $product_id];
 

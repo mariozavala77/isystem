@@ -126,8 +126,8 @@ class Channel_Controller extends Base_Controller {
     // 上架渠道
     public function action_sell()
     {
-        $sale_id = Input::get('sale_id');
-        $result = Channel::sell($sale_id);
+        $sale_sku_id = Input::get('sale_sku_id');
+        $result = Channel::sell($sale_sku_id);
 
         return Response::json($result);
     }

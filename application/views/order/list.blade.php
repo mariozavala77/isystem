@@ -41,7 +41,7 @@
             </ul>
             <div class="hiddenpars">
                  <div class="cOptions">
-                    <a href="javascript:void(0);" class="tOptions tipS doFullscreen" caction="olist" title="全屏"><img src="{{ URL::base() }}/images/icons/fullscreen"/></a>
+                    <a href="javascript:void(0);" caction="olist" class="tOptions tipS doFullscreen" title="全屏"><img src="{{ URL::base() }}/images/icons/fullscreen"/></a>
                     <a href="javascript:void(0);" ckey="olist_search" class="tOptions tipS" title="搜索"><img src="{{ URL::base() }}/images/icons/search" alt=""/></a>
                     <a href="javascript:void(0);" ckey="olist_options" class="tOptions tipS" title="设置"><img src="{{ URL::base() }}/images/icons/options" alt=""/></a>
                 </div>
@@ -51,8 +51,7 @@
         <script type="text/javascript">
             $(function() {
                 $('a[ckey="olist_search"]').click(function(){
-                    if(!initsearch)
-                        initSearch();
+                    if(!initsearch) initSearch();
                 });
 
                 // 订单搜索

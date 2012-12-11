@@ -10,35 +10,35 @@
 class Product_Sale_Controller extends Base_Controller {
 
     // 销售列表
-    public function action_index() {
-        return View::make('product.sale.list');
+    public function action_index()
+    {
+
+        $fields   = ['name'];
+        $channels = Channel::filter($fields)->get();
+        $fields   = ['company'];
+        $agents   = Agent::filter($fields)->get();
+        $status   = [0 => '已下架', '1'=> '已上架'];
+
+        return View::make('product.sale.list')->with('channels', $channels)
+                                              ->with('agents', $agents)
+                                              ->with('status', $status);
     }
 
     // 列表
-    public function action_filter() {
-        $fields = [ 'title', 'price', 'agent_id', 
-                    'created_at', 'id as operate'];
-        $products = Product_Sale::filter($fields);
-        $data = Datatables::of($products)->make();
-        $agents   = [];
-        foreach($data['aaData'] as $key=>$value){
-            $agents[$value[2]]   = $value[2];
-        }
-        $agents = Agent::filter(['id', 'company'])->where_in('id', $agents)->get();
-        foreach($agents as $key=>$value){
-            $agent[$value->id] = $value->company;
-        }
-        $agents = $agent;
+    public function action_filter()
+    {
+        $fields = [ 'title', 'sku', 'price', 'c.name', 'a.company', 
+                    'is_sold', 'ps.created_at', 'pss.id as operate'];
+        $products = Product_Sale_Sku::filter($fields);
 
-        foreach($data['aaData'] as $key=>$value){
-            $value[5] = empty($value[2])?'暂无':$agents[$value[2]];
-            $data['aaData'][$key] = $value;
-        }
+        $data = Datatables::of($products)->make();
+
         return Response::json($data);
     }
 
     // 审核信息
-    public function action_check(){
+    public function action_check()
+    {
         $sale_id = Input::get('sale_id');
         $status  = Input::get('status');
         $task_id = Input::get('task_id');
@@ -55,7 +55,7 @@ class Product_Sale_Controller extends Base_Controller {
             return Response::json(['status' => 'fail', 'message' => '销售记录已经审核过了']);
         }
 
-        if(1==$status){
+        if(1 == $status){
 
             $validation = json_decode($info->validation);
             $sale_data  = [
@@ -111,20 +111,44 @@ class Product_Sale_Controller extends Base_Controller {
     }
 
     // 编辑销售信息
-    public function action_edit(){
-        $sale_id = Input::get('sale_id');
+    public function action_edit()
+    {
+        $sale_sku_id  = Input::get('id');
+        $product_sale = Product_Sale_Sku::info($sale_sku_id);
+        $product      = Product::info($product_sale->product_id);
 
-        $info = Product_Sale::info($sale_id);
-        var_dump($info);
+        if(!$product) {
+            $tips = '还没有做产品池产品映射，不能编辑。';
+            return View::make('product.sale.tips')->with('tips', $tips);
+        } else {
+            return View::make('product.sale.edit')->with('product_sale', $product_sale)
+                                                  ->with('product', $product);
+        }
     }
 
     // 更新销售
-    public function action_update(){
+    public function action_update()
+    {
+        $input = Input::all();
 
+        $sale_id = $input['sale_id'];
+
+        $data = [
+            'title'             => $input['title'],
+            'price'             => $input['price'],
+            'keywords'          => $input['keywords'],
+            'short_description' => $input['short_description'],
+            'description'       => $input['description'],
+            ];
+
+        Product_Sale::update($sale_id, $data);
+
+        return Redirect::to('product/sale');
     }
 
     // 产品上架
-    public function action_sale(){
+    public function action_sale()
+    {
         $sale_id = Input::get('sale_id');
         $task_id = Input::get('task_id');
         $info = Product_Sale::info($sale_id);
@@ -173,7 +197,7 @@ class Product_Sale_Controller extends Base_Controller {
             // 代理商在售产品信息传递
             $method = '';
             $api = AgentAPI($method, $params);
-            $apie->handle();
+            $api->handle();
             $request = [ 'status' => 'success', 'message' => '信息审核成功'];
         }else{
             $request = [ 'status' => 'fail', 'message' => '信息审核失败'];
@@ -184,7 +208,8 @@ class Product_Sale_Controller extends Base_Controller {
     }
 
     // 产品下架
-    public function action_off(){
+    public function action_off()
+    {
         $sale_id = Input::get('sale_id');
         $task_id = Input::get('task_id');
         $info = Product_Sale::info($sale_id);
@@ -238,7 +263,8 @@ class Product_Sale_Controller extends Base_Controller {
     }
 
     // 代理商认购商品信息
-    public function action_info(){
+    public function action_info()
+    {
         $sale_id = intval(Input::get('sale_id'));
 
         if(empty($sale_id)){
@@ -262,7 +288,8 @@ class Product_Sale_Controller extends Base_Controller {
     }
 
     // 产品映射
-    public function action_mapping(){
+    public function action_mapping()
+    {
         $product_id = Input::get('product_id');
         $sku = Input::get('sku');
         $task_id = Input::get('task_id');

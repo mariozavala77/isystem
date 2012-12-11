@@ -17,7 +17,8 @@ class Product_Extension {
      *
      * return boolean
      */
-    public static function insert($data) {
+    public static function insert($data)
+    {
         return DB::table('products_extensions')->insert($data);
     }
 
@@ -30,7 +31,8 @@ class Product_Extension {
      *
      * return boolean
      */
-    public static function update($product_id, $language, $data) {
+    public static function update($product_id, $language, $data)
+    {
         return DB::table('products_extensions')->where('product_id', '=', $product_id)
                                                ->where('language', '=', $language)
                                                ->update($data);
@@ -43,7 +45,8 @@ class Product_Extension {
      *
      * return boolean
      */
-    public static function delete($product_id) {
+    public static function delete($product_id)
+    {
         return DB::table('products_extensions')->where('product_id', '=', $product_id)->delete();
     }
 
@@ -55,7 +58,8 @@ class Product_Extension {
      *
      * return object
      */
-    public static function filter( $fields, $filter = [] ) {
+    public static function filter($fields, $filter = [])
+    {
 
         $query = DB::table('products_extensions')->select($fields);
 
