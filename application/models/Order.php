@@ -433,4 +433,112 @@ class Order {
         $data['params'] = serialize($params);
         $data['channel_id'] = $channel->id;
     }
+
+    /**
+     * 订单状态分类统计
+     *
+     * return array
+     */
+    public static function statistics_status($start = '', $end = '')
+    {
+        $sql = 'SELECT COUNT(`id`) as total, SUM(`total_price`) AS price, `status` '
+             . 'FROM `orders`';
+
+        if(!empty($start) && !empty($end)){
+            $sql = $sql . 'WHERE `updated_at` '
+                 . 'BETWEEN \'' . $start . ' 00:00:00\' AND \'' 
+                 . $end . ' 23:59:59\'';
+        }
+        else
+        {
+            if (!empty($start))
+            {
+                $sql = $sql . 'WHERE `updated_at` '
+                     . 'BETWEEN \'' . $start . ' 00:00:00\' AND \'' 
+                     . $start . ' 23:59:59\'';
+            }
+            if (!empty($end))
+            {
+                $sql = $sql . 'WHERE `updated_at` '
+                     . 'BETWEEN \'' . $start . ' 00:00:00\' AND \'' 
+                     . $end . ' 23:59:59\'';
+            }            
+        }
+
+        $sql = $sql . 'GROUP BY status';
+
+        return DB::query($sql);
+    }
+
+    /**
+     * 订单购买统计
+     *
+     * return array
+     */
+    public static function statistics_purchased($start = '', $end = ''){
+        $sql = 'SELECT COUNT(`id`) as total, SUM(`total_price`) AS price '
+             . 'FROM `orders` ';
+
+        if (!empty($start) && !empty($end))
+        {
+            $sql = $sql . 'WHERE `purchased_at` '
+                 . 'BETWEEN \'' . $start . ' 00:00:00\' AND \'' 
+                 . $end . ' 23:59:59\'';
+        }
+        else
+        {
+            if (!empty($start))
+            {
+                $sql = $sql . 'WHERE `purchased_at` '
+                     . 'BETWEEN \'' . $start . ' 00:00:00\' AND \'' 
+                     . $start . ' 23:59:59\'';
+            }
+            if (!empty($end))
+            {
+                $sql = $sql . 'WHERE `purchased_at` '
+                     . 'BETWEEN \'' . $start . ' 00:00:00\' AND \'' 
+                     . $end . ' 23:59:59\'';
+            }            
+        }
+
+        return DB::query($sql);
+    }
+
+    /**
+     * 获取订单的购买时间,最大和最小
+     *
+     * return array
+     */
+    public static function get_purchased_at()
+    {
+        $sql = DB::table('orders');
+
+        return ['min' => $sql->min('purchased_at'), 'max' => $sql->max('purchased_at')];
+    }
+
+    /**
+     * 获取订单的变更时间,最大和最小
+     *
+     * return array     
+     */
+    public static function get_updated_at()
+    {
+        $sql = DB::table('orders');
+
+        return ['min' => $sql->min('updated_at'), 'max' => $sql->max('updated_at')];
+    }
+
+    /**
+     * 获取每个国家的订单额
+     *
+     * return array     
+     */
+    public static function orders_region()
+    {
+        $sql = DB::table('orders'); 
+        $sql = $sql -> select(['shipping_country', DB::raw('SUM(total_price) as price')])
+                    -> group_by('shipping_country')
+                    -> get();
+        return $sql;
+    }
 }

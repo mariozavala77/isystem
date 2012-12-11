@@ -115,27 +115,9 @@
 </div>
 <!-- Content ends -->
 <script type="text/javascript" charset="utf-8" async defer>
-var slibe;
-var order_data=[
-    {date:'11-15',order:3233,pay:2335,refund:1,warehousing:3543},
-    {date:'11-16',order:3243,pay:2344,refund:0,warehousing:4522},
-    {date:'11-17',order:4565,pay:3454,refund:1,warehousing:2434},
-    {date:'11-18',order:4323,pay:3234,refund:1,warehousing:4631},
-    {date:'11-19',order:6543,pay:5472,refund:1,warehousing:6432},
-    {date:'11-20',order:3893,pay:3214,refund:1,warehousing:3453},
-    {date:'11-21',order:4675,pay:4332,refund:1,warehousing:4532},
-    {date:'11-22',order:6784,pay:4554,refund:1,warehousing:5433},
-    {date:'11-23',order:7432,pay:5734,refund:1,warehousing:6314},
-    {date:'11-24',order:8904,pay:8452,refund:1,warehousing:7454},
-    {date:'11-25',order:9435,pay:8563,refund:1,warehousing:6543},
-    {date:'11-26',order:8954,pay:8324,refund:1,warehousing:9234},
-    {date:'11-27',order:9932,pay:9534,refund:1,warehousing:11325},
-    {date:'11-28',order:11245,pay:10879,refund:1,warehousing:12657},
-    {date:'11-29',order:4321,pay:3678,refund:1,warehousing:4532},
-];
 $('.dropdown-toggle').dropdown();
-function orders_chart() {
-    slibe = new AmCharts.AmSerialChart();
+function orders_chart(order_data) {
+    var slibe = new AmCharts.AmSerialChart();
     slibe.dataProvider = order_data;
     slibe.categoryField = "date";
     slibe.balloon.color = "#000000";
@@ -162,7 +144,7 @@ function orders_chart() {
     // GRAPH
     var graph = new AmCharts.AmGraph();
     graph.title = "当日订单累计金额";
-    graph.valueField = "order";
+    graph.valueField = "purchased_price";
     graph.balloonText = "当日订单累计金额[[value]]";
     graph.hideBulletsCount = 40;
     graph.lineAlpha = 1;
@@ -170,7 +152,7 @@ function orders_chart() {
     slibe.addGraph(graph);
     var graph = new AmCharts.AmGraph();
     graph.title = "当日支付累计金额支付量";
-    graph.valueField = "pay";
+    graph.valueField = "unshipped_price";
     graph.balloonText = "当日支付累计金额[[value]]";
     graph.hideBulletsCount = 20;
     graph.lineAlpha = 1;
@@ -178,7 +160,7 @@ function orders_chart() {
     slibe.addGraph(graph);
     var graph = new AmCharts.AmGraph();
     graph.title = "当日退款累计金额";
-    graph.valueField = "refund";
+    graph.valueField = "unfulfillable_price";
     graph.balloonText = "当日退款累计金额[[value]]";
     graph.hideBulletsCount = 20;
     graph.lineAlpha = 1;
@@ -186,7 +168,7 @@ function orders_chart() {
     slibe.addGraph(graph);
     var graph = new AmCharts.AmGraph();
     graph.title = "当日出库累计金额";
-    graph.valueField = "warehousing";
+    graph.valueField = "shipped_price";
     graph.balloonText = "当日出库累计金额[[value]]";
     graph.hideBulletsCount = 20;
     graph.lineAlpha = 1;
@@ -199,12 +181,17 @@ function orders_chart() {
     slibe.addChartCursor(chartCursor);
 
     var legend = new AmCharts.AmLegend();
-    legend.markerType = "circle";
-    slibe.addLegend(legend);
+                legend.markerType = "circle";
+                slibe.addLegend(legend);
     slibe.write("orders");
 }
-AmCharts.ready(function () {
-    orders_chart();
-});    
+function get_main(){
+    $.getJSON('/statistics/main',function(data){
+        orders_chart(data.chart);
+    });
+}
+$(function() {
+    get_main();
+});
 </script>   
 @endsection
