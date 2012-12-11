@@ -39,7 +39,7 @@
                 </div>
                 <div class="body" style="padding:0;">
                     <ul class="wInvoice" style="border:0;margin:0;">
-                        <li style="width:100%"><h4 class="green">$2,500,593</h4><span>订单总额</span></li>
+                        <li style="width:100%"><h4 class="green" data="ORDER_PRICE">$2,500,593</h4><span>订单总额</span></li>
                     </ul>
                 </div>
             </div>
@@ -97,12 +97,12 @@
             </div>
             <div class="body" style="padding:0;">
                 <ul class="wInvoice" style="border:0;margin:0;">
-                    <li style="width:16.5%"><h4 class="green">63,734</h4><span>总数</span></li>
-                    <li style="width:16.5%"><h4 class="red">46</h4><span>待付款</span></li>
-                    <li style="width:16.5%"><h4 class="red">187</h4><span>未发货</span></li>
-                    <li style="width:16.5%"><h4 class="red">837</h4><span>部分发货</span></li>
-                    <li style="width:16.5%"><h4 class="red">16</h4><span>已取消</span></li>
-                    <li style="width:16.5%"><h4 class="red">7</h4><span>无法处理</span></li>
+                    <li style="width:16.5%"><h4 class="green" data="ORDER">63,734</h4><span>总数</span></li>
+                    <li style="width:16.5%"><h4 class="red" data="ORDER_PENDING">46</h4><span>待付款</span></li>
+                    <li style="width:16.5%"><h4 class="red" data="ORDER_UNSHIPPED">187</h4><span>未发货</span></li>
+                    <li style="width:16.5%"><h4 class="red" data="ORDER_PARTIALLYSHIPPED">837</h4><span>部分发货</span></li>
+                    <li style="width:16.5%"><h4 class="red" data="ORDER_CANCELED">16</h4><span>已取消</span></li>
+                    <li style="width:16.5%"><h4 class="red" data="UNFULFILLABLE">7</h4><span>无法处理</span></li>
                 </ul>
             </div>
         </div>

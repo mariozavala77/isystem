@@ -64,9 +64,18 @@ class Statistics_Controller extends Base_Controller {
         }
         $data['chart'] = $order;
         $status=Order::statistics_status();
-        var_dump($status);
-        exit;
+        $order_status=Config::get('application.order_status');
+
+        foreach ($status as $value) 
+        {
+            $key = $order_status[$value->status]['define'];
+            $data['statistics'][$key]=$value->total;
+        }
+
         $purchased=Order::statistics_purchased();
+        $purchased=$purchased[0];
+        $data['statistics']['ORDER']=$purchased->total;
+        $data['statistics']['ORDER_PRICE']='$'.$purchased->price;
 
         return Response::json($data);
     }

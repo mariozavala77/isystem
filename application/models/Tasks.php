@@ -62,4 +62,17 @@ class Tasks {
     public static function update($tasks_id, $data){
         return DB::table('tasks')->where('id', '=', $tasks_id)->update($data);
     }
+
+    /**
+     * 获取任务的统计
+     *
+     * @param: $user_id integer 用户id
+     *
+     * return object
+     */
+    public static function statistics($user_id=0)
+    {
+        $fields = [DB::raw('COUNT(`id`) AS total'), 'handle']
+        return DB::table('tasks')->select($fields)->group_by('handle')->get();
+    }
 }
