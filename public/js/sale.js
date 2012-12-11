@@ -143,6 +143,7 @@ $(function() {
             dataType: 'json',
             success: function(data) {
                 if(data.length > 0) {
+                    console.log(data);
                     var channels = '';
                     for(i in data) {
                         var on_sale = '';
@@ -161,7 +162,7 @@ $(function() {
                         channels += '<li'+addtional+'>' + data[i].name + on_sale + '</li>' ;
                     }
                     product_sell_dialog.find('ul').html(channels);
-                    product_sell_dialog.dialog('open');呢
+                    product_sell_dialog.dialog('open');
                 } else {
                     $.jGrowl('没有可以上架的渠道。');
                 }
@@ -180,9 +181,34 @@ $(function() {
 		useCSS:true
 	});
 
-    // 点击上架
-    $('li[on_sale="false"]').live('click', function(){
-        alert(1);
+    // 上架操作
+    $('li[on_sale="false"]').live('click', function() {
+        var $this = $(this);
+        var channel_id = $this.attr('channel_id');
+        var sale_sku_id = $this.attr('sale_id');
+
+        $.ajax({
+            url: '/product/sale/listing',
+            type: 'POST',
+            data: {channel_id: channel_id, sale_sku_id: sale_sku_id},
+            dataType: 'json',
+            success: function(data) {
+                if(typeof(data.message) != 'undefined') {
+                    if(data.status == 'success') {
+                        $this.append('<em class="on_sale" title="已上架"></em>');
+                        $this.attr('on_sale', 'true');
+                        $.jGrowl('上架成功！');
+                    } else {
+                        $.jGrowl('上架失败！');
+                    }
+                } else {
+                    $.jGrowl('上架出错！');
+                }
+            },
+            error: function() {
+                $.jGrowl('请求失败！');
+            }
+        });
     });
 
 });
