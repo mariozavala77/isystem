@@ -3,7 +3,7 @@
     {{ HTML::script('js/product.js') }}
 @endsection
 @section('sidebar')
-    @include('../block.sidebar');
+    @include('../block.sidebar')
 @endsection
 @section('content')
 <!-- COntent begins -->
@@ -23,7 +23,7 @@
             </ul>
         </div>
         
-        @include('../block.bread');
+        @include('../block.bread')
 
     </div>
     <!-- Breadcrumbs line ends -->

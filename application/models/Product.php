@@ -16,7 +16,8 @@ class Product {
      *
      * return object
      */
-    public static function filter( $fields, $filter = [] ) {
+    public static function filter($fields, $filter = [])
+    {
 
         $query = DB::table('products as p')->left_join('products_extensions as pe', 'p.id', '=', 'pe.product_id')
                                            ->select($fields);
@@ -36,7 +37,8 @@ class Product {
      *
      * return object
      */
-    public static function info($product_id, $language = 'cn') {
+    public static function info($product_id, $language = 'cn')
+    {
 
         $info = DB::table('products as p')->left_join('products_extensions as pe', 'p.id', '=', 'pe.product_id')
                                           ->where('p.id', '=', $product_id)
@@ -52,6 +54,7 @@ class Product {
             }
             $info->images = $img;
         }
+
         return $info;
     }
 
@@ -62,7 +65,8 @@ class Product {
      *
      * return bool
      */
-    public static function insert($data) {
+    public static function insert($data)
+    {
         return DB::table('products')->insert($data);
     }
 
@@ -73,7 +77,8 @@ class Product {
      *
      * return integer
      */
-    public static function insertGetId($data) {
+    public static function insertGetId($data)
+    {
         return DB::table('products')->insert_get_id($data);
     }
 
@@ -86,7 +91,8 @@ class Product {
      *
      * return array
      */
-    public static function import($filepath) {
+    public static function import($filepath)
+    {
         try {
             $import = new Import('product', $filepath);
             $result = ['status' => 'success', 'message'=> '导入成功！'];
@@ -111,7 +117,8 @@ class Product {
      *
      * return bool
      */
-    public static function update($product_id, $data) {
+    public static function update($product_id, $data)
+    {
         return DB::table('products')->where('id', '=', $product_id)->update($data);
     }
 
@@ -122,7 +129,8 @@ class Product {
      *
      * return object
      */
-    public static function language($product_id) {
+    public static function language($product_id)
+    {
         return DB::table('products_extensions')->where('product_id', '=', $product_id)->lists('language');
     }
 
@@ -133,7 +141,8 @@ class Product {
      *
      * return bool
      */
-    public static function delete($product_id) {
+    public static function delete($product_id)
+    {
         return DB::table('products')->delete($product_id);
     }
 }

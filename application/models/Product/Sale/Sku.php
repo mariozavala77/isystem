@@ -19,8 +19,10 @@ class Product_Sale_Sku
      */
     public static function filter($fields, $filter = [])
     {
-        $query = DB::table('products_sale_sku as psku')->left_join('products_sale as ps', 'ps.id', '=', 'psku.psid')
-                                                       ->select($fields);
+        $query = DB::table('products_sale_sku as pss')->left_join('products_sale as ps', 'ps.id', '=', 'pss.sale_id')
+                                                      ->left_join('agents as a', 'a.id', '=', 'ps.agent_id')
+                                                      ->left_join('channels as c', 'c.id', '=', 'pss.channel_id')
+                                                      ->select($fields);
 
         foreach($filter as $key => $value) {
             $query->where($key, '=', $value);
@@ -59,8 +61,9 @@ class Product_Sale_Sku
      */
     public static function info($sale_id)
     {
-        return DB::table('products_sale_sku as psku')->left_join('products_sale as ps', 'ps.id', '=', 'psku.psid')
-                                                     ->where('psku.id', '=', $sale_id)
+        return DB::table('products_sale_sku as pss')->left_join('products_sale as ps', 'ps.id', '=', 'pss.sale_id')
+                                                     ->select(['pss.*', 'ps.title', 'ps.price', 'ps.keywords', 'ps.short_description', 'ps.description'])
+                                                     ->where('pss.id', '=', $sale_id)
                                                      ->first();
     }
 
@@ -90,8 +93,8 @@ class Product_Sale_Sku
         return DB::table('products_sale_sku')->where('sku', '=', $sku)->only('product_id');
     }
 
-    public static function existence($psid, $channel_id){
-        return DB::table('products_sale_sku')->where('psid', '=', $psid)
+    public static function existence($sale_id, $channel_id){
+        return DB::table('products_sale_sku')->where('sale_id', '=', $sale_id)
                                              ->where('channel_id', '=', $channel_id)
                                              ->only('id');
     }
