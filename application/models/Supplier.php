@@ -72,4 +72,13 @@ class Supplier {
     public static function delete($supplier_id){
         return DB::table('suppliers')->where('id', '=', $supplier_id)->delete();
     }
+    
+    /**
+     * 获取供应商的个数
+     *
+     * return integer
+     */
+    public static function total() {
+        return DB::table('suppliers')->count();
+    }    
 }

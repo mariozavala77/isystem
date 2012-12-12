@@ -101,6 +101,7 @@ class Product_Sale_Controller extends Base_Controller {
         }
 
         $sale_info = Product_Sale_Sku::info($sale_id);
+        $sale = Product_Sale::info($sale_info->sale_id);
 
         if(empty($sale_info)){
             return Response::json(['status' => 'fail', 'message' => '没有找到销售产品的记录']);
@@ -111,7 +112,7 @@ class Product_Sale_Controller extends Base_Controller {
         $channel = Channel::info($sale_info->channel_id);
         
         $sale_info->channel = $channel->name;
-        $sale_info->agent = Agent::info($sale_info->agent_id);
+        $sale_info->agent = Agent::info($sale->agent_id);
 
         return Response::json(['status' => 'success', 'message' => $sale_info]);
     }

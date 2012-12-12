@@ -79,15 +79,9 @@ var task_mod ='{{$task->type}}';
                     <tr>
                         @if (empty($task->handle))
                             <td colspan="3">任务尚未解决
-                                @if($task->to_uid == $user_id)
-                                    <a class="buttonS bGreen tipS" href="javascript:void(0);" title="标记已经解决任务" id="handle">已近解决</a>
-                                @endif
                                 </td>
                         @else
                             <td>解决时间：</td><td colspan="2">{{$task->modified_at}}
-                                @if($task->from_uid == $user_id and $task->handle == 1)
-                                    <a class="buttonS bRed tipS" href="javascript:void(0);" title="问题尚未解决重新打开" id="open">重新打开</a>
-                                @endif
                             </td>
                         @endif
                             <td>任务领取：</td>
@@ -165,51 +159,6 @@ var task_mod ='{{$task->type}}';
 <textarea rows="8" cols="" name="textarea" class="auto" placeholder="备注" id="message"></textarea></p>
 </div>
 <!--delete confirm ends-->
-<!-- 创建任务 begins -->
-<div id="task_confirm" style="display:none" title="创建新任务">
-    <div class="formRow">
-        <label>任务类型：</label>
-        <select name="type" id="task_type" >
-            <option value="product">产品类</option>
-            <option value="product_sale">代理商销售</option>
-            <option value="order">订单类</option>
-        </select>
-    </div>
-    <div class="formRow">
-        <label>任务分派：</label>
-        <select name="to_uid" id="task_to_uid">
-            @foreach($users as $user)
-                <option value="{{$user->id}}">{{$user->username}}</option>
-            @endforeach
-        </select>
-    </div>
-    <div class="formRow">
-        <div class="grid12">
-            <div class="sliderSpecs">
-                <label for="task_level" style="font-size:12px">紧急程度：</label><input type="text" id="task_level" />
-                <div class="clear"></div>
-            </div>
-            <div class="uMin"></div>
-        </div>
-        <div class="clear"></div>
-    </div>
-    <div class="formRow">
-        <label>实际id：</label>
-        <input type="text" name="entity_id" id="task_entity_id" placeholder="订单ID或者产品ID" class="validate[required]">
-    </div>
-    <div class="formRow">
-        <label>任务内容：</label>
-        <textarea name="content" id="task_content" class="validate[required]"></textarea>
-    </div>
-    <div class="formRow">
-            <div class="grid12">
-                <input type="radio" id="task_channel" name="task_channel" value="1"/><label for="radio1"  class="mr20">任务</label>
-                <input type="radio" id="task_channel_sun" name="task_channel" checked="checked" value="0" /><label for="radio2"  class="mr20">子任务</label>
-            </div>
-        <div class="clear"></div>
-    </div>
-</div>
-<!-- 创建任务 ends -->
 <div id="task_finish" style="display:none" title="提示">
     <p>你确认标记此任务已完成?</p>
 </div>

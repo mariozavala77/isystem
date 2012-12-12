@@ -145,4 +145,13 @@ class Product {
     {
         return DB::table('products')->delete($product_id);
     }
+
+    /**
+     * 获取产品池的个数
+     *
+     * return integer
+     */
+    public static function total() {
+        return DB::table('products')->count();
+    }    
 }

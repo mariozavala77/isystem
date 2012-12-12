@@ -22,7 +22,7 @@ class Tasks {
 
         foreach ($filter as $key => $value) {
             if(!empty($value)){
-                $query->where($key, '=', $value);
+                $query = $query->where($key, '=', $value);
             }
         }
 
@@ -72,7 +72,7 @@ class Tasks {
      */
     public static function statistics($user_id=0)
     {
-        $fields = [DB::raw('COUNT(`id`) AS total'), 'handle']
+        $fields = [DB::raw('COUNT(`id`) AS total'), 'handle'];
         return DB::table('tasks')->select($fields)->group_by('handle')->get();
     }
 }

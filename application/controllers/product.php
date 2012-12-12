@@ -242,7 +242,7 @@ class Product_Controller extends Base_Controller {
         $devel = User::info($product_info->devel_id);
 
         $product_info->devel = $devel->username;
-        if(Response::ajax()){
+        if(Request::ajax()){
             return Response::json(['status'=>'success', 'message'=>$product_info]);
         }else{
             return View::make('product.info')->with('product_info', $product_info)

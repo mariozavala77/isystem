@@ -11,7 +11,9 @@ class Task_Controller extends Base_Controller {
     
     // 任务列表
     public function action_index() {
-        return View::make('task.index');
+        $fields = ['id', 'username'];
+        $users = User::filter($fields)->get();
+        return View::make('task.index')->with('users', $users);
     }
 
     // 列表

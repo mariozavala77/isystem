@@ -76,6 +76,16 @@ class Statistics_Controller extends Base_Controller {
         $purchased=$purchased[0];
         $data['statistics']['ORDER']=$purchased->total;
         $data['statistics']['ORDER_PRICE']='$'.$purchased->price;
+        $data['statistics']['AGENT']=Agent::total();
+        $data['statistics']['SUPPLIER']=Supplier::total();
+        $data['statistics']['PRODUCT']=Product::total();
+        $data['statistics']['SALE_PRODUCT']=Product_Sale::productTotal();
+        $tasks = Tasks::statistics();
+        foreach ($tasks as $value) {
+            $key = $value->handle?'TASKS_HANDLE':'TASKS_UNHANDLED';
+            $data['statistics'][$key]=$value->total;
+        }
+        //exit;
 
         return Response::json($data);
     }

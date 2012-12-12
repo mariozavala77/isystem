@@ -39,7 +39,7 @@
                 </div>
                 <div class="body" style="padding:0;">
                     <ul class="wInvoice" style="border:0;margin:0;">
-                        <li style="width:100%"><h4 class="green" data="ORDER_PRICE">$2,500,593</h4><span>订单总额</span></li>
+                        <li style="width:100%"><h4 class="green" field="ORDER_PRICE">$0</h4><span>订单总额</span></li>
                     </ul>
                 </div>
             </div>
@@ -51,8 +51,8 @@
                 </div>
                 <div class="body" style="padding:0;">
                     <ul class="wInvoice" style="border:0;margin:0;">
-                        <li style="width:50%"><h4 class="green">56</h4><span>已处理</span></li>
-                        <li style="width:50%"><h4 class="red">18</h4><span>未处理</span></li>
+                        <li style="width:50%"><h4 class="green" field="TASKS_HANDLE">0</h4><span>已处理</span></li>
+                        <li style="width:50%"><h4 class="red" field="TASKS_UNHANDLED">0</h4><span>未处理</span></li>
                     </ul>
                 </div>
             </div>
@@ -64,8 +64,8 @@
                 </div>
                 <div class="body" style="padding:0;">
                     <ul class="wInvoice" style="border:0;margin:0;">
-                        <li style="width:50%"><h4 class="green">493</h4><span>产品池</span></li>
-                        <li style="width:50%"><h4 class="red">3859</h4><span>在售商品</span></li>
+                        <li style="width:50%"><h4 class="green" field="PRODUCT">0</h4><span>产品池</span></li>
+                        <li style="width:50%"><h4 class="red" field="SALE_PRODUCT">0</h4><span>在售商品</span></li>
                     </ul>
                 </div>
             </div>
@@ -83,8 +83,8 @@
                 </div>
                 <div class="body" style="padding:0;">
                     <ul class="wInvoice" style="border:0;margin:0;">
-                        <li style="width:50%"><h4 class="green">765</h4><span>供应商</span></li>
-                        <li style="width:50%"><h4 class="red">15</h4><span>代理商</span></li>
+                        <li style="width:50%"><h4 class="green" field="SUPPLIER">0</h4><span>供应商</span></li>
+                        <li style="width:50%"><h4 class="red" field="AGENT">0</h4><span>代理商</span></li>
                     </ul>
                 </div>
             </div>                                                            
@@ -97,12 +97,12 @@
             </div>
             <div class="body" style="padding:0;">
                 <ul class="wInvoice" style="border:0;margin:0;">
-                    <li style="width:16.5%"><h4 class="green" data="ORDER">63,734</h4><span>总数</span></li>
-                    <li style="width:16.5%"><h4 class="red" data="ORDER_PENDING">46</h4><span>待付款</span></li>
-                    <li style="width:16.5%"><h4 class="red" data="ORDER_UNSHIPPED">187</h4><span>未发货</span></li>
-                    <li style="width:16.5%"><h4 class="red" data="ORDER_PARTIALLYSHIPPED">837</h4><span>部分发货</span></li>
-                    <li style="width:16.5%"><h4 class="red" data="ORDER_CANCELED">16</h4><span>已取消</span></li>
-                    <li style="width:16.5%"><h4 class="red" data="UNFULFILLABLE">7</h4><span>无法处理</span></li>
+                    <li style="width:16.5%"><h4 class="green" field="ORDER">0</h4><span>总数</span></li>
+                    <li style="width:16.5%"><h4 class="red" field="ORDER_PENDING">0</h4><span>待付款</span></li>
+                    <li style="width:16.5%"><h4 class="red" field="ORDER_UNSHIPPED">0</h4><span>未发货</span></li>
+                    <li style="width:16.5%"><h4 class="red" field="ORDER_PARTIALLYSHIPPED">0</h4><span>部分发货</span></li>
+                    <li style="width:16.5%"><h4 class="red" field="ORDER_CANCELED">0</h4><span>已取消</span></li>
+                    <li style="width:16.5%"><h4 class="red" field="UNFULFILLABLE">0</h4><span>无法处理</span></li>
                 </ul>
             </div>
         </div>
@@ -151,9 +151,9 @@ function orders_chart(order_data) {
     graph.bullet = "round";
     slibe.addGraph(graph);
     var graph = new AmCharts.AmGraph();
-    graph.title = "当日支付累计金额支付量";
+    graph.title = "当日已支付累计金额";
     graph.valueField = "unshipped_price";
-    graph.balloonText = "当日支付累计金额[[value]]";
+    graph.balloonText = "当日已支付累计金额[[value]]";
     graph.hideBulletsCount = 20;
     graph.lineAlpha = 1;
     graph.bullet = "round";
@@ -188,6 +188,10 @@ function orders_chart(order_data) {
 function get_main(){
     $.getJSON('/statistics/main',function(data){
         orders_chart(data.chart);
+        var statistics = data.statistics;
+        for(i in statistics) {
+            $('.wInvoice').find('[field="'+i+'"]').html(statistics[i]);
+        }
     });
 }
 $(function() {

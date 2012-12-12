@@ -102,4 +102,13 @@ class Agent {
         return DB::table('agents')->where('channel_id', '=', $channel_id)
                                   ->only('id');
     }
+
+    /**
+     * 获取代理商的个数
+     *
+     * return integer
+     */
+    public static function total() {
+        return DB::table('agents')->count();
+    }
 }

@@ -97,4 +97,15 @@ class Product_Sale {
                                                      ->update($data);
         return $sku_result && $sale_result;
     }
+
+    /**
+     * 获取在售的商品个数
+     *
+     * return integer
+     */
+    public static function productTotal(){
+        $sql = DB::table('products_sale');
+        $sql = $sql->select([DB::raw('count(distinct `product_id`) as total')])->get();
+        return $sql[0]->total;
+    }
 }

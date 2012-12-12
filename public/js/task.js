@@ -76,9 +76,62 @@ $(function() {
             }
         }
     });
+    $('#task_confirm').dialog({
+        autoOpen: false,
+        resizable:false,
+        modal: true,
+        buttons: {
+            "提交": function () {
+                push_task();
+            },
+            "取消": function () {
+                $(this).dialog("close");
+            }
+        }
+    });
+    $('#bulidtask').click(function(){
+       $('#task_confirm').dialog('open'); 
+    });
+    $( ".uMin" ).slider({ /* Slider with minimum */
+        range: "min",
+        value: 0,
+        min: 0,
+        max: 9,
+        slide: function( event, ui ) {
+            $( "#task_level" ).val(ui.value );
+        }
+    });        
 });
 function handle(id){
     task_id = id;
     $('#task_finish_confirm').dialog('open');
     return false;
+}
+function push_task(){
+    var task_type = $('#task_type option:selected').val();
+    var task_entity_id = $('#task_entity_id').val();
+    var task_level = $('#task_level').val();
+    var task_to_uid =$('#task_to_uid option:selected').val();
+    var task_content =$('#task_content').val();
+    var task_channel = $('input[name="task_channel"]:checked').val();
+    if (task_channel==0) {
+        if(empty(task_entity_id)){
+            $.jGrowl('请填写实际id！');
+            $('#task_level').focus();
+            return false;
+        }
+    }
+    if(empty(task_content)){
+        $.jGrowl('请填写任务内容！');
+        $('#task_content').focus();
+        return false;
+    }
+
+    task_entity_id = (task_channel==0)?entity_id:task_entity_id;
+    var parent_id = (task_channel==0)?task_id:0;
+
+    $.post('/task/insert',{to_uid:task_to_uid,parent_id:parent_id,type:task_type,entity_id:task_entity_id,content:task_content,level:task_level},function(response){
+        $('#task_confirm').dialog('close');
+            $.jGrowl(response.message);
+    },'json');
 }
