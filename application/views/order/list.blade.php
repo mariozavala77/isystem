@@ -98,8 +98,8 @@
                 @endforeach
                 source_select += '</select>';
 
-                $('#filter_order_entity_id').html('<input class="order_search" type="text" index="1">');
-                $('#filter_order_name').html('<input class="order_search" type="text" index="2">');
+                $('#filter_order_entity_id').html('<input class="order_search" type="text" index="1"/>');
+                $('#filter_order_name').html('<input class="order_search" type="text" index="2"/>');
                 $('#filter_order_country').html(country_select);
                 $('#filter_order_status').html(status_select);
                 $('#filter_order_source').html(source_select);

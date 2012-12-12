@@ -68,6 +68,19 @@ class Product_Sale_Sku
     }
 
     /**
+     * 生成SKU
+     */
+    public static function generateSku() {
+        $sku = 'UFC' . Str::upper('-' . Str::random(4) . '-' . Str::random(4));
+        $sale_sku_id = DB::table('products_sale_sku')->where('sku', '=', $sku)->only('id');
+        if($sale_sku_id) {
+            $sku = static::makeSku();
+        }
+
+        return $sku;
+    }
+
+    /**
      * 是否上架在售
      *
      * @param: $product_id integer 产品ID
@@ -83,6 +96,69 @@ class Product_Sale_Sku
     }
 
     /**
+     * 产品上架处理
+     *
+     * @param: $channel_id  integer 渠道ID
+     * @param: $sale_sku_id integer SKU映射ID
+     *
+     * return array
+     */
+    public static function listing($channel_id, $sale_sku_id)
+    {
+        $datetime = date('Y-m-d H:i:s');
+        $result   = ['status'=>'fail', 'message'=>'上架失败！'];
+
+        $info = Product_Sale_Sku::info($sale_sku_id);
+        $sale_sku_id = Product_Sale_Sku::onSale($info->product_id, $channel_id);
+
+
+        if($sale_sku_id) {
+            $data = ['is_sold' => 1];
+            Product_Sale_Sku::update($sale_sku_id, $data);
+            
+        } else {
+            $sku = Product_Sale_Sku::generateSku();
+
+            $data = [
+                'channel_id' => $channel_id,
+                'product_id' => $info->product_id,
+                'sale_id'    => $info->sale_id,
+                'is_sold'    => 1,
+                'sold_at'    => $datetime,
+                'sku'        => $sku,
+                ];
+            $sale_sku_id = Product_Sale_Sku::insert($data);
+        }
+       
+        if($sale_sku_id) {
+
+            $params = static::queueParams($channel_id, $sale_sku_id);
+
+            $data = [
+                    'type'       => 'product',
+                    'action'     => 'listing',
+                    'entity_id'  => $sale_sku_id,
+                    'channel_id' => $channel_id,
+                    'params'     => serialize($params),
+                    'created_at' => $datetime,
+                    ];
+
+            if(Queue::insert($data)) {
+                $result = ['status'=>'success', 'message'=>'上架成功！'];
+            } else {
+                $data = [
+                    'user_id' => $this->id,
+                    'content' => printf('SKU为%s的产品上架失败！', $sku),
+                    'created_at' => $datetime,
+                    ];
+                Logs::insert($data);
+            }
+        }
+
+        return $result;
+    }
+
+    /**
      * 通过在售产品SKU获取产品池ID
      *
      * @param: $sku string 在售产品SKU
@@ -91,6 +167,30 @@ class Product_Sale_Sku
      */
     public static function map($sku) {
         return DB::table('products_sale_sku')->where('sku', '=', $sku)->only('product_id');
+    }
+
+    /**
+     * 构造队列参数
+     *
+     * @param: $channel_id  integer 渠道ID
+     * @param: $sale_sku_id integer 销售ID
+     *
+     * return array
+     */
+    public static function queueParams($channel_id, $sale_sku_id)
+    {
+        $channel   = Channel::info($channel_id);
+        $sale_info = (array)Product_Sale_Sku::info($sale_sku_id);
+        $sale_info['images'] = (array)Product_Image::get($sale_info['product_id']);
+
+        $params = [
+            'class'      => $channel->type,
+            'channel_id' => $channel_id,
+            'options'    => unserialize($channel->accredit),
+            'params'     => $sale_info,
+            ];
+
+        return $params;
     }
 
     public static function existence($sale_id, $channel_id){
