@@ -78,17 +78,9 @@ class Product_Sale_Controller extends Base_Controller {
         $channel_id  = Input::get('channel_id');
         $sale_sku_id = Input::get('sale_sku_id');
 
-        $info = Product_Sale_Sku::info($sale_sku_id);
-        $sale_sku_id = Product_Sale_Sku::onSale($info->product_id, $channel_id);
+        $result = Product_Sale_Sku::listing($channel_id, $sale_sku_id);
 
-        $result = ['status'=>'fail', 'message'=>'上架失败！'];
-
-        if($sale_sku_id) {
-            
-        } else {
-        
-        }
-    
+        return Response::json($result);
     }
 
     // 代理商认购商品信息
