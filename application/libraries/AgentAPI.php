@@ -183,7 +183,7 @@ class AgentAPI{
                 throw new AgentAPIException('无效代理商', -32001);
             }
             
-            $interface = 'AgentAPI_' . $interface;
+            $interface = 'AgentAPI_' . ucfirst($interface);
             $param['value']= $params;
             $result=call_user_func_array([$interface, $action], $param);
             if($result === FALSE){
