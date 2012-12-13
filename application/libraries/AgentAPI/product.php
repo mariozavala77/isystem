@@ -97,7 +97,7 @@ class AgentAPI_Product extends AgentAPI_Base
             if($requslt){
                 $sale_id = Product_Sale_Sku::existence($product_sale_id, $agent_info->channel_id);
                 if(empty($sale_id)){
-                    $sale_info['psid'] = $product_sale_id;
+                    $sale_info['sale_id'] = $product_sale_id;
                     $sale_info['sold'] = 1;
                     $sale_info['sold_at'] = date('Y-m-d H:i:s');
                     Product_Sale_Sku::insert($sale_info);
@@ -115,7 +115,7 @@ class AgentAPI_Product extends AgentAPI_Base
             if($requset){
                 $sale_id = Product_Sale_Sku::existence($requset, $agent_info->channel_id);
                 if(empty($sale_id)){
-                    $sale_info['psid'] = $requset;
+                    $sale_info['sale_id'] = $requset;
                     $sale_info['sold'] = 1;
                     $sale_info['sold_at'] = date('Y-m-d H:i:s');
                     Product_Sale_Sku::insert($sale_info);
