@@ -238,6 +238,7 @@ class ChannelAPI_Amazon_Order {
                 }
             }
         } else {
+            print_r($data);
             Throw new Amazon_Exception("抓取订单产品失败。[Entity ID:]{$options['AmazonOrderId']}");
         }
 

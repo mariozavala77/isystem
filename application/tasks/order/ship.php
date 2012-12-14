@@ -36,6 +36,12 @@ class Task_Order_Ship {
         $fields = ['id', 'entity_id', 'params'];
         $filter = ['type' => 'order', 'action'=> 'ship', 'status' => 0];
         $queues = Queue::filter($fields, $filter)->get();
+        // 过滤外部渠道
+        foreach($queues as $index => $queue) {
+            if(in_array($queue->channel_id, $out_channels)) {
+                unset($queues[$index]);
+            }
+        }
         if(!empty($queues)) Order::updateAgentChannel($queues, ORDER_SHIPPED);
     }
 }

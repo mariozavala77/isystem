@@ -76,7 +76,6 @@ Autoloader::map(array(
 Autoloader::directories(array(
     path('app').'models',
     path('app').'libraries',
-    path('app').'sync',
     path('app').'helpers',
 ));
 
