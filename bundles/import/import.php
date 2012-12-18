@@ -81,16 +81,6 @@ class Import {
     }
 
     /**
-     * 返回数据
-     *
-     * return array
-     */
-    public function data() {
-        return ;
-    }
-
-    
-    /**
      * 初始化配置
      *
      * @param: $config string 配置名称
@@ -200,7 +190,12 @@ class Import {
 
         // 表头验证
         $headers = array_shift($this->_data);
-        if($headers != $this->_headers) $this->_exception(__('import::import.not_a_standard_file'));
+        $new_headers = [];
+        foreach($headers as $index => $header) {
+            if($header)
+                $new_headers[$index] = $header;
+        }
+        if($new_headers != $this->_headers) $this->_exception(__('import::import.not_a_standard_file'));
 
         // 数据验证
         $this->_messages = Config::get('import::error');  // 验证提示
@@ -246,8 +241,7 @@ class Import {
             } else {
                 $data = array_merge($data, Config::get('import::import.transduce'));
                 // 存储
-                if(! is_null($this->_key) && ! is_null($this->_case) ) {
-                    // var_dump($data[$this->_case] == $this->_key); die;
+                if(! is_null($this->_key) && ! is_null($this->_case) ) { // 有场景处理
                     // 如果是主要版本
                     if($data[$this->_case] == $this->_key) {
 
@@ -257,7 +251,7 @@ class Import {
                         foreach($this->_storage as $table => $fields) {
 
                             // 如果是 one to many
-                            if(isset($fields['relation_tables'])) {
+                            if(isset($fields['relation_tables']) && !empty($fields['relation_tables'])) {
 
                                 $table_data = $this->_data($fields['fields'], $data);
                                 $exists_id = $this->_data_exists($table, $fields['uniques'], $data);
@@ -281,9 +275,51 @@ class Import {
                     
                     
                     }
+                } else { // 无场景处理
+                    foreach($this->_storage as $table => $fields) {
+                        // one to one
+                        if(!isset($fields['relation_tables']) || empty($fields['relation_tables'])) {
+                            $table_data = $this->_data($fields['fields'], $data);
+                            $exists_id = $this->_data_exists($table, $fields['uniques'], $data);
+
+                            if($exists_id) {
+                                DB::table($table)->where('id', '=', $exists_id)->update($table_data);
+                            } else {
+                                DB::table($table)->insert($table_data);
+                            }
+                        }
+                    
+                    }
                 }
             }
         }
+    }
+
+    /**
+     * 去掉二维数组的空值
+     *
+     * @param: $data array 表格数据
+     *
+     * return array
+     */
+    private function _trim($data) {
+        foreach($data as $index => $datum) {
+            $is_empty = true;
+            foreach($datum as $i => $d) {
+                if($d != '') {
+                    $is_empty = false; 
+                } else {
+                    unset($datum[$i]);
+                }
+            }
+
+            if($is_empty) 
+                unset($data[$index]);
+            else
+                $data[$index] = $datum;
+        }
+
+        return $data;
     }
 
     /**
@@ -331,7 +367,7 @@ class Import {
     private function _data($fields, $source, $f=0) {
         foreach($fields as $key => $value) {
             if(preg_match('/^\d+$/', $key)) {
-                if($source[$value]) $data[$value] = $source[$value];
+                if($source[$value] != '') $data[$value] = $source[$value];
             } else {
                 $data[$key] = $this->_value($value);
             }
@@ -397,32 +433,8 @@ class Import {
     }
 
     /**
-     * 过滤空数据
-     *
-     * @param: $data array 读取Excel的row记录
-     *
-     * return array
-     */
-    private function _trim($data) {
-        $count = count($this->_fields);
-        foreach($data as $index => $datum) {
-            $i = 0;
-            foreach($datum as $idx => $value) {
-                $value = trim($value);
-                if(empty($value)) $i++;
-                $data[$index][$idx] = $value;
-            }
-
-            // 删除全空的行
-            if($i == $count) unset($data[$index]);
-        }
-
-        return $data;
-    }
-
-    /**
      * 抛出导入包异常
-     *
+     *data
      * @param: $message string 消息
      *
      * @throws: ImportException

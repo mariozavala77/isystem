@@ -73,4 +73,24 @@ class Stock_Controller extends Base_Controller
         return Response::json($result);
     }
 
+    // 导入仓库信息
+    public function action_import()
+    {
+        return View::make('stock.import');
+    }
+
+    // 导入仓库信息处理
+    public function action_do_import()
+    {
+        $file = Input::file('file');
+        $filename = UploadHelper::rename($file['name'], 'timestamp');
+        $success = Input::upload('file', path('stock_import'), $filename);
+
+        $result = ['status' => 'fail', 'message' => '文件上传失败！'];
+
+        if($success)
+            $result = Stock::import(path('stock_import').$filename);
+
+        return Response::json($result);
+    }
 }

@@ -179,9 +179,10 @@ if ( ! Request::cli() and Config::get('session.driver') !== '')
 
 
 // --------------------------------------------------------------
-// 定义产品导入文件存放目录
+// 导入文件存放目录
 // --------------------------------------------------------------
-set_path('product_import', path('storage').'products'.DS.'import'.DS.date('Ymd').DS);
+set_path('product_import', path('storage').'import'.DS.'products'.DS.date('Ymd').DS);
+set_path('stock_import', path('storage').'import'.DS.'stocks'.DS.date('Ymd').DS);
 
 // --------------------------------------------------------------
 // 定义产品图片存放目录
