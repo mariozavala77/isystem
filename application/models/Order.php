@@ -95,10 +95,11 @@ class Order {
         foreach($channels as $channel) {
             $interface = $channel->type;
             $options = unserialize($channel->accredit);
+            $options['LastUpdatedAt'] = $channel->synced_at;
             $api = new ChannelAPI($interface, $options);
 
             // 订单处理
-            $data = $api->order()->sync(['LastUpdatedAt' => $channel->synced_at]);
+            $data = $api->order()->sync();
             if(!empty($data['data'])) {
                 foreach($data['data'] as $datum) {
 
@@ -113,7 +114,23 @@ class Order {
                                 }
                             }
                             $datum['is_synced'] = 1;
+                            $items = [];
+                            if(isset($datum['items'])) {
+                                $items = $datum['items'];  
+                                unset($datum['items']);
+                            }
                             static::update($order_info->id, $datum);
+                            if(!$order_info->is_crawled && !empty($items)) {
+                                foreach($items as $item) {
+                                    if(Item::exists($order_info->id, $item['entity_id'])) {
+                                        $item['order_id'] = $order_info->id;
+                                        Item::insert($item);
+                                    }
+                                }
+
+                                $update_data = ['is_crawled' => 1];
+                                static::update($order_info->id, $update_data);
+                            }
                         } 
 
                     // 新订单处理
@@ -121,14 +138,27 @@ class Order {
                         $datum['created_at']  = date('Y-m-d H:i:s');
                         $datum['modified_at'] = date('Y-m-d H:i:s');
                         $datum['is_synced'] = 1;
-                        static::insert($datum);
+                        if(isset($datum['items'])) {
+                            $items = $datum['items'];  
+                            unset($datum['items']);
+                        }
+                        $order_id = static::insert($datum);
+                        if(!empty($items)) {
+                            foreach($items as $item) {
+                                if(Item::exists($order_id, $item['entity_id'])) {
+                                    $item['order_id'] = $order_id;
+                                    Item::insert($item);
+                                }
+                            }
+                            $update_data = ['is_crawled' => 1];
+                            static::update($order_id, $update_data);
+                        }
                     }
                 }
             }
             Channel::update($channel->id, ['synced_at' => $data['synced_at']]);
         }
 
-        Item::sync($channels);
         return ['status' => 'success', 'message' => ''];
     }
 

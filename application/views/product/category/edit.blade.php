@@ -27,21 +27,6 @@
     </div>
     <!-- Breadcrumbs line ends -->
 
-    <script type="text/javascript">
-        $(function(){
-            var categories = eval('(' + '{{$categories}}' + ')');
-            var category_id = {{ $category->id }};
-
-            var select = '<option value>--请选择--</option>';
-            for(var i in categories) {
-                select += '<option value="' + categories[i].id + '">' + categories[i].name + '</option>';
-            }
-
-            $('#category').html(select);
-
-
-        });
-    </script>
 
     <!-- Main content bigins -->
     <div class="wrapper">
@@ -52,7 +37,45 @@
                     <div class="whead"><h6>编辑分类</h6><div class="clear"></div></div>
                     <div class="formRow">
                         <div class="grid3"><label>所在分类：</label></div>
-                        <div class="grid9">{{ Category::name($category->id) }}<span id="category_modify" class="ml20 bDefault buttonS">修改</span><input type="hidden" name="parent_id" value="{{$category->parent_id}}"></div>
+                        <div class="grid9" id="category">
+                            {{ Category::name($category->id) }}
+                            <input type="hidden" name="parent_id" value="{{$category->parent_id}}">
+                            <a id="category_edit" class="ml20">[ 修改 ]</a>
+                        </div>
+                            <script type="text/javascript">
+                            $(function(){
+                                $('#category_edit').click(function(){
+                                    var edit = '<select name="parent_id" class="category"><option value="0">顶级分类</option>@foreach($categories as $c)<option value="{{$c->id}}">{{$c->name}}</option>@endforeach</select>';
+                                    $('#category').html(edit).children().uniform();
+                                });
+
+                                // 选择分类
+                                $('.category').live('change', function() {
+                                    var select = $(this).parent();
+                                    select.nextAll().remove();
+                                    var category_id = $(this).val();
+                                    if(category_id != '' && category_id != '0') {
+                                        select.prev().find('select').attr('name','');
+                                        $.ajax({
+                                            url: '{{ URL::to('product/category/children')}}',
+                                            data: {category_id: category_id},
+                                            success: function( data) {
+                                                if(data.length > 0) {
+                                                    var new_select = '<select class="category"><option value>--请选择--</option>';
+                                                    for(i in data) {
+                                                        new_select += '<option value="' + data[i].id + '">' + data[i].name + '</option>';
+                                                    }
+                                                    new_select += '</select>';
+                                                    select.after(new_select);
+                                                    select.next().uniform().parent().css('margin-left', '5px');
+                                                }
+                                            }
+                                        });
+                                        select.find('select').attr('name', 'parent_id');
+                                    }
+                                });
+                            });
+                            </script>
                         <div class="clear"></div>
                     </div>
                     <div class="formRow">

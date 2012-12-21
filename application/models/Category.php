@@ -21,6 +21,18 @@ class Category {
     }
 
     /**
+     * 分类添加
+     *
+     * @param: $data array 分类数据
+     *
+     * return integer
+     */
+    public static function insert($data)
+    {
+        return DB::table('category')->insert_get_id($data);
+    }
+
+    /**
      * 产品分类更新
      *
      * @param: $category_id integer 类别ID
@@ -30,6 +42,18 @@ class Category {
      */
     public static function update($category_id, $data) {
         return DB::table('category')->where('id', '=', $category_id)->update($data);
+    }
+
+    /**
+     * 删除分类
+     *
+     * @param: $category_id integer 分类ID
+     *
+     * return void
+     */
+    public static function delete($category_id)
+    {
+        DB::table('category')->where('id', '=', $category_id)->delete();
     }
 
     /**

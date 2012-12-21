@@ -36,7 +36,11 @@ class Product_Category_Controller extends Base_Controller {
 
     // 类别添加
     public function action_add() {
-        return View::make('product.category.add');
+        $fields = ['id', 'name'];
+        $filter = ['parent_id' => 0];
+        $categories = Category::filter($fields, $filter)->get();
+
+        return View::make('product.category.add')->with('categories', $categories);
     }
 
     // 插入 
@@ -44,20 +48,25 @@ class Product_Category_Controller extends Base_Controller {
         $data = [
            'parent_id' => Input::get('parent_id'), 
            'name'      => Input::get('name'),
+           'sort'      => Input::get('sort'),
             ];
 
         Category::insert($data);
     
-        return Redirect::to('category');
+        return Redirect::to('product/category');
     }
 
     // 编辑
     public function action_edit() {
         $category_id = Input::get('category_id');
         $category = Category::info($category_id);
-        $categories = json_encode(Category::children());
+        $children = json_encode(Category::children());
+        $fields = ['id', 'name'];
+        $filter = ['parent_id' => 0];
+        $categories = Category::filter($fields, $filter)->get();
 
         return View::make('product.category.edit')->with('category', $category)
+                                                  ->with('children', $children)
                                                   ->with('categories', $categories);
     }
 
@@ -66,7 +75,8 @@ class Product_Category_Controller extends Base_Controller {
         $category_id = Input::get('category_id');
         $data = [
             'parent_id' => Input::get('parent_id'),
-            'name' => Input::get('name'),
+            'name'      => Input::get('name'),
+            'sort'      => Input::get('sort'),
             ];
 
         Category::update($category_id, $data);

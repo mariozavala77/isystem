@@ -18,7 +18,7 @@
             <ul id="breadcrumbs" class="breadcrumbs">
                 <li><a href="{{ URL::base() }}">控制中心</a></li>
                 <li><a href="{{ URL::to('product') }}">产品管理</a></li>
-                <li class="current"><a href="{{ URL::to('product/category') }}">分类管理</a></li>
+                <li class="current"><a href="{{ URL::to('product/category') }}">分类管理1</a></li>
             </ul>
         </div>
         
@@ -28,6 +28,12 @@
 
     <!-- Main content begins -->
     <div class="wrapper">
+
+        <div class="mt15">
+            <a href="{{ URL::to('product/category/add') }}" class="buttonM bDefault floatR ml10"><span class="icon-plus-2"></span><span>添加分类</span></a>
+            <div class="clear"></div>
+        </div>
+
         <div class="widget">
             <div class="whead"><h6>分类列表</h6><div class="clear"></div></div>
             <div class="shownpars">

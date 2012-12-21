@@ -69,7 +69,7 @@ return array(
 
         'mysql' => array(
             'driver'   => 'mysql',
-            'host'     => '192.168.1.110',
+            'host'     => 'localhost',
             'database' => 'ufc_isystem',
             'username' => 'root',
             'password' => '123456',

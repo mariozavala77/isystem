@@ -33,7 +33,7 @@ class User_Controller extends Base_Controller {
 
     // 添加用户
     public function action_insert() {
-    
+        User::add('refone', 'admin2012', 'admin@ufcec.com');
     }
 
     // 编辑用户
