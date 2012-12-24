@@ -144,14 +144,19 @@ class Order {
                         }
                         $order_id = static::insert($datum);
                         if(!empty($items)) {
+                            $status = true;
                             foreach($items as $item) {
-                                if(Item::exists($order_id, $item['entity_id'])) {
+                                if(!Item::exists($order_id, $item['entity_id'])) {
                                     $item['order_id'] = $order_id;
-                                    Item::insert($item);
+                                    if(!Item::insert($item))
+                                        $status = false;
                                 }
                             }
-                            $update_data = ['is_crawled' => 1];
-                            static::update($order_id, $update_data);
+
+                            if($status) {
+                                $update_data = ['is_crawled' => 1];
+                                static::update($order_id, $update_data);
+                            }
                         }
                     }
                 }
