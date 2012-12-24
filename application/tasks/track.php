@@ -9,7 +9,6 @@
 class Track_Task extends Task {
 
     public function run( $arguments = [] ){
-        
         $table = Track_Queues::filter();
         $count = $table->count();
         if(!empty($count)){
@@ -36,7 +35,7 @@ class Track_Task extends Task {
      */
     public function _doTrack($track_api, $lists){
         foreach($lists as $key=>$value){
-            $track = $track_api->get($value->company, $value->tracking_no);
+            $track = $track_api->get(str_replace('_', '', $value->company), $value->tracking_no);
             if(!empty($track)){
                 // 状态是 3，4，5 删除队列
                 $filter = ['company'     => $value->company, 
@@ -46,7 +45,7 @@ class Track_Task extends Task {
                 Track::update($filter, $data);
 
                 if(in_array($track['status'], [3, 4, 5])){
-                    //Track_Queues::delete($track_queue_id);
+                    Track_Queues::delete($track_queue_id);
                 }
             }
         }

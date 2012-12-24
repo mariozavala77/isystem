@@ -234,6 +234,40 @@
     </div>
     <!-- order cancel ends-->
 </div>
+<!-- 创建任务 begins -->
+<div id="task_confirm" style="display:none" title="创建新任务">
+    <div class="formRow">
+        <label>任务类型：</label>
+        <select name="type" id="task_type" >
+            <option value="product">产品类</option>
+            <option value="product_sale">代理商销售</option>
+            <option value="order">订单类</option>
+        </select>
+    </div>
+    <div class="formRow">
+        <label>任务分派：</label>
+        <select name="to_uid" id="task_to_uid">
+            @foreach($users as $user)
+                <option value="{{$user->id}}">{{$user->username}}</option>
+            @endforeach
+        </select>
+    </div>
+    <div class="formRow">
+        <div class="grid12">
+            <div class="sliderSpecs">
+                <label for="task_level" style="font-size:12px">紧急程度：</label><input type="text" id="task_level" />
+                <div class="clear"></div>
+            </div>
+            <div class="uMin"></div>
+        </div>
+        <div class="clear"></div>
+    </div>
+    <div class="formRow">
+        <label>任务内容：</label>
+        <textarea name="content" id="task_content" class="validate[required]"></textarea>
+    </div>
+</div>
+<!-- 创建任务 ends -->
 <!-- Content ends --> 
 @endsection
 

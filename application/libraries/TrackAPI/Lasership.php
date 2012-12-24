@@ -1,36 +1,36 @@
 <?php
 /**
- * 物流信息跟踪-快递一百接口
+ * 物流信息跟踪-Lasership Track
  *
  * @author: shaoqi <shaoqisq123@gmail.com>
  * @copyright: Copyright (c) 2012 UFCEC Tech All Rights Reserved.
  * @version: $Id$
  */
-
-class TrackAPI_Kuaidi{
-    
+class TrackAPI_Lasership{
     // api 连接地址
-    const API_URL = 'http://api.kuaidi100.com/api?id={key}&com={com}&nu={nu}&show=0&muti=1&order=asc';
-    
-    // api key
-    const API_KEY = 'ac4bffc51dce962e';
-    
+    const API_URL = 'http://www.lasership.com/track/{TRACKINGNUMBER}/json';
+
     // 远程提交处理
     public function transport($com, $nu){
-        $search  = ['{key}', '{com}', '{nu}'];
-        $replace = [self::API_KEY, $com, $nu];
-        $subject = self::API_URL;
-        $api = str_replace($search, $replace, $subject);
+        $url = str_replace('{TRACKINGNUMBER}',$nu,self::API_URL);
         $transport = new Transport();
         try{
-            $request = $transport->request($api);
+            $request = $transport->request($url);
             if(!empty($request) || !isset($request['body'])){
-                $request = $request['body'];
-                $request = json_decode($request,TRUE);
-                if($request['status']!=1){
-                    throw new AgentAPILogException($request['message'], $request['status']);
+                $request = json_decode($request['body'],true);
+                $request = $request['Events'];
+                foreach ($request as $key => $value) {
+                    $info_time = date('Y-m-d H:i:s', strtotime($value['UTCDateTime']));
+                    $info_context = trim($value['City']).','.trim($value['Country']).':'.trim($value['EventShortText']).(empty($value['Location'])?:' '.$value['Location']);
+                    $tracking_info[$key]=['time'=>$info_time, 'context'=>$info_context];
                 }
-                return ['status' => $request['state']+1, 'tracking_info' => $request['data']];
+                $state = trim($request[0]['EventShortText']);
+                if($state=='Delivered'){
+                    $state = 4;
+                }else{
+                    $state = 2;
+                }
+                return ['status' => $state, 'tracking_info' => $tracking_info];
             }
         }catch(AgentAPILogException $e){
             $content = [

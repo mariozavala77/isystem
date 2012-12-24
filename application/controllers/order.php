@@ -16,11 +16,12 @@ class Order_Controller extends Base_Controller {
         $fields = ['id', 'name'];
         $channels = Channel::filter($fields)->get();
         $logistic_company = Config::get('application.logistic_company');
-
+        $users = User::filter(['id', 'username'])->get();
         return View::make('order.list')->with('countries', $countries)
                                        ->with('status', $status)
                                        ->with('channels', $channels)
-                                       ->with('logistic_company', $logistic_company);
+                                       ->with('logistic_company', $logistic_company)
+                                       ->with('users', $users);
     }
 
     // 订单列表

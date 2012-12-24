@@ -19,6 +19,6 @@ class Track_Queues {
     }
 
     public static function insert($data){
-        return DB::insert($data);
+        return DB::table('track_queues')->insert($data);
     }
 }

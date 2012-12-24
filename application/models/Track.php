@@ -60,12 +60,26 @@ class Track {
         return isset($track[0]->count) ? $track[0]->count : 0;
     }
 
+    /**
+     * 更新内容
+     */
     public static function update($filter, $data){
 
         $query = DB::table('track');
         foreach ($filter as $key => $value) {
-            $query->where($key, '=', $value);
+            $query = $query->where($key, '=', $value);
         }
         return $query->update($data);
+    }
+
+    public static function exists($data)
+    {
+        $table = DB::table('track');
+
+        foreach($data as $key => $value) {
+            $table = $table->where($key, '=', $value);
+        }
+
+        return $table->first();
     }
 }
