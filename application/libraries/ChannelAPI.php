@@ -38,5 +38,12 @@ class ChannelAPI {
         return $this->_api->product();
     }
 
+    /**
+     * 报表处理
+     */
+    public function report() {
+        return $this->_api->report();
+    }
+
 }
 ?>

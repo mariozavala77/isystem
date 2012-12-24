@@ -437,6 +437,9 @@ class Order {
     /**
      * 订单状态分类统计
      *
+     * @param: $start string 开始时间
+     * @param: $end   string 结束时间
+     *
      * return array
      */
     public static function statistics_status($start = '', $end = '')
@@ -472,6 +475,9 @@ class Order {
 
     /**
      * 订单购买统计
+     *
+     * @param: $start string 开始时间
+     * @param: $end   string 结束时间
      *
      * return array
      */
@@ -540,5 +546,17 @@ class Order {
                     -> group_by('shipping_country')
                     -> get();
         return $sql;
+    }
+
+    /**
+     * 获取尚未跟踪订单的最早时间和最晚时间
+     */
+    public static function get_track($channel_id)
+    {
+        $sql = DB::table('orders')->where('is_auto', '=', '1')
+                                  ->where('is_track', '=', '0')
+                                  ->where('channel_id', '=', $channel_id);
+
+        return ['min' => $sql->min('purchased_at'), 'max' => $sql->max('purchased_at')];
     }
 }

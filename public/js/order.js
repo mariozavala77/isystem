@@ -32,7 +32,7 @@ $(function(){
             { sTitle: "购买时间", aTargets: [14], sWidth: '120px' },
             { bVisible: false, aTargets: [15] }, // 支付方式
             { sTitle: "状态", aTargets: [16], sWidth: '50px' },
-            { sTitle: "操作", aTargets: [17], bSearchable: false, sClass: "tableActs", sWidth: '80px' },
+            { sTitle: "操作", aTargets: [17], bSearchable: false, sClass: "tableActs", sWidth: '110px' },
         ],
         fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
             var id = aData[0];
@@ -48,6 +48,7 @@ $(function(){
                 operation += '<a class="tablectrl_small bDefault tipS" action="order_cannel" cid="'+id+'" original-title="取消"><span class="iconb" data-icon="&#xe035"></span></a>';
             }
             operation += '<a class="tablectrl_small bDefault tipS" action="order_info" cid="'+id+'" original-title="详情"><span class="iconb" data-icon="&#xe215"></span></a>';
+            operation += '<a class="tablectrl_small bDefault tipS" action="new_task" cid="'+id+'" original-title="新建任务"><span class="iconb" data-icon="&#xe215"></span></a>';
 
             $(nRow).attr('id', 'oid'+id);
 
@@ -361,6 +362,11 @@ $(function(){
         order_cancel_dialog.dialog('open');
     });
     // 详情
+    $('a[action="order_info"]').live('click', function(){
+        var id = $(this).attr('cid');
+        var entity_id = $(this).attr('centity_id');
+        order_info(id, entity_id);
+    });
     $('a[action="order_info"]').live('click', function(){
         var id = $(this).attr('cid');
         var entity_id = $(this).attr('centity_id');

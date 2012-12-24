@@ -35,6 +35,9 @@ class Order_Task extends Task {
             case 'sync': // 同步订单
                 new Task_Order_Sync($args);
                 break;
+            case 'track': // 同步FBA物流
+                new Task_Order_Track($args);
+                break;
             default:
                 $this->_help();
                 break;

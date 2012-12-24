@@ -11,12 +11,12 @@ class AgentAPILogException extends Exception{}
 class TrackAPI{
 
     public function get($com, $nu){
-        $kuaidi = ['Kuaidi'    => ['dhl', 'ups', 'usps', 'fedex', 'tnt', 'ems', 'shunfeng'], 
-                    //'Icha'      => ['shunfeng'], 
+        $kuaidi = ['Kuaidi' => ['dhl', 'ups', 'usps', 'fedex', 'tnt', 'ems', 'shunfeng', 'fedexus'], 
+                    //'Icha'      => ['shunfeng'],
                     'Royalmail' => ['royalmail'],
                    ];
         $interface = '';
-        $com = ($com=='EUB')?'ems':$com;
+        $com = ($com=='EUB' || $com=='eub')?'ems':$com;
 
         foreach ($kuaidi as $key => $value) {
             if(in_array($com, $value)){
@@ -31,11 +31,9 @@ class TrackAPI{
             $interface = 'Amazon';
         }
 
-        if(empty($interface)){
-            return FALSE;
-        }
+        $interface = empty($interface)?$com:$interface;
 
-        $interface = 'TrackAPI_' . $interface;
+        $interface = 'TrackAPI_' . ucfirst($interface);
 
         $api = new $interface();
         return $api->get($com, $nu);

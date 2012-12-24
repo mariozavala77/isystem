@@ -21,6 +21,13 @@ class ChannelAPI_Amazon {
     public function product() {
         return new ChannelAPI_Amazon_Product($this->_options);
     }
+
+    /**
+     * 报告处理
+     */
+    public function report() {
+        return new ChannelAPI_Amazon_Report($this->_options);    
+    }
 }
 
 

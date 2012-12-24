@@ -39,7 +39,6 @@ class Statistics_Task extends Task{
     }
 
     private function _handle(){
-        //var_dump($this->_day('20121010'));
         $purchased_at = Order::get_purchased_at();
         $updated_at = Order::get_updated_at();
         $null = '0000-00-00 00:00:00';
