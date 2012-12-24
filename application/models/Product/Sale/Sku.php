@@ -193,6 +193,32 @@ class Product_Sale_Sku
         return $params;
     }
 
+     /**
+      * 外部渠道上架操作
+      *
+      * @param: $products array 队列数据
+      *
+      * return ;
+      */
+    public static function outListing($products)
+    {
+        $api = new ChannelAPI($products['type'], $products['options']);
+        unset($products['type'], $products['options']);
+        $data = $api->product()->listing($products);
+        print_r($data);
+        die;
+
+        $ids = [];
+        foreach($products as $product) {
+            $ids[] = $product->id;
+        }
+
+        if(!empty($ids)) {
+            $data = ['status' => 1];
+            DB::table('queues')->where_in('id', $ids)->update($data);
+        }
+    }
+
     public static function existence($sale_id, $channel_id){
         return DB::table('products_sale_sku')->where('sale_id', '=', $sale_id)
                                              ->where('channel_id', '=', $channel_id)

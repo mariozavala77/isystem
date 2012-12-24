@@ -185,6 +185,29 @@ class Stock extends Base_Model
         return $result;
     }
 
+    /**
+     * 库存导入
+     *
+     * @param: $filepath string 导入文件绝对地址
+     *
+     * return array
+     */
+    public static function import($filepath)
+    {
+        try {
+            $import = new Import('stock', $filepath);
+            $result = ['status' => 'success', 'message' => '导入成功！'];
+        } catch(Import\ImportRowException $e) {
+            $result = ['status' => 'fail', 'message' => $e->getMessage() ];
+        } catch(Import\ImportFileException $e) {
+            $result = ['status' => 'fail', 'message' => $e->getMessage() ];
+        } catch(Import\ImportException $e) {
+            $result = ['status' => 'fail', 'message' => $e->getMessage() ];
+        }
+
+        return $result;
+    }
+    
 
 }
 
