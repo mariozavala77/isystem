@@ -45,9 +45,15 @@ class Product_Category_Controller extends Base_Controller {
            'parent_id' => Input::get('parent_id'), 
            'name'      => Input::get('name'),
             ];
-
-        Category::insert($data);
-    
+        if(Category::exist($data)){
+            $msg = ['status' => 'failure', 'message' => '分类名称有重复'];
+        }else{
+            Category::insert($data);
+            $msg = ['status' => 'success', 'message' => '删除成功！'];
+        }
+        if(Request::ajax()){
+            return Response::json($msg);
+        }
         return Redirect::to('category');
     }
 
@@ -85,5 +91,3 @@ class Product_Category_Controller extends Base_Controller {
     }
 
 }
-
-?>

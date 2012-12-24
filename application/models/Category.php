@@ -89,4 +89,34 @@ class Category {
 
        return $categories;
     }
+
+    /**
+     * 根据条件判断 内容是否唯一
+     *
+     * @param: $filter array 条件
+     *
+     * return integer
+     */
+    public static function exist($filter)
+    {
+        $query = DB::table('category');
+        foreach ($filter as $key=>$value)
+        {
+            $query = $query->where($key, '=', $value);
+        }
+
+        return $query->only('id');
+    }
+
+    /**
+     * 新增产品分类
+     *
+     * @param: $data        array   数据
+     *
+     * return boolean
+     */
+    public static function insert($data)
+    {
+        return DB::table('category')->insert($data);
+    }
 }
