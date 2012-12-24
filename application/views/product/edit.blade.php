@@ -165,8 +165,6 @@
 
         uploader.bind('FileUploaded', function(up, files, info){
             var response = jQuery.parseJSON(info.response);
-            console.log(files);
-            console.log(info);
             $('#images').append('<li style="height: 60px">' +
                                 '   <img src="{{ URL::to('/') }}'+ response.result+'" style="width: 60px; height: 60px">' +
                                 '   <input name="images[]" value="'+ files.name+'" type="hidden">' +

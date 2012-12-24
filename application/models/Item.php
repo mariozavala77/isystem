@@ -134,29 +134,17 @@ class Item {
      */
     public static function sync($channels) {
         foreach($channels as $channel) {
-            $fields = ['orders.id', 'orders.entity_id'];
-            $filter = ['channel_id' => $channel->id, 'is_crawled' => 0];
-            $orders = Order::filter($fields, $filter)->get();
-
-            if(!$orders) continue;
 
             $interface = $channel->type;
             $options = unserialize($channel->accredit);
             $api = new ChannelAPI($interface, $options);
-            foreach($orders as $order) {
-                $options['entity_id'] = $order->entity_id;
-                $data = $api->order()->items($options);
-                foreach($data as $datum) {
-                    $item_id = static::exists($order->id, $datum['entity_id']);
-                    if(!$item_id) {
-                        $datum['order_id'] = $order->id;
-                        static::insert($datum);
-                    }
-                }
+            $data = $api->order()->items($options);
+            /*
+                static::insert($datum);
 
                 $data = ['is_crawled' => 1];
                 Order::update($order->id, $data);
-            }
+             */
         }
     }
 }

@@ -14,6 +14,7 @@ class Product_Controller extends Base_Controller {
         $fields = [ 'id', 'name' ];
         $filter = [ 'parent_id' => 0 ];
         $categories = Category::filter($fields, $filter)->get();
+
         return View::make('product.list')->with('categories', $categories);
     }
 

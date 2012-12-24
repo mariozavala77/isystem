@@ -8,7 +8,7 @@ $(function() {
         bServerSide: true,
         bJQueryUI: false,
         sPaginationType: 'full_numbers',
-        sAjaxSource: '/product/category/filter',
+        sAjaxSource: '/product/category/filter',	
         sDom: '<"H"fl<"clear">>tr<"F"ip>',
         oLanguage: { sUrl: '/js/plugins/tables/lang_cn.txt'},
         aoColumnDefs: [
@@ -20,7 +20,7 @@ $(function() {
             var id = aData[2];
             var operation = '<a href="javascript:void(0);" class="tablectrl_small bDefault tipS" original-title="添加分类" data-id="' + id + '" title="添加分类" action="add_category"><span class="iconb" data-icon="&#xe14a;"></span></a>'+
                             '<a href="/product/category/edit?category_id=' + id + '" class="tablectrl_small bDefault tipS" original-title="编辑" title="编辑分类"><span class="iconb" data-icon=""></span></a>' + 
-                            '<a href="javascript:void(0);" data-id="' + id + '" class="tablectrl_small bDefault tipS" original-title="删除" action="del_category" title="删除分类"><span class="iconb" data-icon=""></span></a>';
+                            '<a href="javascript:void(0);" data-id="' + id + '" class="tablectrl_small bDefault tipS" original-title="删除" action="delete" title="删除分类"><span class="iconb" data-icon=""></span></a>';
             $('td:eq(2)', nRow).html(operation);
         },
         fnInitComplete: function() {
@@ -30,7 +30,7 @@ $(function() {
             $('#category_list_table').css('width', '100%');
         }
     });
-    $('a[action="del_category"]').live('click', function(){
+    $('a[action="delete"]').live('click', function(){
         data_id = $(this).attr('data-id');
         $('#category_delete_confirm').dialog('open');
     });

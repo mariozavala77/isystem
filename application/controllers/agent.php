@@ -111,5 +111,11 @@ class Agent_Controller extends Base_Controller {
     public function action_secret(){
         return Response::json(['status' => 'success', 'message' => Agent::secret()]);
     }
+
+    public function action_test(){
+        $track_api = new TrackAPI;
+        $track = $track_api->get('Dhlglobalm', '9274899999933301356174');
+        var_export($track);
+        exit;
+    }
 }
-?>

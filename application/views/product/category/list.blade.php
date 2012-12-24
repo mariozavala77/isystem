@@ -1,9 +1,9 @@
 @layout('layout.base')
 @section('script')
-    {{ HTML::script('js/category.js') }}
+{{ HTML::script('js/category.js') }}
 @endsection
 @section('sidebar')
-    @include('../block.sidebar')
+@include('../block.sidebar')
 @endsection
 @section('content')
 <div id="content">
@@ -18,7 +18,7 @@
             <ul id="breadcrumbs" class="breadcrumbs">
                 <li><a href="{{ URL::base() }}">控制中心</a></li>
                 <li><a href="{{ URL::to('product') }}">产品管理</a></li>
-                <li class="current"><a href="{{ URL::to('product/category') }}">分类管理</a></li>
+                <li class="current"><a href="{{ URL::to('product/category') }}">分类管理1</a></li>
             </ul>
         </div>
         
@@ -29,7 +29,7 @@
     <!-- Main content begins -->
     <div class="wrapper">
         <div class="mt15">
-            <a href="javascript:void(0);" class="buttonM bDefault floatR" id="add_category"><span class="icon-plus-3"></span><span>添加产品分类</span></a>
+            <a href="{{ URL::to('product/category/add') }}" class="buttonM bDefault floatR ml10"><span class="icon-plus-2"></span><span>添加分类</span></a>
             <div class="clear"></div>
         </div>
         <div class="widget">
