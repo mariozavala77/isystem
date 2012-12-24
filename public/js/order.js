@@ -1,3 +1,4 @@
+var task_entity_id = 0;
 $(function(){
     // 初始化搜索标识
     initsearch = false;
@@ -48,7 +49,7 @@ $(function(){
                 operation += '<a class="tablectrl_small bDefault tipS" action="order_cannel" cid="'+id+'" original-title="取消"><span class="iconb" data-icon="&#xe035"></span></a>';
             }
             operation += '<a class="tablectrl_small bDefault tipS" action="order_info" cid="'+id+'" original-title="详情"><span class="iconb" data-icon="&#xe215"></span></a>';
-            operation += '<a class="tablectrl_small bDefault tipS" action="new_task" cid="'+id+'" original-title="新建任务"><span class="iconb" data-icon="&#xe215"></span></a>';
+            operation += '<a class="tablectrl_small bDefault tipS" action="new_task" cid="'+id+'" original-title="新建任务"><span class="iconb" data-icon="&#xe014"></span></a>';
 
             $(nRow).attr('id', 'oid'+id);
 
@@ -367,13 +368,20 @@ $(function(){
         var entity_id = $(this).attr('centity_id');
         order_info(id, entity_id);
     });
-    $('a[action="order_info"]').live('click', function(){
-        var id = $(this).attr('cid');
-        var entity_id = $(this).attr('centity_id');
-        order_info(id, entity_id);
+    // 新建任务
+    $('a[action="new_task"]').live('click', function(){
+        task_entity_id = $(this).attr('cid');
+        $('#task_confirm').dialog('open');
     });
-
-
+    $( ".uMin" ).slider({ /* Slider with minimum */
+        range: "min",
+        value: 0,
+        min: 0,
+        max: 9,
+        slide: function( event, ui ) {
+            $( "#task_level" ).val(ui.value );
+        }
+    }); 
     // 批量发货提交
     $('a[action="batch_order_ship_submit"]').click(function(){
         var ship_company = $('input[name="batch_ship_company"]').val();
@@ -407,6 +415,19 @@ $(function(){
                 $.jGrowl('请求发货操作错误。');
             }
         });
+    });
+    $('#task_confirm').dialog({
+        autoOpen: false,
+        resizable:false,
+        modal: true,
+        buttons: {
+            "提交": function () {
+                push_task();
+            },
+            "取消": function () {
+                $(this).dialog("close");
+            }
+        }
     });
 });
 
@@ -463,6 +484,27 @@ function order_info(order_id, entity_id) {
             $.jGrowl('获取产品信息失败！');
         }
     });
+
+}
+function push_task(){
+    var task_type = $('#task_type option:selected').val();
+    var task_level = $('#task_level').val();
+    var task_to_uid =$('#task_to_uid option:selected').val();
+    var task_content =$('#task_content').val();
+    var task_channel = 1;
+    if(empty(task_content)){
+        $.jGrowl('请填写任务内容！');
+        $('#task_content').focus();
+        return false;
+    }
+
+    task_entity_id = (task_channel==0)?entity_id:task_entity_id;
+    var parent_id = (task_channel==0)?task_id:0;
+
+    $.post('/task/insert',{to_uid:task_to_uid,parent_id:parent_id,type:task_type,entity_id:task_entity_id,content:task_content,level:task_level},function(response){
+        $('#task_confirm').dialog('close');
+            $.jGrowl(response.message);
+    },'json');
 }
 /*
  * 列隐藏显示
