@@ -131,16 +131,4 @@ class Category {
 
         return $query->only('id');
     }
-
-    /**
-     * 新增产品分类
-     *
-     * @param: $data        array   数据
-     *
-     * return boolean
-     */
-    public static function insert($data)
-    {
-        return DB::table('category')->insert($data);
-    }
 }
