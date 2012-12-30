@@ -244,6 +244,8 @@ class Transport
         curl_setopt($curl_session, CURLOPT_HEADER, true);//结果中包含头部信息
         curl_setopt($curl_session, CURLOPT_RETURNTRANSFER, true);//把结果返回，而非直接输出
         curl_setopt($curl_session, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_0);//采用1.0版的HTTP协议
+        curl_setopt($curl_session, CURLOPT_SSL_VERIFYPEER, FALSE);
+        curl_setopt($curl_session, CURLOPT_SSL_VERIFYHOST, FALSE);
 
         $url_parts = $this->parse_raw_url($url);
 

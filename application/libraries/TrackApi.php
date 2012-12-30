@@ -11,7 +11,7 @@ class AgentAPILogException extends Exception{}
 class TrackAPI{
 
     public function get($com, $nu){
-        $kuaidi = ['Kuaidi' => ['dhl', 'ups', 'usps', 'fedex', 'tnt', 'ems', 'shunfeng', 'fedexus'], 
+        $kuaidi = ['Kuaidi' => ['dhl', 'ups', 'usps', 'fedex', 'tnt', 'ems', 'shunfeng', 'fedexus', 'ontrac'], 
                     //'Icha'      => ['shunfeng'],
                     'Royalmail' => ['royalmail'],
                    ];
